@@ -1,37 +1,50 @@
-Dưới đây là file README.md đã được điều chỉnh toàn bộ nội dung, cấu trúc và tính năng để khớp với dự án GreenSpace (dựa trên tài liệu SRS và DB Schema mình đã phân tích trước đó).
+----------
 
-GreenSpace - E-commerce Platform for Plants & Decor
-Hệ thống Thương mại Điện tử Cây cảnh và Giải pháp Không gian Xanh
+# GreenSpace - E-commerce Platform for Plants & Decor
+
+**Hệ thống Thương mại Điện tử Cây cảnh và Giải pháp Không gian Xanh**
 
 GreenSpace là nền tảng E-commerce chuyên cung cấp cây cảnh, chậu cây và các giải pháp trang trí nội thất xanh. Hệ thống không chỉ bán hàng mà còn cung cấp kiến thức chăm sóc cây (Blog/Guides) và xây dựng cộng đồng yêu cây xanh.
 
-📋 Mục lục
-Tổng quan
+----------
 
-Kiến trúc hệ thống
+## 📋 Mục lục
 
-Công nghệ sử dụng
+-   [Tổng quan](https://www.google.com/search?q=%23-t%E1%BB%95ng-quan)
+    
+-   [Kiến trúc hệ thống](https://www.google.com/search?q=%23-ki%E1%BA%BFn-tr%C3%BAc-h%E1%BB%87-th%E1%BB%91ng)
+    
+-   [Công nghệ sử dụng](https://www.google.com/search?q=%23-c%C3%B4ng-ngh%E1%BB%87-s%E1%BB%AD-d%E1%BB%A5ng)
+    
+-   [Tính năng chính](https://www.google.com/search?q=%23-t%C3%ADnh-n%C4%83ng-ch%C3%ADnh)
+    
+-   [Cài đặt và triển khai](https://www.google.com/search?q=%23-c%C3%A0i-%C4%91%E1%BA%B7t-v%C3%A0-tri%E1%BB%83n-khai)
+    
+-   [Cấu trúc dự án](https://www.google.com/search?q=%23-c%E1%BA%A5u-tr%C3%BAc-d%E1%BB%B1-%C3%A1n)
+    
+-   [Database Schema](https://www.google.com/search?q=%23-database-schema)
+    
+-   [API Documentation](https://www.google.com/search?q=%23-api-documentation)
+    
 
-Tính năng chính
+----------
 
-Cài đặt và triển khai
+## 🎯 Tổng quan
 
-Cấu trúc dự án
+GreenSpace Backend được xây dựng theo kiến trúc **Clean Architecture**, tập trung vào hiệu năng, khả năng mở rộng và dễ dàng bảo trì. Hệ thống phục vụ các đối tượng:
 
-Database Schema
+-   **Customer (Khách hàng)**: Tìm kiếm cây, mua hàng, theo dõi đơn, xem hướng dẫn chăm sóc.
+    
+-   **Admin (Quản trị viên)**: Quản lý sản phẩm, kho vận, đơn hàng, khuyến mãi và báo cáo doanh thu.
+    
 
-API Documentation
+----------
 
-🎯 Tổng quan
-GreenSpace Backend được xây dựng theo kiến trúc Clean Architecture, tập trung vào hiệu năng, khả năng mở rộng và dễ dàng bảo trì. Hệ thống phục vụ các đối tượng:
+## 🏗️ Kiến trúc hệ thống
 
-Customer (Khách hàng): Tìm kiếm cây, mua hàng, theo dõi đơn, xem hướng dẫn chăm sóc.
+Dự án tuân thủ mô hình **Clean Architecture** kết hợp với **Repository Pattern**:
 
-Admin (Quản trị viên): Quản lý sản phẩm, kho vận, đơn hàng, khuyến mãi và báo cáo doanh thu.
-
-🏗️ Kiến trúc hệ thống
-Dự án tuân thủ mô hình Clean Architecture kết hợp với Repository Pattern:
-
+```
 ┌─────────────────────────────────────────┐
 │          Presentation Layer             │
 │        (GreenSpace.WebAPI)              │
@@ -55,96 +68,136 @@ Dự án tuân thủ mô hình Clean Architecture kết hợp với Repository P
 │   • Interfaces (IRepository, IService)  │
 │   • DTOs & Enums                        │
 └─────────────────────────────────────────┘
-🛠️ Công nghệ sử dụng
-Backend Framework
-ASP.NET Core 8.0 - Web API
 
-Entity Framework Core 8.0 - ORM
+```
 
-PostgreSQL 15+ - Database chính
+----------
 
-AutoMapper - Mapping Object-to-Object
+## 🛠️ Công nghệ sử dụng
 
-Authentication & Security
-ASP.NET Core Identity - Quản lý User/Role
+### Backend Framework
 
-JWT Bearer - Xác thực Token
+-   **ASP.NET Core 8.0** - Web API
+    
+-   **Entity Framework Core 8.0** - ORM
+    
+-   **PostgreSQL 15+** - Database chính
+    
+-   **AutoMapper** - Mapping Object-to-Object
+    
 
-BCrypt - Mã hóa mật khẩu
+### Authentication & Security
 
-Integrations (Tích hợp)
-VNPAY / MoMo - Cổng thanh toán (Planned)
+-   **ASP.NET Core Identity** - Quản lý User/Role
+    
+-   **JWT Bearer** - Xác thực Token
+    
+-   **BCrypt** - Mã hóa mật khẩu
+    
 
-Cloudinary / Firebase Storage - Lưu trữ ảnh sản phẩm
+### Integrations (Tích hợp)
 
-Docker - Containerization
+-   **VNPAY / MoMo** - Cổng thanh toán (Planned)
+    
+-   **Cloudinary / Firebase Storage** - Lưu trữ ảnh sản phẩm
+    
+-   **Docker** - Containerization
+    
 
-✨ Tính năng chính
-1. Phân hệ Khách hàng (Storefront)
-a. Sản phẩm & Danh mục
-✅ Tìm kiếm & Lọc sản phẩm (Theo giá, loại cây, kích thước)
+----------
 
-✅ Xem chi tiết: Hình ảnh, Mô tả, Hướng dẫn chăm sóc
+## ✨ Tính năng chính
 
-✅ Lựa chọn biến thể: Size (S, M, L), Màu chậu, Mix cây
+### 1. Phân hệ Khách hàng (Storefront)
 
-✅ Xem sản phẩm liên quan/Gợi ý
+#### a. Sản phẩm & Danh mục
 
-b. Đặt hàng & Thanh toán
-✅ Quản lý Giỏ hàng (Thêm/Sửa/Xóa)
+-   ✅ Tìm kiếm & Lọc sản phẩm (Theo giá, loại cây, kích thước)
+    
+-   ✅ Xem chi tiết: Hình ảnh, Mô tả, Hướng dẫn chăm sóc
+    
+-   ✅ **Lựa chọn biến thể**: Size (S, M, L), Màu chậu, Mix cây
+    
+-   ✅ Xem sản phẩm liên quan/Gợi ý
+    
 
-✅ Checkout: Nhập địa chỉ, Áp dụng mã giảm giá (Promotions)
+#### b. Đặt hàng & Thanh toán
 
-✅ Thanh toán: COD, Chuyển khoản (VNPAY/QR)
+-   ✅ Quản lý Giỏ hàng (Thêm/Sửa/Xóa)
+    
+-   ✅ Checkout: Nhập địa chỉ, Áp dụng mã giảm giá (Promotions)
+    
+-   ✅ Thanh toán: COD, Chuyển khoản (VNPAY/QR)
+    
+-   ✅ Theo dõi trạng thái đơn hàng (Pending -> Shipping -> Completed)
+    
 
-✅ Theo dõi trạng thái đơn hàng (Pending -> Shipping -> Completed)
+#### c. Nội dung & Tương tác
 
-c. Nội dung & Tương tác
-✅ Đọc Blog/Tin tức về cây cảnh
+-   ✅ Đọc Blog/Tin tức về cây cảnh
+    
+-   ✅ Đánh giá & Bình luận sản phẩm (Reviews)
+    
+-   ✅ Quản lý sổ địa chỉ giao hàng
+    
 
-✅ Đánh giá & Bình luận sản phẩm (Reviews)
+### 2. Phân hệ Quản trị (Admin Panel)
 
-✅ Quản lý sổ địa chỉ giao hàng
+#### a. Quản lý Sản phẩm (Catalog)
 
-2. Phân hệ Quản trị (Admin Panel)
-a. Quản lý Sản phẩm (Catalog)
-✅ CRUD Danh mục (Categories) đa cấp
+-   ✅ CRUD Danh mục (Categories) đa cấp
+    
+-   ✅ CRUD Sản phẩm & Biến thể (Variants)
+    
+-   ✅ Quản lý kho hàng (Stock management)
+    
+-   ✅ Upload thư viện ảnh sản phẩm
+    
 
-✅ CRUD Sản phẩm & Biến thể (Variants)
+#### b. Quản lý Đơn hàng (Sales)
 
-✅ Quản lý kho hàng (Stock management)
+-   ✅ Xem danh sách đơn hàng
+    
+-   ✅ Cập nhật trạng thái đơn (Xác nhận, Giao hàng, Hủy)
+    
+-   ✅ Xử lý hoàn tiền/khiếu nại
+    
 
-✅ Upload thư viện ảnh sản phẩm
+#### c. Marketing & Báo cáo
 
-b. Quản lý Đơn hàng (Sales)
-✅ Xem danh sách đơn hàng
+-   ✅ Tạo mã giảm giá (Voucher/Coupon)
+    
+-   ✅ Dashboard thống kê: Doanh thu, Sản phẩm bán chạy
+    
+-   ✅ Quản lý bài viết Blog
+    
 
-✅ Cập nhật trạng thái đơn (Xác nhận, Giao hàng, Hủy)
+----------
 
-✅ Xử lý hoàn tiền/khiếu nại
+## 🚀 Cài đặt và triển khai
 
-c. Marketing & Báo cáo
-✅ Tạo mã giảm giá (Voucher/Coupon)
+### Yêu cầu
 
-✅ Dashboard thống kê: Doanh thu, Sản phẩm bán chạy
+-   **.NET SDK 8.0+**
+    
+-   **PostgreSQL** (Local hoặc Docker)
+    
 
-✅ Quản lý bài viết Blog
+### 1. Clone & Config
 
-🚀 Cài đặt và triển khai
-Yêu cầu
-.NET SDK 8.0+
-
-PostgreSQL (Local hoặc Docker)
-
-1. Clone & Config
 Bash
 
+```
 git clone https://github.com/GreenSpace-Team/GreenSpace_BE.git
 cd GreenSpace_BE
-Tạo file src/GreenSpace.WebAPI/appsettings.Development.json:
+
+```
+
+Tạo file `src/GreenSpace.WebAPI/appsettings.Development.json`:
 
 JSON
 
+```
 {
   "ConnectionStrings": {
     "DefaultConnection": "Host=localhost;Port=5432;Database=greenspace_db;Username=postgres;Password=your_password"
@@ -155,11 +208,16 @@ JSON
     "Audience": "GreenSpace_Client"
   }
 }
-2. Database Migration
+
+```
+
+### 2. Database Migration
+
 Chạy lệnh sau tại thư mục root của solution để khởi tạo Database:
 
 Bash
 
+```
 cd src
 # Restore packages
 dotnet restore
@@ -168,13 +226,25 @@ dotnet restore
 cd GreenSpace.Infrastructure
 dotnet ef migrations add InitialCreate --startup-project ../GreenSpace.WebAPI
 dotnet ef database update --startup-project ../GreenSpace.WebAPI
-3. Run
+
+```
+
+### 3. Run
+
 Bash
 
+```
 cd ../GreenSpace.WebAPI
 dotnet run
 # API sẽ chạy tại: http://localhost:5000 hoặc https://localhost:5001
-📁 Cấu trúc dự án
+
+```
+
+----------
+
+## 📁 Cấu trúc dự án
+
+```
 GreenSpace_BE/
 ├── src/
 │   ├── GreenSpace.Core/            # Lõi hệ thống (Không phụ thuộc bên ngoài)
@@ -194,28 +264,42 @@ GreenSpace_BE/
 │       ├── Program.cs              # DI Config & Middleware
 │
 └── docker-compose.yml              # Deployment config
-📚 API Documentation
+
+```
+
+----------
+
+## 📚 API Documentation
+
 Sau khi chạy dự án, truy cập Swagger UI để xem tài liệu API:
 
-Local: https://localhost:7000/swagger
+-   **Local**: `https://localhost:7000/swagger`
+    
+-   **Production**: `https://your-domain.onrender.com/swagger`
+    
 
-Production: https://your-domain.onrender.com/swagger
+**Các Module chính:**
 
-Các Module chính:
+-   `Auth`: Đăng ký, Đăng nhập, Refresh Token.
+    
+-   `Products`: CRUD sản phẩm, biến thể.
+    
+-   `Orders`: Tạo đơn, xem lịch sử, cập nhật trạng thái.
+    
+-   `Promotions`: Kiểm tra và áp dụng mã giảm giá.
+    
+-   `Blogs`: Quản lý bài viết.
+    
 
-Auth: Đăng ký, Đăng nhập, Refresh Token.
+----------
 
-Products: CRUD sản phẩm, biến thể.
+## 📞 Liên hệ
 
-Orders: Tạo đơn, xem lịch sử, cập nhật trạng thái.
+-   **GreenSpace Team** - EXE201 Project
+    
+-   GitHub: [Link Repo]
+    
 
-Promotions: Kiểm tra và áp dụng mã giảm giá.
+----------
 
-Blogs: Quản lý bài viết.
-
-📞 Liên hệ
-GreenSpace Team - EXE201 Project
-
-GitHub: 
-
-Made with 🌿 for a greener life.
+_Made with 🌿 for a greener life._
