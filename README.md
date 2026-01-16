@@ -290,16 +290,6 @@ Sau khi chạy dự án, truy cập Swagger UI để xem tài liệu API:
     
 -   `Blogs`: Quản lý bài viết.
     
-
-----------
-
-## 📞 Liên hệ
-
--   **GreenSpace Team** - EXE201 Project
-    
--   GitHub: [Link Repo]
-    
-
 ----------
 
 _Made with 🌿 for a greener life._
