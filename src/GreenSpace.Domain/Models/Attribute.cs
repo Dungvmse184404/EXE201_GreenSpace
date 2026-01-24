@@ -11,7 +11,7 @@ public partial class Attribute
 {
     [Key]
     [Column("attribute_id")]
-    public int AttributeId { get; set; }
+    public Guid AttributeId { get; set; }
 
     [Column("name")]
     [StringLength(255)]

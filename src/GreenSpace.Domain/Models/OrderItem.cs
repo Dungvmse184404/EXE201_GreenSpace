@@ -11,13 +11,13 @@ public partial class OrderItem
 {
     [Key]
     [Column("item_id")]
-    public int ItemId { get; set; }
+    public Guid ItemId { get; set; }
 
     [Column("order_id")]
-    public int OrderId { get; set; }
+    public Guid OrderId { get; set; }
 
     [Column("variant_id")]
-    public int? VariantId { get; set; }
+    public Guid? VariantId { get; set; }
 
     [Column("quantity")]
     public int Quantity { get; set; }

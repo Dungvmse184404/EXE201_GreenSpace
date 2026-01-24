@@ -11,10 +11,10 @@ public partial class Promotion
 {
     [Key]
     [Column("promotion_id")]
-    public int PromotionId { get; set; }
+    public Guid PromotionId { get; set; }
 
     [Column("order_id")]
-    public int? OrderId { get; set; }
+    public Guid? OrderId { get; set; }
 
     [Column("start_date", TypeName = "timestamp without time zone")]
     public DateTime? StartDate { get; set; }

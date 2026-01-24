@@ -1,16 +1,18 @@
-﻿using GreenSpace.Infrastructure.Persistence.Contexts;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
-using Microsoft.AspNetCore.Http.Features;
+﻿using GreenSpace.Application;
+using GreenSpace.Infrastructure;
+using GreenSpace.Infrastructure.Persistence.Contexts;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models;
 using System.Text;
 
 namespace GreenSpace.WebAPI
@@ -22,41 +24,7 @@ namespace GreenSpace.WebAPI
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddDbContext<AppDbContext>(
-            options =>
-            {
-                // Cấu hình PostgreSQL
-                options.UseNpgsql(
-                    builder.Configuration.GetConnectionString("DefaultConnection"),
-                    npgsqlOptions =>
-                    {
-                        npgsqlOptions.MigrationsAssembly("GreenSpace.Infrastructure");
-                        npgsqlOptions.CommandTimeout(60); // timeout 60s để tránh request treo lâu
-                        npgsqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 1,
-                            maxRetryDelay: TimeSpan.FromSeconds(15),
-                            errorCodesToAdd: null);
-                    });
-
-                // Fix timezone 
-                AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
-                // Logging & debugging — chỉ bật khi đang ở môi trường dev
-                if (builder.Environment.IsDevelopment())
-                {
-                    options.EnableSensitiveDataLogging(); // hiển thị parameter trong query
-                    options.EnableDetailedErrors();       // hiển thị lỗi chi tiết
-                    options.LogTo(Console.WriteLine, LogLevel.Information);
-                }
-                else
-                {
-                    // Trong production chỉ log cảnh báo trở lên để tiết kiệm hiệu năng
-                    options.LogTo(Console.WriteLine, LogLevel.Warning);
-                }
-            },
-                ServiceLifetime.Scoped // Scoped để mỗi request có 1 DbContext riêng
-            );
-
+            
 
             // thêm cấu hình JWT
             var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -118,8 +86,11 @@ namespace GreenSpace.WebAPI
             });
 
             //thêm DI từ các layer khác
-            //builder.Services.AddInfrastructure(builder.Configuration);
-            //builder.Services.Applicaiton();
+            builder.Services.AddApplications();
+            builder.Services.AddInfrastructure(
+                builder.Configuration,
+                builder.Environment.IsDevelopment()
+            );
 
 
             var app = builder.Build();

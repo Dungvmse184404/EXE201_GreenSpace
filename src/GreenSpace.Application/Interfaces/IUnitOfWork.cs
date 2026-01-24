@@ -1,4 +1,5 @@
 ﻿using GreenSpace.Application.Interfaces.Repositories;
+using GreenSpace.Application.Interfaces.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,6 +26,12 @@ namespace GreenSpace.Application.Interfaces
         IPaymentRepository PaymentRepository { get; }
         ICartRepository CartRepository { get; }
         ICartItemRepository CartItemRepository { get; }
+
+
+
+
+        IRefreshTokenRepository RefreshTokenRepository { get; }
+        IRefreshTokenService RefreshTokenService { get; }
 
 
 

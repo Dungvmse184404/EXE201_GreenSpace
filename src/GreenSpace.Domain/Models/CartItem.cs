@@ -11,13 +11,13 @@ public partial class CartItem
 {
     [Key]
     [Column("cart_item_id")]
-    public int CartItemId { get; set; }
+    public Guid CartItemId { get; set; }
 
     [Column("cart_id")]
-    public int CartId { get; set; }
+    public Guid CartId { get; set; }
 
     [Column("variant_id")]
-    public int VariantId { get; set; }
+    public Guid VariantId { get; set; }
 
     [Column("quantity")]
     public int? Quantity { get; set; }

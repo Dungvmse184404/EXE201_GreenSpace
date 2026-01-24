@@ -1,9 +1,6 @@
---=====================================================--
--- XÓA BẢNG CŨ (DROP TABLES)
---=====================================================--
-DROP TABLE IF EXISTS 
-"cart_items", 
-"carts", 
+using EXE201_GreenSpaceDb,
+ 
+DROP TABLE IF EXISTS "ratings",
 "promotions", 
 "payments", 
 "order_items", 
@@ -17,10 +14,6 @@ DROP TABLE IF EXISTS
 "users" 
 CASCADE;
 
---=====================================================--
--- TẠO BẢNG (SCHEMA)
---=====================================================--
-
 -- 1. USERS
 CREATE TABLE "users" (
     "user_id" SERIAL PRIMARY KEY,
@@ -28,7 +21,7 @@ CREATE TABLE "users" (
     "password_hash" VARCHAR(255) NOT NULL,
     "full_name" VARCHAR(255),
     "phone" VARCHAR(20),
-    "role" VARCHAR(20) DEFAULT 'Customer', -- 'Guest, Customer','Staff' 'Admin'
+    "role" INT DEFAULT '0', -- '0-Guest, 1-Customer','2-Staff' '3-Admin'
     "date_of_birth" TIMESTAMP,
     "gender" VARCHAR(10),
     "is_active" BOOLEAN DEFAULT TRUE,
@@ -175,26 +168,7 @@ CREATE TABLE "ratings" (
         FOREIGN KEY ("user_id") REFERENCES "users" ("user_id") ON DELETE CASCADE
 );
 
--- 13. CARTS (Giỏ hàng - Mới thêm)
-CREATE TABLE "carts" (
-    "cart_id" SERIAL PRIMARY KEY,
-    "user_id" INT, -- Nullable cho Guest
-    "session_id" VARCHAR(100), -- Cookie ID cho Guest
-    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_carts_user FOREIGN KEY ("user_id") REFERENCES "users" ("user_id") ON DELETE CASCADE
-);
 
--- 14. CART_ITEMS (Sản phẩm trong giỏ - Mới thêm)
-CREATE TABLE "cart_items" (
-    "cart_item_id" SERIAL PRIMARY KEY,
-    "cart_id" INT NOT NULL,
-    "variant_id" INT NOT NULL,
-    "quantity" INT DEFAULT 1,
-    "created_at" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_cart_items_cart FOREIGN KEY ("cart_id") REFERENCES "carts" ("cart_id") ON DELETE CASCADE,
-    CONSTRAINT fk_cart_items_variant FOREIGN KEY ("variant_id") REFERENCES "product_variants" ("variant_id") ON DELETE CASCADE
-);
 --=====================================================--
 -- Insert dữ liệu
 --=====================================================--
@@ -274,14 +248,3 @@ INSERT INTO "ratings" (product_id, user_id, stars, comment) VALUES
 INSERT INTO "promotions" (start_date, end_date, discount_type, discount_amount, is_active) VALUES
 (NOW(), NOW() + INTERVAL '7 days', 'Percentage', 10.00, TRUE), -- Giảm 10% tuần lễ vàng
 (NOW() - INTERVAL '30 days', NOW() - INTERVAL '1 day', 'Fixed', 50000, FALSE); -- Voucher cũ đã hết hạn
-
--- 12. Insert CARTS (Mới thêm)
-INSERT INTO "carts" (user_id, session_id) VALUES
-(2, NULL),           -- Cart ID 1: Của Nguyễn Văn A (User Login)
-(NULL, 'guest_abc'); -- Cart ID 2: Của khách vãng lai (Guest)
-
--- 13. Insert CART_ITEMS (Mới thêm)
-INSERT INTO "cart_items" (cart_id, variant_id, quantity) VALUES
-(1, 1, 2), -- User A đang để 2 cây Kim Tiền nhỏ trong giỏ
-(1, 4, 1), -- User A đang để thêm 1 Sen đá
-(2, 5, 10);-- Guest đang để 10 cái chậu trong giỏ

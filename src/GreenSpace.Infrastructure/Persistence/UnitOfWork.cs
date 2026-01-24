@@ -1,5 +1,7 @@
 ﻿using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Repositories;
+using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.Application.Services;
 using GreenSpace.Infrastructure.Persistence.Contexts;
 using GreenSpace.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -30,6 +32,8 @@ namespace GreenSpace.Infrastructure.Persistence
         private readonly Lazy<IPaymentRepository> _paymentRepository;
         private readonly Lazy<ICartRepository> _cartRepository;
         private readonly Lazy<ICartItemRepository> _cartItemRepository;
+        private readonly Lazy<IRefreshTokenRepository> _refreshTokenRepository;
+        private readonly Lazy<IRefreshTokenService> _refreshTokenService;
 
         public UnitOfWork(AppDbContext context, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
@@ -52,6 +56,8 @@ namespace GreenSpace.Infrastructure.Persistence
             _paymentRepository = new Lazy<IPaymentRepository>(() => new PaymentRepository(_context));
             _cartRepository = new Lazy<ICartRepository>(() => new CartRepository(_context));
             _cartItemRepository = new Lazy<ICartItemRepository>(() => new CartItemRepository(_context));
+            _refreshTokenRepository = new Lazy<IRefreshTokenRepository>(() => new RefreshTokenRepository(_context));
+            _refreshTokenService = new Lazy<IRefreshTokenService>(() => new RefreshTokenService(this, _configuration, _loggerFactory.CreateLogger<RefreshTokenService>()));
         }
 
         public IAttributeRepository AttributeRepository => _attributeRepository.Value;
@@ -68,6 +74,8 @@ namespace GreenSpace.Infrastructure.Persistence
         public IPaymentRepository PaymentRepository => _paymentRepository.Value;
         public ICartRepository CartRepository => _cartRepository.Value;
         public ICartItemRepository CartItemRepository => _cartItemRepository.Value;
+        public IRefreshTokenRepository RefreshTokenRepository => _refreshTokenRepository.Value;
+        public IRefreshTokenService RefreshTokenService => _refreshTokenService.Value;
 
 
         // --- Xử lý Transaction ---

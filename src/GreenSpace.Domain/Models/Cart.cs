@@ -11,10 +11,10 @@ public partial class Cart
 {
     [Key]
     [Column("cart_id")]
-    public int CartId { get; set; }
+    public Guid CartId { get; set; }
 
     [Column("user_id")]
-    public int? UserId { get; set; }
+    public Guid? UserId { get; set; }
 
     [Column("session_id")]
     [StringLength(100)]

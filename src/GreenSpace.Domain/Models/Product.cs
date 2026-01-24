@@ -11,13 +11,13 @@ public partial class Product
 {
     [Key]
     [Column("product_id")]
-    public int ProductId { get; set; }
+    public Guid ProductId { get; set; }
 
     [Column("brand_id")]
     public int? BrandId { get; set; }
 
     [Column("category_id")]
-    public int? CategoryId { get; set; }
+    public Guid? CategoryId { get; set; }
 
     [Column("name")]
     [StringLength(255)]

@@ -11,10 +11,10 @@ public partial class UserAddress
 {
     [Key]
     [Column("address_id")]
-    public int AddressId { get; set; }
+    public Guid AddressId { get; set; }
 
     [Column("user_id")]
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     [Column("address")]
     [StringLength(255)]

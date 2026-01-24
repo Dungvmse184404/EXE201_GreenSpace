@@ -11,10 +11,10 @@ public partial class Order
 {
     [Key]
     [Column("order_id")]
-    public int OrderId { get; set; }
+    public Guid OrderId { get; set; }
 
     [Column("user_id")]
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     [Column("total_amount")]
     [Precision(10, 2)]

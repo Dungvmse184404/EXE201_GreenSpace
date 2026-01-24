@@ -12,10 +12,10 @@ public partial class ProductVariant
 {
     [Key]
     [Column("variant_id")]
-    public int VariantId { get; set; }
+    public Guid VariantId { get; set; }
 
     [Column("product_id")]
-    public int ProductId { get; set; }
+    public Guid ProductId { get; set; }
 
     [Column("sku")]
     [StringLength(100)]

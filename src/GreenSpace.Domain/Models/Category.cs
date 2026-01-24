@@ -11,10 +11,10 @@ public partial class Category
 {
     [Key]
     [Column("category_id")]
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
 
     [Column("parent_id")]
-    public int? ParentId { get; set; }
+    public Guid? ParentId { get; set; }
 
     [Column("name")]
     [StringLength(255)]

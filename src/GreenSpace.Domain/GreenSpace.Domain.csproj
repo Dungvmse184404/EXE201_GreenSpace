@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Common\" />
     <Folder Include="Events\" />
+    <Folder Include="Utilities\" />
   </ItemGroup>
 
   <ItemGroup>

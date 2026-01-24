@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace GreenSpace.Application.Interfaces.Services
 {
-    public  interface IProductService
+    public interface IProductService
     {
+
     }
 }

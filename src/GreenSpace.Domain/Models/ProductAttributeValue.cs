@@ -11,13 +11,13 @@ public partial class ProductAttributeValue
 {
     [Key]
     [Column("value_id")]
-    public int ValueId { get; set; }
+    public Guid ValueId { get; set; }
 
     [Column("attribute_id")]
-    public int AttributeId { get; set; }
+    public Guid AttributeId { get; set; }
 
     [Column("product_id")]
-    public int ProductId { get; set; }
+    public Guid ProductId { get; set; }
 
     [Column("value")]
     [StringLength(255)]

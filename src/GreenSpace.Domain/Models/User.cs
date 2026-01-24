@@ -8,11 +8,16 @@ namespace GreenSpace.Domain.Models;
 
 [Table("users")]
 [Index("Email", Name = "users_email_key", IsUnique = true)]
+[Index("Username", Name = "users_username_key", IsUnique = true)]
 public partial class User
 {
     [Key]
     [Column("user_id")]
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
+
+    [Column("username")]
+    [StringLength(50)]
+    public string Username { get; set; } = null!;
 
     [Column("email")]
     [StringLength(255)]
@@ -22,9 +27,13 @@ public partial class User
     [StringLength(255)]
     public string PasswordHash { get; set; } = null!;
 
-    [Column("full_name")]
-    [StringLength(255)]
-    public string? FullName { get; set; }
+    [Column("first_name")]
+    [StringLength(100)]
+    public string? FirstName { get; set; }
+
+    [Column("last_name")]
+    [StringLength(100)]
+    public string? LastName { get; set; }
 
     [Column("phone")]
     [StringLength(20)]
@@ -58,6 +67,9 @@ public partial class User
 
     [InverseProperty("User")]
     public virtual ICollection<Rating> Ratings { get; set; } = new List<Rating>();
+
+    [InverseProperty("User")]
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
     [InverseProperty("User")]
     public virtual ICollection<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
