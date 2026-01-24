@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "D:\\Projects\\EXE201\\GreenSpace\\src\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\refreshtokenservice .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\refreshtokenservice .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2384D6A2-A83C-4F27-8B21-F36738425FB0}|GreenSpace.WebAPI\\GreenSpace.WebAPI.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.webapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2384D6A2-A83C-4F27-8B21-F36738425FB0}|GreenSpace.WebAPI\\GreenSpace.WebAPI.csproj|solutionrelative:greenspace.webapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\mappings\\automappers\\authprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\mappings\\automappers\\authprofile.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\refreshtokenservice .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\refreshtokenservice .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\interfaces\\repositories\\irefreshtokenrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -310,7 +310,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "RefreshTokenService .cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\RefreshTokenService .cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\RefreshTokenService .cs",
@@ -735,7 +735,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "AuthController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\AuthController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\AuthController.cs",
@@ -748,7 +748,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "AuthProfile.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Mappings\\AutoMappers\\AuthProfile.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Mappings\\AutoMappers\\AuthProfile.cs",
@@ -756,8 +756,7 @@
               "RelativeToolTip": "GreenSpace.Application\\Mappings\\AutoMappers\\AuthProfile.cs",
               "ViewState": "AgIAAC8AAAAAAAAAAACKPU4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-24T06:07:14.529Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-24T06:07:14.529Z"
             },
             {
               "$type": "Document",
@@ -793,8 +792,7 @@
               "RelativeToolTip": "GreenSpace.Application\\Interfaces\\Services\\ITokenService.cs",
               "ViewState": "AgIAABsAAAAAvf////8XwBUAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-23T09:21:32.841Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-23T09:21:32.841Z"
             },
             {
               "$type": "Document",
