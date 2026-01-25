@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GreenSpace.Application.Common.Constants;
 using GreenSpace.Application.DTOs.Order;
 using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Services;
@@ -28,18 +29,19 @@ namespace GreenSpace.Application.Services
             try
             {
                 var orders = await _unitOfWork.OrderRepository.GetAllQueryable()
+                    .AsNoTracking()
                     .Where(o => o.UserId == userId)
                     .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Variant)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToListAsync();
 
-                var dtos = _mapper.Map<List<OrderDto>>(orders);
-                return ServiceResult<List<OrderDto>>.Success(dtos);
+                return ServiceResult<List<OrderDto>>.Success(_mapper.Map<List<OrderDto>>(orders));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting orders for user {UserId}", userId);
-                return ServiceResult<List<OrderDto>>.Failure($"Error: {ex.Message}");
+                return ServiceResult<List<OrderDto>>.Failure(ApiStatusCodes.InternalServerError, "Failed to retrieve your orders.");
             }
         }
 
@@ -48,19 +50,20 @@ namespace GreenSpace.Application.Services
             try
             {
                 var order = await _unitOfWork.OrderRepository.GetAllQueryable()
+                    .AsNoTracking()
                     .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Variant)
                     .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
                 if (order == null)
-                    return ServiceResult<OrderDto>.Failure("Order not found");
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, "Order not found.");
 
-                var dto = _mapper.Map<OrderDto>(order);
-                return ServiceResult<OrderDto>.Success(dto);
+                return ServiceResult<OrderDto>.Success(_mapper.Map<OrderDto>(order));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting order {OrderId}", orderId);
-                return ServiceResult<OrderDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, "Error retrieving order details.");
             }
         }
 
@@ -70,23 +73,41 @@ namespace GreenSpace.Application.Services
             {
                 await _unitOfWork.BeginTransactionAsync();
 
+                // 1. Validate Stock for all items first
+                foreach (var item in dto.Items)
+                {
+                    var variant = await _unitOfWork.ProductVariantRepository.GetByIdAsync(item.VariantId);
+                    if (variant == null)
+                        throw new Exception($"Variant {item.VariantId} not found.");
+
+                    if (variant.StockQuantity < item.Quantity)
+                        return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest, $"Not enough stock for variant: {variant.Sku}");
+
+                    // 2. Deduct Stock
+                    variant.StockQuantity -= item.Quantity;
+                    await _unitOfWork.ProductVariantRepository.UpdateAsync(variant);
+                }
+
+                // 3. Create Order
                 var order = _mapper.Map<Order>(dto);
                 order.UserId = userId;
-                order.Status = "Pending";
+                order.Status = "Pending"; // Use a Constant like OrderStatuses.Pending
                 order.CreatedAt = DateTime.UtcNow;
 
                 await _unitOfWork.OrderRepository.AddAsync(order);
                 await _unitOfWork.SaveChangesAsync();
+
+                // 4. (Optional) Clear User Cart here if your logic requires it
+
                 await _unitOfWork.CommitAsync();
 
-                var result = _mapper.Map<OrderDto>(order);
-                return ServiceResult<OrderDto>.Success(result, "Order created");
+                return ServiceResult<OrderDto>.Success(_mapper.Map<OrderDto>(order), "Order placed successfully.");
             }
             catch (Exception ex)
             {
                 await _unitOfWork.RollbackAsync();
-                _logger.LogError(ex, "Error creating order");
-                return ServiceResult<OrderDto>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error creating order for user {UserId}", userId);
+                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, "Order creation failed. Please try again.");
             }
         }
 
@@ -96,21 +117,20 @@ namespace GreenSpace.Application.Services
             {
                 var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
                 if (order == null)
-                    return ServiceResult<OrderDto>.Failure("Order not found");
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, "Order not found.");
 
+  
                 order.Status = status;
                 await _unitOfWork.OrderRepository.UpdateAsync(order);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<OrderDto>(order);
-                return ServiceResult<OrderDto>.Success(result, "Order status updated");
+                return ServiceResult<OrderDto>.Success(_mapper.Map<OrderDto>(order), $"Order status updated to {status}.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating order status {OrderId}", orderId);
-                return ServiceResult<OrderDto>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error updating order status for {OrderId}", orderId);
+                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to update order status.");
             }
         }
     }
 }
-

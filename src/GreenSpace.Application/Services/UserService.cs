@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GreenSpace.Application.Common.Constants;
 using GreenSpace.Application.DTOs.User;
 using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Services;
@@ -27,16 +28,16 @@ namespace GreenSpace.Application.Services
             try
             {
                 var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
-                if (user == null || user.IsActive != true)
-                    return ServiceResult<UserDto>.Failure("User not found");
 
-                var dto = _mapper.Map<UserDto>(user);
-                return ServiceResult<UserDto>.Success(dto);
+                if (user == null || user.IsActive != true)
+                    return ServiceResult<UserDto>.Failure(ApiStatusCodes.NotFound, "User not found or is inactive.");
+
+                return ServiceResult<UserDto>.Success(_mapper.Map<UserDto>(user));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting user {UserId}", userId);
-                return ServiceResult<UserDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<UserDto>.Failure(ApiStatusCodes.InternalServerError, "Error retrieving user profile.");
             }
         }
 
@@ -45,16 +46,16 @@ namespace GreenSpace.Application.Services
             try
             {
                 var users = await _unitOfWork.UserRepository.GetAllQueryable()
+                    .AsNoTracking()
                     .Where(u => u.IsActive == true)
                     .ToListAsync();
 
-                var dtos = _mapper.Map<List<UserDto>>(users);
-                return ServiceResult<List<UserDto>>.Success(dtos);
+                return ServiceResult<List<UserDto>>.Success(_mapper.Map<List<UserDto>>(users));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting users");
-                return ServiceResult<List<UserDto>>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error getting all users");
+                return ServiceResult<List<UserDto>>.Failure(ApiStatusCodes.InternalServerError, "Could not retrieve user list.");
             }
         }
 
@@ -64,44 +65,45 @@ namespace GreenSpace.Application.Services
             {
                 var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
                 if (user == null)
-                    return ServiceResult<UserDto>.Failure("User not found");
+                    return ServiceResult<UserDto>.Failure(ApiStatusCodes.NotFound, "User not found.");
 
+                // 1. Validate Email Uniqueness if changed
                 if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
                 {
-                    var emailExists = await _unitOfWork.UserRepository.EmailExistsAsync(dto.Email);
-                    if (emailExists)
-                        return ServiceResult<UserDto>.Failure("Email already in use");
+                    if (await _unitOfWork.UserRepository.EmailExistsAsync(dto.Email))
+                        return ServiceResult<UserDto>.Failure(ApiStatusCodes.Conflict, "Email is already in use by another account.");
                     user.Email = dto.Email;
                 }
 
+                // 2. Validate Phone Uniqueness if changed
                 if (!string.IsNullOrEmpty(dto.PhoneNumber) && dto.PhoneNumber != user.Phone)
                 {
-                    var phoneExists = await _unitOfWork.UserRepository.PhoneExistsAsync(dto.PhoneNumber);
-                    if (phoneExists)
-                        return ServiceResult<UserDto>.Failure("Phone already in use");
+                    if (await _unitOfWork.UserRepository.PhoneExistsAsync(dto.PhoneNumber))
+                        return ServiceResult<UserDto>.Failure(ApiStatusCodes.Conflict, "Phone number is already in use.");
                     user.Phone = dto.PhoneNumber;
                 }
 
+                // 3. Handle Name Parsing
                 if (!string.IsNullOrEmpty(dto.FullName))
                 {
-                    var names = dto.FullName.Split(' ', 2);
+                    var names = dto.FullName.Trim().Split(' ', 2);
                     user.FirstName = names.Length > 0 ? names[0] : "";
                     user.LastName = names.Length > 1 ? names[1] : "";
                 }
 
-                user.IsActive = dto.IsActive;
+                // 4. Update other fields via Mapper
+                _mapper.Map(dto, user);
                 user.UpdateAt = DateTime.UtcNow;
 
                 await _unitOfWork.UserRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<UserDto>(user);
-                return ServiceResult<UserDto>.Success(result, "User updated");
+                return ServiceResult<UserDto>.Success(_mapper.Map<UserDto>(user), "User profile updated successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating user {UserId}", userId);
-                return ServiceResult<UserDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<UserDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to update user profile.");
             }
         }
 
@@ -111,7 +113,7 @@ namespace GreenSpace.Application.Services
             {
                 var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
                 if (user == null)
-                    return ServiceResult<bool>.Failure("User not found");
+                    return ServiceResult<bool>.Failure(ApiStatusCodes.NotFound, "User not found.");
 
                 user.IsActive = false;
                 user.UpdateAt = DateTime.UtcNow;
@@ -119,12 +121,12 @@ namespace GreenSpace.Application.Services
                 await _unitOfWork.UserRepository.UpdateAsync(user);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ServiceResult<bool>.Success(true, "User deactivated");
+                return ServiceResult<bool>.Success(true, "User has been deactivated successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deactivating user {UserId}", userId);
-                return ServiceResult<bool>.Failure($"Error: {ex.Message}");
+                return ServiceResult<bool>.Failure(ApiStatusCodes.InternalServerError, "Failed to deactivate user.");
             }
         }
     }

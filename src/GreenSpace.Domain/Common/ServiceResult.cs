@@ -12,25 +12,23 @@ namespace GreenSpace.Domain.Common
         public bool IsSuccess { get; protected set; }
         public string? Message { get; protected set; }
         public IEnumerable<string>? Errors { get; protected set; }
+        public int StatusCode { get; protected set; }
 
-        protected ServiceResult(bool isSuccess, string? message = null, IEnumerable<string>? errors = null)
+        protected ServiceResult(bool isSuccess, int statusCode, string? message = null, IEnumerable<string>? errors = null)
         {
             IsSuccess = isSuccess;
+            StatusCode = statusCode;
             Message = message;
             Errors = errors;
         }
+        public static ServiceResult Success(string? message = null, int statusCode = 200)
+              => new(true, statusCode, message);
 
-        public static ServiceResult Success(string? message = null)
-            => new(true, message);
+        public static ServiceResult Failure(int statusCode, string message)
+            => new(false, statusCode, message);
 
-        public static ServiceResult Failure(string message)
-            => new(false, message);
-
-        public static ServiceResult Failure(IEnumerable<string> errors)
-            => new(false, errors: errors);
-
-        public static ServiceResult Failure(string message, IEnumerable<string> errors)
-            => new(false, message, errors);
+        public static ServiceResult Failure(int statusCode, IEnumerable<string> errors)
+            => new(false, statusCode, errors: errors);
     }
 
     /// <summary>
@@ -41,22 +39,21 @@ namespace GreenSpace.Domain.Common
     {
         public T? Data { get; private set; }
 
-        protected ServiceResult(bool isSuccess, T? data = default, string? message = null, IEnumerable<string>? errors = null)
-            : base(isSuccess, message, errors)
+        protected ServiceResult(bool isSuccess, int statusCode, T? data = default, string? message = null, IEnumerable<string>? errors = null)
+            : base(isSuccess, statusCode, message, errors)
         {
             Data = data;
         }
 
-        public static ServiceResult<T> Success(T data, string? message = null)
-            => new(true, data, message);
+        public static ServiceResult<T> Success(T data, string? message = null, int statusCode = 200)
+            => new(true, statusCode, data, message);
 
-        public static new ServiceResult<T> Failure(string message)
-            => new(false, default, message);
+        public static new ServiceResult<T> Failure(int statusCode, string message)
+            => new(false, statusCode, default, message);
 
         public static new ServiceResult<T> Failure(IEnumerable<string> errors)
             => new(false, default, errors: errors);
 
-        public static new ServiceResult<T> Failure(string message, IEnumerable<string> errors)
-            => new(false, default, message, errors);
+       
     } 
 }

@@ -3,12 +3,40 @@
   "WorkspaceRootPath": "D:\\Projects\\EXE201\\GreenSpace\\src\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\common\\constants\\apimessages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\common\\constants\\apimessages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\promotionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\promotionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\orderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\categoryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\common\\constants\\apimessages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\common\\constants\\apimessages.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\interfaces\\security\\iotpservice.cs||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\interfaces\\security\\iotpservice.cs||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5FA6AAF8-770A-47A6-A26A-BCAF0DC98875}|GreenSpace.Infrastructure\\GreenSpace.Infrastructure.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.infrastructure\\services\\otpservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -35,10 +63,6 @@
       "RelativeMoniker": "D:0:0:{2384D6A2-A83C-4F27-8B21-F36738425FB0}|GreenSpace.WebAPI\\GreenSpace.WebAPI.csproj|solutionrelative:greenspace.webapi\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\interfaces\\security\\iotpservice.cs||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\interfaces\\security\\iotpservice.cs||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5FA6AAF8-770A-47A6-A26A-BCAF0DC98875}|GreenSpace.Infrastructure\\GreenSpace.Infrastructure.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.infrastructure\\externalservices\\passwordservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{5FA6AAF8-770A-47A6-A26A-BCAF0DC98875}|GreenSpace.Infrastructure\\GreenSpace.Infrastructure.csproj|solutionrelative:greenspace.infrastructure\\externalservices\\passwordservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -61,10 +85,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\dtos\\productvariant\\createproductvariantdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\dtos\\productvariant\\createproductvariantdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\interfaces\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\interfaces\\services\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2384D6A2-A83C-4F27-8B21-F36738425FB0}|GreenSpace.WebAPI\\GreenSpace.WebAPI.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.webapi\\controllers\\ratingcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -95,10 +115,6 @@
       "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\interfaces\\repositories\\iproductattributevaluerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\productservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\dtos\\user\\updateuserdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\dtos\\user\\updateuserdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -121,10 +137,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2384D6A2-A83C-4F27-8B21-F36738425FB0}|GreenSpace.WebAPI\\GreenSpace.WebAPI.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.webapi\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2384D6A2-A83C-4F27-8B21-F36738425FB0}|GreenSpace.WebAPI\\GreenSpace.WebAPI.csproj|solutionrelative:greenspace.webapi\\controllers\\cartscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\cartservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\interfaces\\services\\iorderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -195,20 +207,12 @@
       "RelativeMoniker": "D:0:0:{5FA6AAF8-770A-47A6-A26A-BCAF0DC98875}|GreenSpace.Infrastructure\\GreenSpace.Infrastructure.csproj|solutionrelative:greenspace.infrastructure\\persistence\\repositories\\attributerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\useraddressservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\useraddressservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\ratingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\ratingservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\promotionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|solutionrelative:greenspace.application\\services\\promotionservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{998E72B5-50FE-41CD-92F0-D8C3A8348F48}|GreenSpace.Application\\GreenSpace.Application.csproj|d:\\projects\\exe201\\greenspace\\src\\greenspace.application\\services\\productattributeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -325,8 +329,8 @@
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedWidth": 233,
-          "SelectedChildIndex": 5,
+          "DockedWidth": 257,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -338,7 +342,59 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 3,
+              "Title": "OrderService.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\OrderService.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\OrderService.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\OrderService.cs",
+              "RelativeToolTip": "GreenSpace.Application\\Services\\OrderService.cs",
+              "ViewState": "AgIAABgAAACAAQAAAAAiwE0AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T19:37:22.554Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CategoryService.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\CategoryService.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\CategoryService.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\CategoryService.cs",
+              "RelativeToolTip": "GreenSpace.Application\\Services\\CategoryService.cs",
+              "ViewState": "AgIAAHQAAADA5v////88wEUAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T19:36:30.938Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\UserService.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\UserService.cs*",
+              "RelativeToolTip": "GreenSpace.Application\\Services\\UserService.cs*",
+              "ViewState": "AgIAAAkAAAAAQwAAAAAUwB4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-23T08:21:40.584Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ApiMessages.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
+              "RelativeToolTip": "GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
+              "ViewState": "AgIAAEgAAAAA9P////8PwGMAAABPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T17:49:54.439Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
               "Title": "DependencyInjection.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\DependencyInjection.cs",
               "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\DependencyInjection.cs",
@@ -350,19 +406,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "EmailSender.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
-              "RelativeToolTip": "GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
-              "ViewState": "AgIAAB8AAACA+v////8RwEcAAAAIAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "PromotionService.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\PromotionService.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\PromotionService.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\PromotionService.cs",
+              "RelativeToolTip": "GreenSpace.Application\\Services\\PromotionService.cs",
+              "ViewState": "AgIAAAQAAABA/v////8pwC4AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T10:44:48.724Z"
+              "WhenOpened": "2026-01-23T08:21:32.795Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 15,
               "Title": "PasswordService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\ExternalServices\\PasswordService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\ExternalServices\\PasswordService.cs",
@@ -374,20 +431,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ApiMessages.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
-              "RelativeToolTip": "GreenSpace.Application\\Common\\Constants\\ApiMessages.cs",
-              "ViewState": "AgIAAGgAAABAAgAAAAA9wIYAAABEAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "CartService.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\CartService.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\CartService.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\CartService.cs*",
+              "RelativeToolTip": "GreenSpace.Application\\Services\\CartService.cs*",
+              "ViewState": "AgIAAAYAAAAAAAAAAACUPSwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T17:49:54.439Z",
+              "WhenOpened": "2026-01-23T08:20:42.299Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 11,
+              "Title": "EmailSender.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
+              "RelativeToolTip": "GreenSpace.Infrastructure\\ExternalServices\\EmailSender.cs",
+              "ViewState": "AgIAAB8AAACA+v////8RwEcAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T10:44:48.724Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
               "Title": "IProductAttributeValueRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductAttributeValueRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IProductAttributeValueRepository.cs",
@@ -399,7 +468,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 21,
               "Title": "RatingController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\RatingController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\RatingController.cs",
@@ -411,7 +480,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 26,
               "Title": "IUserAddressRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IUserAddressRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IUserAddressRepository.cs",
@@ -423,19 +492,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
-              "Title": "CartService.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\CartService.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\CartService.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\CartService.cs",
-              "RelativeToolTip": "GreenSpace.Application\\Services\\CartService.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABUAAAAdAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-23T08:20:42.299Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 37,
               "Title": "UserProfile.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Mappings\\AutoMappers\\UserProfile.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Mappings\\AutoMappers\\UserProfile.cs",
@@ -447,7 +504,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 34,
               "Title": "IOrderService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\IOrderService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\IOrderService.cs",
@@ -459,7 +516,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 77,
+              "DocumentIndex": 78,
               "Title": "IProductService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\IProductService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\IProductService.cs",
@@ -471,7 +528,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 76,
+              "DocumentIndex": 77,
               "Title": "IUserService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\IUserService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\IUserService.cs",
@@ -483,7 +540,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 38,
               "Title": "ProductProfile.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Mappings\\AutoMappers\\ProductProfile.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Mappings\\AutoMappers\\ProductProfile.cs",
@@ -495,7 +552,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 40,
               "Title": "IRefreshTokenRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IRefreshTokenRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IRefreshTokenRepository.cs",
@@ -507,7 +564,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 39,
               "Title": "ProductVariantService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\ProductVariantService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\ProductVariantService.cs",
@@ -519,7 +576,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 41,
               "Title": "RefreshTokenService .cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\RefreshTokenService .cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\RefreshTokenService .cs",
@@ -531,7 +588,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 43,
               "Title": "IServiceResult.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Domain\\Common\\IServiceResult.cs",
               "RelativeDocumentMoniker": "GreenSpace.Domain\\Common\\IServiceResult.cs",
@@ -543,7 +600,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 42,
               "Title": "TokenService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Services\\TokenService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\Services\\TokenService.cs",
@@ -555,7 +612,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 46,
               "Title": "IOrderItemRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IOrderItemRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IOrderItemRepository.cs",
@@ -567,7 +624,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 47,
               "Title": "AttributeService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\AttributeService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\AttributeService.cs",
@@ -579,7 +636,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 48,
               "Title": "CartItemService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\CartItemService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\CartItemService.cs",
@@ -591,7 +648,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 49,
               "Title": "IAttributeService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\IAttributeService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\IAttributeService.cs",
@@ -603,7 +660,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 50,
               "Title": "AttributeRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Persistence\\Repositories\\AttributeRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\Persistence\\Repositories\\AttributeRepository.cs",
@@ -615,19 +672,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
-              "Title": "UserService.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\UserService.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\UserService.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\UserService.cs",
-              "RelativeToolTip": "GreenSpace.Application\\Services\\UserService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-23T08:21:40.584Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 51,
               "Title": "UserAddressService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\UserAddressService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\UserAddressService.cs",
@@ -639,7 +684,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 52,
               "Title": "RatingService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\RatingService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\RatingService.cs",
@@ -651,19 +696,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
-              "Title": "PromotionService.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\PromotionService.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\PromotionService.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\PromotionService.cs",
-              "RelativeToolTip": "GreenSpace.Application\\Services\\PromotionService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-23T08:21:32.795Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 53,
               "Title": "ProductAttributeService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\ProductAttributeService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\ProductAttributeService.cs",
@@ -675,7 +708,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 54,
               "Title": "PaymentService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\PaymentService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\PaymentService.cs",
@@ -687,7 +720,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 55,
               "Title": "OrderItemService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\OrderItemService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\OrderItemService.cs",
@@ -699,7 +732,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 56,
               "Title": "ICartService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\ICartService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\ICartService.cs",
@@ -711,7 +744,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 57,
               "Title": "OrderRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Persistence\\Repositories\\OrderRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\Persistence\\Repositories\\OrderRepository.cs",
@@ -723,7 +756,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 58,
               "Title": "ICartItemService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\ICartItemService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\ICartItemService.cs",
@@ -735,7 +768,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 59,
               "Title": "IRatingRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IRatingRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IRatingRepository.cs",
@@ -747,7 +780,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 60,
               "Title": "IPromotionRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IPromotionRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IPromotionRepository.cs",
@@ -759,7 +792,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 61,
               "Title": "IProductVariantRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductVariantRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IProductVariantRepository.cs",
@@ -771,7 +804,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 62,
               "Title": "IPaymentRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IPaymentRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IPaymentRepository.cs",
@@ -783,7 +816,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 63,
               "Title": "IOrderRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IOrderRepository.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Repositories\\IOrderRepository.cs",
@@ -795,7 +828,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 69,
+              "DocumentIndex": 70,
               "Title": "IGenericRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Infrastructure\\Persistence\\Repositories\\IGenericRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Infrastructure\\Persistence\\Repositories\\IGenericRepository.cs",
@@ -806,7 +839,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 68,
+              "DocumentIndex": 69,
               "Title": "GenericRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Infrastructure\\Persistence\\Repositories\\GenericRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Infrastructure\\Persistence\\Repositories\\GenericRepository.cs",
@@ -818,21 +851,9 @@
           ]
         },
         {
-          "DockedWidth": 167,
+          "DockedWidth": 143,
           "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "OTPService.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Services\\OTPService.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\Services\\OTPService.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Services\\OTPService.cs",
-              "RelativeToolTip": "GreenSpace.Infrastructure\\Services\\OTPService.cs",
-              "ViewState": "AgIAAE4AAAAAAAAAAAAnwHQAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T09:37:20.534Z"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 8,
@@ -843,36 +864,51 @@
               "RelativeToolTip": "GreenSpace.Application\\Interfaces\\Security\\IOtpService.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T17:42:34.974Z"
+              "WhenOpened": "2026-01-25T17:42:34.974Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
               "Title": "AuthService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\AuthService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\AuthService.cs",
               "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\AuthService.cs",
               "RelativeToolTip": "GreenSpace.Application\\Services\\AuthService.cs",
-              "ViewState": "AgIAAHwAAAAA3f////8vwJQAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAPgAAAAAAAAAAKDZPRUBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-23T08:20:36.505Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\AuthController.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "GreenSpace.WebAPI\\Controllers\\AuthController.cs",
-              "ViewState": "AgIAACgAAAAAAAAAAADgvz8AAAAMAAAAAAAAAA==",
+              "DocumentIndex": 2,
+              "Title": "ProductService.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\ProductService.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\ProductService.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\ProductService.cs",
+              "RelativeToolTip": "GreenSpace.Application\\Services\\ProductService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T18:43:19.978Z"
+              "WhenOpened": "2026-01-23T08:21:22.078Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
+              "Title": "OTPService.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Services\\OTPService.cs",
+              "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\Services\\OTPService.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Services\\OTPService.cs",
+              "RelativeToolTip": "GreenSpace.Infrastructure\\Services\\OTPService.cs",
+              "ViewState": "AgIAAEAAAAAA8P////8twE8AAABTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T09:37:20.534Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Program.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Program.cs",
@@ -884,7 +920,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 12,
               "Title": "EmailTemplateHelper.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Infrastructure\\Helpers\\EmailTemplateHelper.cs",
               "RelativeDocumentMoniker": "GreenSpace.Infrastructure\\Helpers\\EmailTemplateHelper.cs",
@@ -896,7 +932,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 10,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "GreenSpace.WebAPI\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAACEAAAAA8P////8TwEEAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-25T18:43:19.978Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
               "Title": "AccountActivation.html",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\wwwroot\\Templates\\Emails\\AccountActivation.html",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\wwwroot\\Templates\\Emails\\AccountActivation.html",
@@ -908,7 +957,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 16,
               "Title": "DependencyInjection.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\DependencyInjection.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\DependencyInjection.cs",
@@ -920,7 +969,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 18,
               "Title": "IEmailTemplateHelper.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Common\\Mail\\IEmailTemplateHelper.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Common\\Mail\\IEmailTemplateHelper.cs",
@@ -932,7 +981,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 19,
               "Title": "EmailMessageDto.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\DTOs\\Mail\\EmailMessageDto.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\DTOs\\Mail\\EmailMessageDto.cs",
@@ -944,7 +993,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 22,
               "Title": "OrderController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\OrderController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\OrderController.cs",
@@ -956,19 +1005,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
-              "Title": "IAuthService.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\IAuthService.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\IAuthService.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\IAuthService.cs",
-              "RelativeToolTip": "GreenSpace.Application\\Interfaces\\Services\\IAuthService.cs",
-              "ViewState": "AgIAACAAAAAAAAAAAICHPTUAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-23T12:28:56.101Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 20,
               "Title": "CreateProductVariantDto.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\DTOs\\ProductVariant\\CreateProductVariantDto.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\DTOs\\ProductVariant\\CreateProductVariantDto.cs",
@@ -980,7 +1017,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 25,
               "Title": "UsersController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\UsersController.cs",
@@ -992,7 +1029,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 24,
               "Title": "ProductController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\ProductController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\ProductController.cs",
@@ -1004,7 +1041,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 23,
               "Title": "PromotionsController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\PromotionsController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\PromotionsController.cs",
@@ -1016,19 +1053,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
-              "Title": "ProductService.cs",
-              "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\ProductService.cs",
-              "RelativeDocumentMoniker": "GreenSpace.Application\\Services\\ProductService.cs",
-              "ToolTip": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Services\\ProductService.cs",
-              "RelativeToolTip": "GreenSpace.Application\\Services\\ProductService.cs",
-              "ViewState": "AgIAAG4AAACA1f////8gwDEAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-23T08:21:22.078Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 30,
               "Title": "ProductVariantDto.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\DTOs\\ProductVariant\\ProductVariantDto.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\DTOs\\ProductVariant\\ProductVariantDto.cs",
@@ -1040,7 +1065,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 28,
               "Title": "UpdateUserDto.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\DTOs\\User\\UpdateUserDto.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\DTOs\\User\\UpdateUserDto.cs",
@@ -1052,7 +1077,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 29,
               "Title": "UserDto.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\DTOs\\User\\UserDto.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\DTOs\\User\\UserDto.cs",
@@ -1064,7 +1089,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 31,
               "Title": "LoginDto.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\DTOs\\Auth\\LoginDto.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\DTOs\\Auth\\LoginDto.cs",
@@ -1076,7 +1101,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 32,
               "Title": "Product.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Domain\\Models\\Product.cs",
               "RelativeDocumentMoniker": "GreenSpace.Domain\\Models\\Product.cs",
@@ -1088,7 +1113,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 78,
+              "DocumentIndex": 79,
               "Title": "IPromotionService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\IPromotionService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\IPromotionService.cs",
@@ -1100,7 +1125,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 33,
               "Title": "CartsController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\CartsController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\CartsController.cs",
@@ -1112,7 +1137,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 35,
               "Title": "CategoriesController.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.WebAPI\\Controllers\\CategoriesController.cs",
               "RelativeDocumentMoniker": "GreenSpace.WebAPI\\Controllers\\CategoriesController.cs",
@@ -1124,7 +1149,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 36,
               "Title": "AuthProfile.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Mappings\\AutoMappers\\AuthProfile.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Mappings\\AutoMappers\\AuthProfile.cs",
@@ -1136,7 +1161,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 44,
               "Title": "TokenHashUtility.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\TokenHashUtility.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\TokenHashUtility.cs",
@@ -1148,7 +1173,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 45,
               "Title": "ITokenService.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\GreenSpace.Application\\Interfaces\\Services\\ITokenService.cs",
               "RelativeDocumentMoniker": "GreenSpace.Application\\Interfaces\\Services\\ITokenService.cs",
@@ -1160,7 +1185,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
+              "DocumentIndex": 67,
               "Title": "ICategoryRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\ICategoryRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\ICategoryRepository.cs",
@@ -1171,7 +1196,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 66,
               "Title": "IOrderRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IOrderRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IOrderRepository.cs",
@@ -1182,7 +1207,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
+              "DocumentIndex": 65,
               "Title": "IPaymentRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IPaymentRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IPaymentRepository.cs",
@@ -1193,7 +1218,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 64,
               "Title": "IProductAttributeValueRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductAttributeValueRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductAttributeValueRepository.cs",
@@ -1204,7 +1229,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 67,
+              "DocumentIndex": 68,
               "Title": "IAttributeRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IAttributeRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IAttributeRepository.cs",
@@ -1215,7 +1240,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 73,
+              "DocumentIndex": 74,
               "Title": "IPromotionRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IPromotionRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IPromotionRepository.cs",
@@ -1226,7 +1251,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 72,
+              "DocumentIndex": 73,
               "Title": "IProductVariantRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductVariantRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductVariantRepository.cs",
@@ -1237,7 +1262,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 74,
+              "DocumentIndex": 75,
               "Title": "IRatingRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IRatingRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IRatingRepository.cs",
@@ -1248,7 +1273,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 75,
+              "DocumentIndex": 76,
               "Title": "IUserAddressRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IUserAddressRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IUserAddressRepository.cs",
@@ -1259,7 +1284,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 70,
+              "DocumentIndex": 71,
               "Title": "IOrderItemRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IOrderItemRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IOrderItemRepository.cs",
@@ -1270,7 +1295,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 71,
+              "DocumentIndex": 72,
               "Title": "IProductRepository.cs",
               "DocumentMoniker": "D:\\Projects\\EXE201\\GreenSpace\\src\\src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductRepository.cs",
               "RelativeDocumentMoniker": "src\\GreenSpace.Application\\Interfaces\\Repositories\\IProductRepository.cs",

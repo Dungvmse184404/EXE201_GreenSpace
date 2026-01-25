@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GreenSpace.Application.Common.Constants;
 using GreenSpace.Application.DTOs.Product;
 using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Services;
@@ -7,7 +8,6 @@ using GreenSpace.Domain.Interfaces;
 using GreenSpace.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-
 
 namespace GreenSpace.Application.Services
 {
@@ -29,20 +29,21 @@ namespace GreenSpace.Application.Services
             try
             {
                 var product = await _unitOfWork.ProductRepository.GetAllQueryable()
+                    .AsNoTracking()
                     .Include(p => p.Category)
                     .Include(p => p.ProductVariants)
+                    // .Include(p => p.ProductImages) 
                     .FirstOrDefaultAsync(p => p.ProductId == productId && p.IsActive == true);
 
                 if (product == null)
-                    return ServiceResult<ProductDto>.Failure("Product not found");
+                    return ServiceResult<ProductDto>.Failure(ApiStatusCodes.NotFound, "Product not found or inactive.");
 
-                var dto = _mapper.Map<ProductDto>(product);
-                return ServiceResult<ProductDto>.Success(dto);
+                return ServiceResult<ProductDto>.Success(_mapper.Map<ProductDto>(product));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting product {ProductId}", productId);
-                return ServiceResult<ProductDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<ProductDto>.Failure(ApiStatusCodes.InternalServerError, "Error fetching product details.");
             }
         }
 
@@ -51,18 +52,18 @@ namespace GreenSpace.Application.Services
             try
             {
                 var products = await _unitOfWork.ProductRepository.GetAllQueryable()
+                    .AsNoTracking()
                     .Include(p => p.Category)
                     .Include(p => p.ProductVariants)
                     .Where(p => p.IsActive == true)
                     .ToListAsync();
 
-                var dtos = _mapper.Map<List<ProductDto>>(products);
-                return ServiceResult<List<ProductDto>>.Success(dtos);
+                return ServiceResult<List<ProductDto>>.Success(_mapper.Map<List<ProductDto>>(products));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting products");
-                return ServiceResult<List<ProductDto>>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error getting all products");
+                return ServiceResult<List<ProductDto>>.Failure(ApiStatusCodes.InternalServerError, "Could not retrieve product list.");
             }
         }
 
@@ -70,6 +71,11 @@ namespace GreenSpace.Application.Services
         {
             try
             {
+                // 1. Validate Category Existence
+                var categoryExists = await _unitOfWork.CategoryRepository.GetByIdAsync(dto.CategoryId);
+                if (categoryExists == null)
+                    return ServiceResult<ProductDto>.Failure(ApiStatusCodes.BadRequest, "Specified category does not exist.");
+
                 var product = _mapper.Map<Product>(dto);
                 product.IsActive = true;
                 product.CreatedAt = DateTime.UtcNow;
@@ -78,13 +84,12 @@ namespace GreenSpace.Application.Services
                 await _unitOfWork.ProductRepository.AddAsync(product);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<ProductDto>(product);
-                return ServiceResult<ProductDto>.Success(result, "Product created");
+                return ServiceResult<ProductDto>.Success(_mapper.Map<ProductDto>(product), "Product created successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating product");
-                return ServiceResult<ProductDto>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error creating product: {Name}", dto.Name);
+                return ServiceResult<ProductDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to create product.");
             }
         }
 
@@ -93,8 +98,9 @@ namespace GreenSpace.Application.Services
             try
             {
                 var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
+
                 if (product == null || product.IsActive != true)
-                    return ServiceResult<ProductDto>.Failure("Product not found");
+                    return ServiceResult<ProductDto>.Failure(ApiStatusCodes.NotFound, "Product not found or is inactive.");
 
                 _mapper.Map(dto, product);
                 product.UpdatedAt = DateTime.UtcNow;
@@ -102,13 +108,12 @@ namespace GreenSpace.Application.Services
                 await _unitOfWork.ProductRepository.UpdateAsync(product);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<ProductDto>(product);
-                return ServiceResult<ProductDto>.Success(result, "Product updated");
+                return ServiceResult<ProductDto>.Success(_mapper.Map<ProductDto>(product), "Product updated successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating product {ProductId}", productId);
-                return ServiceResult<ProductDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<ProductDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to update product.");
             }
         }
 
@@ -118,20 +123,21 @@ namespace GreenSpace.Application.Services
             {
                 var product = await _unitOfWork.ProductRepository.GetByIdAsync(productId);
                 if (product == null)
-                    return ServiceResult<bool>.Failure("Product not found");
+                    return ServiceResult<bool>.Failure(ApiStatusCodes.NotFound, "Product not found.");
 
+                // Soft Delete: Keep the data but hide it from the UI
                 product.IsActive = false;
                 product.UpdatedAt = DateTime.UtcNow;
 
                 await _unitOfWork.ProductRepository.UpdateAsync(product);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ServiceResult<bool>.Success(true, "Product deleted");
+                return ServiceResult<bool>.Success(true, "Product marked as inactive.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting product {ProductId}", productId);
-                return ServiceResult<bool>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error soft-deleting product {ProductId}", productId);
+                return ServiceResult<bool>.Failure(ApiStatusCodes.InternalServerError, "Failed to delete product.");
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GreenSpace.Application.Common.Constants;
 using GreenSpace.Application.DTOs.Category;
 using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Services;
@@ -29,15 +30,16 @@ namespace GreenSpace.Application.Services
             {
                 var categories = await _unitOfWork.CategoryRepository.GetAllQueryable()
                     .Include(c => c.Parent)
+                    .Include(c => c.InverseParent) // This brings the Sub-categories
+                    .AsNoTracking()
                     .ToListAsync();
 
-                var dtos = _mapper.Map<List<CategoryDto>>(categories);
-                return ServiceResult<List<CategoryDto>>.Success(dtos);
+                return ServiceResult<List<CategoryDto>>.Success(_mapper.Map<List<CategoryDto>>(categories));
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting categories");
-                return ServiceResult<List<CategoryDto>>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error getting all categories");
+                return ServiceResult<List<CategoryDto>>.Failure(ApiStatusCodes.InternalServerError, "Could not retrieve categories.");
             }
         }
 
@@ -51,15 +53,14 @@ namespace GreenSpace.Application.Services
                     .FirstOrDefaultAsync(c => c.CategoryId == id);
 
                 if (category == null)
-                    return ServiceResult<CategoryDto>.Failure("Category not found");
+                    return ServiceResult<CategoryDto>.Failure(ApiStatusCodes.NotFound, "Category not found.");
 
-                var dto = _mapper.Map<CategoryDto>(category);
-                return ServiceResult<CategoryDto>.Success(dto);
+                return ServiceResult<CategoryDto>.Success(_mapper.Map<CategoryDto>(category));
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting category {CategoryId}", id);
-                return ServiceResult<CategoryDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<CategoryDto>.Failure(ApiStatusCodes.InternalServerError, "Error retrieving category details.");
             }
         }
 
@@ -67,17 +68,23 @@ namespace GreenSpace.Application.Services
         {
             try
             {
+                var exists = await _unitOfWork.CategoryRepository.GetAllQueryable()
+                    .AnyAsync(c => c.Name.ToLower() == dto.Name.ToLower());
+
+                if (exists)
+                    return ServiceResult<CategoryDto>.Failure(ApiStatusCodes.Conflict, "Category name already exists.");
+
                 var category = _mapper.Map<Category>(dto);
+
                 await _unitOfWork.CategoryRepository.AddAsync(category);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<CategoryDto>(category);
-                return ServiceResult<CategoryDto>.Success(result, "Category created");
+                return ServiceResult<CategoryDto>.Success(_mapper.Map<CategoryDto>(category), "Category created successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating category");
-                return ServiceResult<CategoryDto>.Failure($"Error: {ex.Message}");
+                _logger.LogError(ex, "Error creating category: {Name}", dto.Name);
+                return ServiceResult<CategoryDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to create category.");
             }
         }
 
@@ -87,19 +94,23 @@ namespace GreenSpace.Application.Services
             {
                 var category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
                 if (category == null)
-                    return ServiceResult<CategoryDto>.Failure("Category not found");
+                    return ServiceResult<CategoryDto>.Failure(ApiStatusCodes.NotFound, "Category not found.");
+
+                // Business Rule: A category cannot be its own parent
+                if (dto.ParentId.HasValue && dto.ParentId.Value == id)
+                    return ServiceResult<CategoryDto>.Failure(ApiStatusCodes.BadRequest, "A category cannot be its own parent.");
 
                 _mapper.Map(dto, category);
+
                 await _unitOfWork.CategoryRepository.UpdateAsync(category);
                 await _unitOfWork.SaveChangesAsync();
 
-                var result = _mapper.Map<CategoryDto>(category);
-                return ServiceResult<CategoryDto>.Success(result, "Category updated");
+                return ServiceResult<CategoryDto>.Success(_mapper.Map<CategoryDto>(category), "Category updated successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating category {CategoryId}", id);
-                return ServiceResult<CategoryDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<CategoryDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to update category.");
             }
         }
 
@@ -107,19 +118,30 @@ namespace GreenSpace.Application.Services
         {
             try
             {
-                var category = await _unitOfWork.CategoryRepository.GetByIdAsync(id);
+                var category = await _unitOfWork.CategoryRepository.GetAllQueryable()
+                    .Include(c => c.InverseParent)  
+                    .Include(c => c.Products) 
+                    .FirstOrDefaultAsync(c => c.CategoryId == id);
+
                 if (category == null)
-                    return ServiceResult<bool>.Failure("Category not found");
+                    return ServiceResult<bool>.Failure(ApiStatusCodes.NotFound, "Category not found.");
+
+                // Business Rule: Prevent deletion if it has children or products
+                if (category.InverseParent.Any())
+                    return ServiceResult<bool>.Failure(ApiStatusCodes.BadRequest, "Cannot delete category that has sub-categories.");
+
+                if (category.Products != null && category.Products.Any())
+                    return ServiceResult<bool>.Failure(ApiStatusCodes.BadRequest, "Cannot delete category that contains products.");
 
                 await _unitOfWork.CategoryRepository.RemoveAsync(category);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ServiceResult<bool>.Success(true, "Category deleted");
+                return ServiceResult<bool>.Success(true, "Category deleted successfully.");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error deleting category {CategoryId}", id);
-                return ServiceResult<bool>.Failure($"Error: {ex.Message}");
+                return ServiceResult<bool>.Failure(ApiStatusCodes.InternalServerError, "Failed to delete category.");
             }
         }
     }

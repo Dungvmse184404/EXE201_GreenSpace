@@ -98,7 +98,7 @@ namespace GreenSpace.Application.Common.Constants
             public const string Verified = "OTP verified successfully.";
             public const string Invalid = "Invalid OTP. Please try again.";
             public const string Expired = "OTP has expired. Please request a new one.";
-
+            public const string SentFailed = "OTP sent failed";
         }
 
 

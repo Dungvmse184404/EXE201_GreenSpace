@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using GreenSpace.Application.Common.Constants;
 using GreenSpace.Application.DTOs.Promotion;
 using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Services;
@@ -38,7 +39,7 @@ namespace GreenSpace.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting active promotions");
-                return ServiceResult<List<PromotionDto>>.Failure($"Error: {ex.Message}");
+                return ServiceResult<List<PromotionDto>>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }
 
@@ -60,7 +61,7 @@ namespace GreenSpace.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating promotion");
-                return ServiceResult<PromotionDto>.Failure($"Error: {ex.Message}");
+                return ServiceResult<PromotionDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }
     }
