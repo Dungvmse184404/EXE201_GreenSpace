@@ -1,11 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
+﻿using GreenSpace.Application.Common.Mail;
+using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.Application.Mappings.AutoMappers;
+using GreenSpace.Application.Services;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreenSpace.Application
 {
@@ -14,8 +12,25 @@ namespace GreenSpace.Application
     {
         public static IServiceCollection AddApplications(this IServiceCollection services)
         {
-            
-            
+            services.AddAutoMapper(cfg =>
+            {
+                cfg.AddProfile<AuthProfile>();
+                cfg.AddProfile<UserProfile>();
+                cfg.AddProfile<ProductProfile>();
+                cfg.AddProfile<CategoryProfile>();
+                cfg.AddProfile<OrderProfile>();
+                cfg.AddProfile<CartProfile>();
+                cfg.AddProfile<PromotionProfile>();
+            });
+
+            services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IPromotionService, PromotionService>();
+
             return services;
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -43,4 +44,23 @@ namespace GreenSpace.Application.DTOs.Auth
         /// </summary>
         public DateTime ExpiresAt { get; set; }
     }
+
+
+    public class RegisteMailDto
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+    }
+
+
+    public class VerifyRegisterOtpDto
+    {
+        [Required, EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
+        public string Otp { get; set; } = string.Empty;
+    }
+
+
 }

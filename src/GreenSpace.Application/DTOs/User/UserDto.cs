@@ -19,9 +19,14 @@ namespace GreenSpace.Application.DTOs.User
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
-        /// User full name
+        /// User last name
         /// </summary>
-        public string FullName { get; set; }
+        public string? LastName { get; set; }
+
+        /// <summary>
+        /// User first name
+        /// </summary>
+        public string? FirstName { get; set; }
 
         /// <summary>
         /// User phone number

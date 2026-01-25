@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GreenSpace.Application.Interfaces.External
+namespace GreenSpace.Application.Interfaces.Security
 {
     public interface IPasswordService
     {

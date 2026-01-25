@@ -1,5 +1,6 @@
 ﻿using GreenSpace.Application.DTOs.Auth;
 using GreenSpace.Application.DTOs.User;
+using GreenSpace.Domain.Common;
 using GreenSpace.Domain.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -44,5 +45,10 @@ namespace GreenSpace.Application.Interfaces.Services
         /// <returns>Success status</returns>
         Task<IServiceResult<bool>> RevokeAllUserTokensAsync(Guid userId);
 
+
+
+        Task<IServiceResult> RegisterMailAsync(RegisteMailDto dto);
+
+        Task<IServiceResult> VerifyRegisterOtpAsync(VerifyRegisterOtpDto dto);
     }
 }

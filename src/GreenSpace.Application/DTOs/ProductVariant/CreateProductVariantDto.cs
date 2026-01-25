@@ -10,7 +10,7 @@ namespace GreenSpace.Application.DTOs.ProductVariant
     public class CreateProductVariantDto
     {
         [Required]
-        public int ProductId { get; set; }
+        public Guid ProductId { get; set; }
 
         [Required]
         public string Sku { get; set; }

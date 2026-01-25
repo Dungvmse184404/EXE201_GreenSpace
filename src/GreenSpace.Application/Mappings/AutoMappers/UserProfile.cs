@@ -9,7 +9,8 @@ namespace GreenSpace.Application.Mappings.AutoMappers
         public UserProfile()
         {
             CreateMap<User, UserDto>().ReverseMap();
-            
+
+
         }
     }
 }

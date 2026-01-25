@@ -17,14 +17,12 @@ namespace GreenSpace.Application.DTOs.Auth
         [MinLength(6, ErrorMessage = "Password must be at least 6 characters")]
         public string Password { get; set; } = string.Empty;
 
-        public string ConfirmPassword { get; set; } = string.Empty;
-
         public string FirstName { get; set; } = string.Empty;
 
         public string LastName { get; set; } = string.Empty;
 
         [Phone(ErrorMessage = "Invalid phone number format")]
-        [MaxLength(10, ErrorMessage = "Phone number cannot exceed 32 characters")]
+        [MaxLength(11, ErrorMessage = "Phone number cannot exceed 11 characters")]
         public string? PhoneNumber { get; set; }
 
         /// <summary>

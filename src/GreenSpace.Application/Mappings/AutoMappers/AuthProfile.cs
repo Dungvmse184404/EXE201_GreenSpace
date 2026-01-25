@@ -16,7 +16,6 @@ namespace GreenSpace.Application.Mappings.AutoMappers
         {
             // 1. User -> AuthResultDto (CHỈ 1 CHIỀU)
             CreateMap<User, AuthResultDto>()
-                .ForMember(d => d.FullName, o => o.MapFrom(s => string.Concat((s.FirstName ?? "").Trim(), " ", (s.LastName ?? "").Trim()).Trim()))
                 // Các trường token sẽ được gán sau ở Service, ignore để tránh lỗi hoặc warning
                 .ForMember(d => d.AccessToken, o => o.Ignore())
                 .ForMember(d => d.RefreshToken, o => o.Ignore())
@@ -24,7 +23,6 @@ namespace GreenSpace.Application.Mappings.AutoMappers
 
             // 2. User <-> UserDto (2 CHIỀU)
             CreateMap<User, UserDto>()
-                .ForMember(d => d.FullName, o => o.MapFrom(s => string.Concat((s.FirstName ?? "").Trim(), " ", (s.LastName ?? "").Trim()).Trim()))
                 .ForMember(d => d.PhoneNumber, o => o.MapFrom(s => s.Phone))
                 .ForMember(d => d.Address, o => o.MapFrom(s => s.UserAddresses != null ? s.UserAddresses.Select(a => a.Address).FirstOrDefault() : null))
                 .ForMember(d => d.Birthday, o => o.MapFrom(s => s.DateOfBirth.HasValue ? DateOnly.FromDateTime(s.DateOfBirth.Value) : (DateOnly?)null))
@@ -67,11 +65,19 @@ namespace GreenSpace.Application.Mappings.AutoMappers
 
 
             CreateMap<User, UserDto>()
-                 .ForMember(d => d.FullName, o => o.MapFrom(s => string.Concat((s.FirstName ?? "").Trim(), " ", (s.LastName ?? "").Trim()).Trim()))
                  .ForMember(d => d.PhoneNumber, o => o.MapFrom(s => s.Phone));
 
 
-
+            CreateMap<InternalUserDto, User>()
+                .ForMember(d => d.Username, o => o.MapFrom(s => s.Email))
+                .ForMember(d => d.Phone, o => o.MapFrom(s => s.PhoneNumber))
+                .ForMember(d => d.DateOfBirth, o => o.MapFrom(s => s.Birthday.HasValue ? s.Birthday.Value.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null))
+                .ForMember(d => d.IsActive, o => o.MapFrom(_ => true))
+                .ForMember(d => d.CreateAt, o => o.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(d => d.UpdateAt, o => o.MapFrom(_ => DateTime.UtcNow))
+                .ForMember(d => d.UserId, o => o.Ignore())
+                .ForMember(d => d.PasswordHash, o => o.Ignore())
+                .ForMember(d => d.Role, o => o.Ignore());
 
         }
     }

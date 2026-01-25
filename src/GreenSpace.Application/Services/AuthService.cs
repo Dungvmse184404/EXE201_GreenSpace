@@ -1,13 +1,16 @@
 ﻿using AutoMapper;
+using GreenSpace.Application.Common.Constants;
 using GreenSpace.Application.DTOs.Auth;
 using GreenSpace.Application.DTOs.User;
+using GreenSpace.Application.Enums;
 using GreenSpace.Application.Interfaces;
-using GreenSpace.Application.Interfaces.External;
+using GreenSpace.Application.Interfaces.Security;
 using GreenSpace.Application.Interfaces.Services;
 using GreenSpace.Domain.Common;
 using GreenSpace.Domain.Constants;
 using GreenSpace.Domain.Interfaces;
 using GreenSpace.Domain.Models;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 
 
@@ -20,19 +23,79 @@ namespace GreenSpace.Application.Services
         private readonly ITokenService _tokenService;
         private readonly ILogger<AuthService> _logger;
         private readonly IMapper _mapper;
+        private readonly IDistributedCache _cache;
+        private readonly IOtpService _otpService;
         public AuthService(
             IUnitOfWork unitOfWork,
             IPasswordService passwordHashService,
             ITokenService tokenService,
             ILogger<AuthService> logger,
-            IMapper mapper) 
+            IMapper mapper,
+            IDistributedCache cache,
+            IOtpService otpService)
         {
             _unitOfWork = unitOfWork;
             _passwordHashService = passwordHashService;
             _tokenService = tokenService;
             _logger = logger;
             _mapper = mapper;
+            _cache = cache;
+            _otpService = otpService;
         }
+
+
+        /// <summary>
+        /// Khởi tạo đăng ký - Kiểm tra email và gửi OTP
+        /// </summary>
+        /// <param name="dto">The dto.</param>
+        /// <returns></returns>
+        public async Task<IServiceResult> RegisterMailAsync(RegisteMailDto dto)
+        {
+            try
+            {
+                var exists = await _unitOfWork.UserRepository.EmailExistsAsync(dto.Email);
+                if (exists)
+                {
+                    _logger?.LogWarning("Register init failed: Email {Email} already exists", dto.Email);
+                    return ServiceResult.Failure(ApiMessages.Auth.ExistedEmail);
+                }
+
+                await _otpService.SendOtpAsync(dto.Email, "Mã xác thực đăng ký GreenSpace", "Register");
+
+                return ServiceResult.Success(ApiMessages.OTP.Sent);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error initiate register for {Email}", dto.Email);
+                return ServiceResult.Failure("Lỗi hệ thống khi gửi OTP");
+            }
+        }
+
+
+        public async Task<IServiceResult> VerifyRegisterOtpAsync(VerifyRegisterOtpDto dto)
+        {
+            var isValid = await _otpService.VerifyOtpAsync(dto.Email, dto.Otp, "Register");
+
+            switch (isValid)
+            {
+                case OtpResult.Invalid:
+                    return ServiceResult.Failure(ApiMessages.OTP.Invalid);
+
+                case OtpResult.Expired:
+                    return ServiceResult.Failure(ApiMessages.OTP.Expired);
+            }
+
+            var verifiedKey = $"PreRegisterVerified:{dto.Email}";
+
+            await _cache.SetStringAsync(verifiedKey, "true", new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(20)
+            });
+
+            return ServiceResult.Success(ApiMessages.OTP.Verified); // "Xác thực thành công"
+        }
+
+
 
         /// <summary>`
         /// Authenticate user with email and password
@@ -96,44 +159,50 @@ namespace GreenSpace.Application.Services
         {
             try
             {
-                // 1. Validation: Check Email
-                var emailExists = await _unitOfWork.UserRepository.EmailExistsAsync(registerDto.Email);
-                if (emailExists)
+                var verifiedKey = $"PreRegisterVerified:{registerDto.Email}";
+                var isVerified = await _cache.GetStringAsync(verifiedKey);
+
+                if (string.IsNullOrEmpty(isVerified))
                 {
-                    _logger?.LogWarning("Registration failed: Email {Email} already exists", registerDto.Email);
-                    return ServiceResult<UserDto>.Failure("Email already exists");
+                    _logger?.LogWarning("Registration failed: Email {Email} not verified via OTP", registerDto.Email);
+                    return ServiceResult<UserDto>.Failure("Bạn chưa xác thực email hoặc phiên đăng ký đã hết hạn. Vui lòng thử lại.");
                 }
 
-                // 2. Validation: Check Phone
-                var phoneExists = await _unitOfWork.UserRepository.PhoneExistsAsync(registerDto.PhoneNumber);
-                if (phoneExists)
+                // Kiểm tra lại Email (Double check - phòng trường hợp race condition)
+                if (await _unitOfWork.UserRepository.EmailExistsAsync(registerDto.Email))
                 {
-                    _logger?.LogWarning("Registration failed: Phone {Phone} already exists", registerDto.PhoneNumber);
-                    return ServiceResult<UserDto>.Failure("Phone already exists");
+                    return ServiceResult<UserDto>.Failure("Email này đã được đăng ký bởi người khác.");
+                }
+
+                if (await _unitOfWork.UserRepository.PhoneExistsAsync(registerDto.PhoneNumber))
+                {
+                    return ServiceResult<UserDto>.Failure("Số điện thoại đã tồn tại.");
                 }
 
                 var newUser = _mapper.Map<User>(registerDto);
 
                 newUser.Role = Roles.Customer;
-
                 newUser.PasswordHash = _passwordHashService.HashPassword(registerDto.Password);
+
+                newUser.IsActive = true;
 
                 await _unitOfWork.UserRepository.AddAsync(newUser);
                 await _unitOfWork.SaveChangesAsync();
 
-                var userDto = _mapper.Map<UserDto>(newUser);
+                await _cache.RemoveAsync(verifiedKey);
 
+                var userDto = _mapper.Map<UserDto>(newUser);
                 _logger?.LogInformation("User registered successfully: {Email}", registerDto.Email);
 
-                return ServiceResult<UserDto>.Success(userDto, "Registration successful");
+                return ServiceResult<UserDto>.Success(userDto, "Đăng ký thành công.");
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error during registration for email: {Email}", registerDto.Email); 
-                var errorMessage = ex.InnerException?.Message ?? ex.Message;
-                return ServiceResult<UserDto>.Failure($"Error during registration: {errorMessage}");
+                _logger?.LogError(ex, "Error during registration for email: {Email}", registerDto.Email);
+                return ServiceResult<UserDto>.Failure($"Lỗi khi đăng ký: {ex.Message}");
             }
         }
+
 
         /// <summary>
         /// Create a new staff member (Admin only)
@@ -144,42 +213,34 @@ namespace GreenSpace.Application.Services
         {
             try
             {
-                // 1. Validation: Check Email
-                var emailExists = await _unitOfWork.UserRepository.EmailExistsAsync(createInternalDto.Email);
-                if (emailExists)
+                if (await _unitOfWork.UserRepository.EmailExistsAsync(createInternalDto.Email))
                 {
-                    _logger?.LogWarning("Staff creation failed: Email {Email} already exists", createInternalDto.Email);
-                    return ServiceResult<UserDto>.Failure("Email already exists");
+                    return ServiceResult<UserDto>.Failure(ApiMessages.Mail.Existed);
                 }
 
                 var normalizedRole = Roles.Normalize(createInternalDto.Role);
-
                 if (normalizedRole == null)
                 {
-                    _logger?.LogWarning("Staff creation failed. Invalid role: {Role}", createInternalDto.Role);
-                    return ServiceResult<UserDto>.Failure($"Invalid role '{createInternalDto.Role}'. Role must be one of: {string.Join(", ", Roles.All)}");
+                    return ServiceResult<UserDto>.Failure($"{ApiMessages.role.NotFound}. Các role cho phép: {string.Join(", ", Roles.All)}");
                 }
 
                 var newUser = _mapper.Map<User>(createInternalDto);
-
                 newUser.Role = createInternalDto.Role;
                 newUser.PasswordHash = _passwordHashService.HashPassword(createInternalDto.Password);
 
+                // Admin tạo thì auto active
                 newUser.IsActive = true;
 
                 await _unitOfWork.UserRepository.AddAsync(newUser);
                 await _unitOfWork.SaveChangesAsync();
 
-                // Map Entity -> Output DTO
                 var userDto = _mapper.Map<UserDto>(newUser);
-
-                _logger?.LogInformation("Staff member created successfully: {Email} with role: {Role}", createInternalDto.Email, createInternalDto.Role);
-                return ServiceResult<UserDto>.Success(userDto, "Staff member created successfully");
+                return ServiceResult<UserDto>.Success(userDto, ApiMessages.User.Created);
             }
             catch (Exception ex)
             {
-                _logger?.LogError(ex, "Error during staff creation for email: {Email}", createInternalDto.Email);
-                return ServiceResult<UserDto>.Failure($"Error during staff creation: {ex.Message}");
+                _logger?.LogError(ex, "Error creating internal user: {Email}", createInternalDto.Email);
+                return ServiceResult<UserDto>.Failure($"{ApiMessages.User.CreateFailed}: {ex.Message}");
             }
         }
 
@@ -202,7 +263,7 @@ namespace GreenSpace.Application.Services
                 }
 
                 var user = await _unitOfWork.UserRepository.GetByIdAsync(refreshTokenEntity.UserId);
-               
+
                 if (user == null || user.IsActive != true)
                 {
                     _logger?.LogWarning("User not found/inactive for refresh token: {UserId}", refreshTokenEntity.UserId);
@@ -220,7 +281,7 @@ namespace GreenSpace.Application.Services
                 var authResult = _mapper.Map<AuthResultDto>(user);
 
                 authResult.AccessToken = newAccessToken;
-                authResult.RefreshToken = newRefreshTokenEntity.Token; 
+                authResult.RefreshToken = newRefreshTokenEntity.Token;
                 authResult.ExpiresAt = expiresAt;
 
                 _logger?.LogInformation("Token refreshed successfully for user: {UserId}", user.UserId);

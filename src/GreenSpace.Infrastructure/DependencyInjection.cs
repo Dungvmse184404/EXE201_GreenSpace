@@ -1,9 +1,13 @@
-﻿using GreenSpace.Application.Interfaces;
-using GreenSpace.Application.Interfaces.External;
+﻿using GreenSpace.Application.Common.Mail;
+using GreenSpace.Application.Common.Settings;
+using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Repositories;
+using GreenSpace.Application.Interfaces.Security;
 using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.Application.Services;
 using GreenSpace.Infrastructure.Authentication;
 using GreenSpace.Infrastructure.ExternalServices;
+using GreenSpace.Infrastructure.Helpers;
 using GreenSpace.Infrastructure.Persistence;
 using GreenSpace.Infrastructure.Persistence.Contexts;
 using GreenSpace.Infrastructure.Persistence.Repositories;
@@ -14,12 +18,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
+using NETCore.MailKit.Core;
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
+
 
 namespace GreenSpace.Infrastructure
 {
@@ -107,9 +113,23 @@ namespace GreenSpace.Infrastructure
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<ITokenService, TokenService>();
 
+            // Đăng ký dịch vụ gửi email
+            services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.AddScoped<IEmailTemplateHelper, EmailTemplateHelper>();
+            services.AddScoped<IOtpService, OtpService>();
+
+            services.AddScoped<IAuthService, AuthService>();
+
+            services.AddDistributedMemoryCache();
+           
+
+
             return services;
         }
 
+
+        ////chỗ này nghịch ngu đưng động vào
         //public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         //{
         //    if (services == null) throw new ArgumentNullException(nameof(services));

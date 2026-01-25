@@ -8,7 +8,7 @@ namespace GreenSpace.Application.DTOs.ProductVariant
 {
     public class ProductVariantDto
     {
-        public int VariantId { get; set; }
+        public Guid VariantId { get; set; }
         public string Sku { get; set; }
         public decimal Price { get; set; }
         public int StockQuantity { get; set; }

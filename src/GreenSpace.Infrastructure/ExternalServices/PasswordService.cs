@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
-using GreenSpace.Application.Interfaces.External;
+using GreenSpace.Application.Interfaces.Security;
 
 namespace GreenSpace.Infrastructure.ExternalServices
 {
