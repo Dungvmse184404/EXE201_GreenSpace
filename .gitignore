@@ -99,3 +99,13 @@ wwwroot/temp/
 .DS_Store
 Thumbs.db
 ehthumbs.db
+
+
+########################################
+# Docker
+########################################
+Dockerfile
+.git
+**/.vs
+**/bin
+**/obj
