@@ -59,6 +59,9 @@ public partial class User
     [Column("update_at", TypeName = "timestamp without time zone")]
     public DateTime? UpdateAt { get; set; }
 
+    [Column("login_attempts")]
+    public int? LoginAttempts { get; set; }
+
     [InverseProperty("User")]
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 

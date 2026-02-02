@@ -1,6 +1,7 @@
 ﻿using GreenSpace.Application.Common.Mail;
 using GreenSpace.Application.Common.Settings;
 using GreenSpace.Application.Interfaces;
+using GreenSpace.Application.Interfaces.External;
 using GreenSpace.Application.Interfaces.Repositories;
 using GreenSpace.Application.Interfaces.Security;
 using GreenSpace.Application.Interfaces.Services;
@@ -34,7 +35,6 @@ namespace GreenSpace.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
         {
-
             // Bind cấu hình từ appsettings
             var jwtSettings = new JwtSettings();
             configuration.GetSection("JwtSettings").Bind(jwtSettings);
@@ -71,10 +71,10 @@ namespace GreenSpace.Infrastructure
                     {
                         npgsqlOptions.MigrationsAssembly("GreenSpace.Infrastructure");
                         npgsqlOptions.CommandTimeout(60);
-                        npgsqlOptions.EnableRetryOnFailure(
-                            maxRetryCount: 3, // Thường để 3-5
-                            maxRetryDelay: TimeSpan.FromSeconds(15),
-                            errorCodesToAdd: null);
+                        //npgsqlOptions.EnableRetryOnFailure(
+                        //    maxRetryCount: 3, // Thường để 3-5
+                        //    maxRetryDelay: TimeSpan.FromSeconds(15),
+                        //    errorCodesToAdd: null);
                     });
 
                 // Fix timezone 
@@ -120,6 +120,13 @@ namespace GreenSpace.Infrastructure
             services.AddScoped<IOtpService, OtpService>();
 
             services.AddScoped<IAuthService, AuthService>();
+
+            // Đăng ký dịch vụ thanh toán VNPay
+            services.Configure<VNPaySettings>(configuration.GetSection("VNPaySettings"));
+            services.AddScoped<IVNPayService, VNPayService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+
+            services.Configure<ClientSettings>(configuration.GetSection("ClientSettings"));
 
             services.AddDistributedMemoryCache();
            

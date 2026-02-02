@@ -67,16 +67,21 @@ namespace GreenSpace.Infrastructure.Persistence
             return true;
         }
 
+        //public async Task<T?> GetByIdAsync(object id)
+        //{
+        //    var entity = await _dbSet.Set<T>().FindAsync(id);
+        //    if (entity != null)
+        //    {
+        //        // Đảm bảo không bị tracking lại
+        //        _dbSet.Entry(entity).State = EntityState.Detached;
+        //    }
+        //    return entity;
+        //}
         public async Task<T?> GetByIdAsync(object id)
         {
-            var entity = await _dbSet.Set<T>().FindAsync(id);
-            if (entity != null)
-            {
-                // Đảm bảo không bị tracking lại
-                _dbSet.Entry(entity).State = EntityState.Detached;
-            }
-            return entity;
+            return await _dbSet.Set<T>().FindAsync(id);
         }
+
 
         #region Separating asigned entity and save operators        
 

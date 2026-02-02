@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -104,7 +105,7 @@ namespace GreenSpace.Application.Common.Constants
 
         public static class Error
         {
-            public const string General = "An error occurred. Please try again later.";
+            public const string General = "Internal server error. Please try again later.";
         }
 
         public static class Product
@@ -123,6 +124,7 @@ namespace GreenSpace.Application.Common.Constants
             public const string SendFailure = "Failed to send mail.";
             public const string InvalidRecipient = "Invalid email recipient.";
             public const string Existed = "Email already exists.";
+            public const string PhoneExisted = "Phone already exists";
 
         }
 
@@ -142,10 +144,67 @@ namespace GreenSpace.Application.Common.Constants
         }
 
 
+        public static class Category
+        {
+            public const string NotFound = "Category not found.";
+            public const string Created = "Category created successfully.";
+            public const string Updated = "Category updated successfully.";
+            public const string Deleted = "Category deleted successfully.";
+        }
+
+
+        public static class Order
+        {
+            public const string NotFound = "Order not found.";
+            public const string Created = "Order created successfully.";
+            public const string Updated = "Order updated successfully.";
+            public const string Deleted = "Order deleted successfully.";
+            public const string StatusUpdated = "Order status updated successfully.";
+        }
 
 
 
+        public static class ProductVariant
+        {
+            public const string NotFound = "Product variant not found.";
+            public const string InsufficientStock = "Insufficient stock for the requested quantity.";
+            public const string Created = "Product variant created successfully.";
+            public const string Updated = "Product variant updated successfully.";
+            public const string Deleted = "Product variant deleted successfully.";
+            public const string SkuExists = "SKU already exists.";
+            public const string StockUpdated = "Product variant stock updated successfully.";
+        }
 
+        public static class Rating
+        {
+            public const string NotFound = "Rating not found.";
+            public const string Created = "Rating created successfully.";
+            public const string Updated = "Rating updated successfully.";
+            public const string Deleted = "Rating deleted successfully.";
+            public const string StatusUpdated = "Rating status updated successfully.";
+            public const string Existed = "You have already rated this product.";
+            public const string NoPermit = "You can only update your own ratings.";
+            public const string NoData = "No ratings found for this product.";
+        }
+
+        public static class Address
+        {
+            public const string NotFound = "Address not found.";
+            public const string Created = "Address created successfully.";
+            public const string Updated = "Address updated successfully.";
+            public const string Deleted = "Address deleted successfully.";
+            public const string NoPermit = "You can only manage your own addresses.";
+        }
+
+        public static class Payment
+        {
+            public static string Created = "Payment created successfully";
+            public static string InvalidSignature = "Invalid signature";
+            public static string InvalidTransaction = "Invalid transaction reference";
+            public static string PaymentFailed = "Payment failed";
+            public static string NotFound  = "Payment not found";
+            public static string StatusUpdated = "Payment status updated successfully";
+        }
 
     }
 }

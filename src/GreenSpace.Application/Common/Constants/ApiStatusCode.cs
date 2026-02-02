@@ -11,79 +11,59 @@ namespace GreenSpace.Application.Common.Constants
     /// </summary>
     public static class ApiStatusCodes
     {
-        /// <summary>
-        /// The ok
-        /// </summary>
+        /// <summary> Yêu cầu thành công và trả về dữ liệu. </summary>
         public const int OK = 200;
-        /// <summary>
-        /// The created
-        /// </summary>
+
+        /// <summary> Tạo mới tài nguyên thành công (vạch ra Resource ID mới). </summary>
         public const int Created = 201;
-        /// <summary>
-        /// The accepted
-        /// </summary>
+
+        /// <summary> Đã nhận yêu cầu nhưng đang chờ xử lý background. </summary>
         public const int Accepted = 202;
-        /// <summary>
-        /// The no content
-        /// </summary>
+
+        /// <summary> Xử lý thành công nhưng không có dữ liệu trả về (thường dùng cho Delete/Update). </summary>
         public const int NoContent = 204;
 
-        /// <summary>
-        /// The bad request
-        /// </summary>
+        /// <summary> Lỗi cú pháp hoặc dữ liệu đầu vào không hợp lệ (Validation fail). </summary>
         public const int BadRequest = 400;
-        /// <summary>
-        /// The unauthorized
-        /// </summary>
+
+        /// <summary> Chưa đăng nhập hoặc Token hết hạn/không hợp lệ. </summary>
         public const int Unauthorized = 401;
-        /// <summary>
-        /// The forbidden
-        /// </summary>
+
+        /// <summary> Đã đăng nhập nhưng không có quyền truy cập vào tài nguyên này. </summary>
         public const int Forbidden = 403;
-        /// <summary>
-        /// The not found
-        /// </summary>
+
+        /// <summary> Không tìm thấy tài nguyên (ID không tồn tại trong DB). </summary>
         public const int NotFound = 404;
-        /// <summary>
-        /// The method not allowed
-        /// </summary>
+
+        /// <summary> HTTP Method (GET/POST/PUT...) không được hỗ trợ cho endpoint này. </summary>
         public const int MethodNotAllowed = 405;
-        /// <summary>
-        /// The conflict
-        /// </summary>
+
+        /// <summary> Xung đột dữ liệu (ví dụ: Trùng Email, Số điện thoại đã tồn tại). </summary>
         public const int Conflict = 409;
-        /// <summary>
-        /// The gone
-        /// </summary>
+
+        /// <summary> Tài nguyên đã từng tồn tại nhưng hiện đã bị xóa vĩnh viễn. </summary>
         public const int Gone = 410;
-        /// <summary>
-        /// The unprocessable entity
-        /// </summary>
+
+        /// <summary> Dữ liệu đúng format nhưng vi phạm logic nghiệp vụ (thường dùng trong ASP.NET Core). </summary>
         public const int UnprocessableEntity = 422;
-        /// <summary>
-        /// The locked
-        /// </summary>
+
+        /// <summary> Tài nguyên đang bị khóa (đang có process khác xử lý). </summary>
         public const int Locked = 423;
-        /// <summary>
-        /// The too many requests
-        /// </summary>
+
+        /// <summary> Client gửi quá nhiều yêu cầu trong một khoảng thời gian (Spam/Rate limit). </summary>
         public const int TooManyRequests = 429;
 
-        /// <summary>
-        /// The internal server error
-        /// </summary>
+        /// <summary> Lỗi hệ thống không xác định phía Server. </summary>
         public const int InternalServerError = 500;
-        /// <summary>
-        /// The not implemented
-        /// </summary>
+
+        /// <summary> Server chưa hỗ trợ tính năng này. </summary>
         public const int NotImplemented = 501;
-        /// <summary>
-        /// The bad gateway
-        /// </summary>
+
+        /// <summary> Server trung gian nhận phản hồi lỗi từ server đích (Lỗi Proxy/Gateway). </summary>
         public const int BadGateway = 502;
-        /// <summary>
-        /// The service unavailable
-        /// </summary>
+
+        /// <summary> Server bị quá tải hoặc đang bảo trì. </summary>
         public const int ServiceUnavailable = 503;
+        //thêm mã lỗi vào đây
     }
 }

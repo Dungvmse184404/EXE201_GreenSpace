@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GreenSpace.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260124072353_InitialCreate")]
+    [Migration("20260129040741_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -650,6 +650,10 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("last_name");
+
+                    b.Property<int?>("LoginAttempts")
+                        .HasColumnType("integer")
+                        .HasColumnName("login_attempts");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()

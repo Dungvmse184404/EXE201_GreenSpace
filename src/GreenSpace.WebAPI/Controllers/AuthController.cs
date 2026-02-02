@@ -50,6 +50,7 @@ namespace GreenSpace.WebAPI.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
+
         /// <summary>
         /// Xác thực OTP.
         /// User nhập mã 6 số -&gt; Server kiểm tra -&gt; Lưu trạng thái "Đã verify" vào Cache.
@@ -89,8 +90,6 @@ namespace GreenSpace.WebAPI.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var result = await _authService.LoginAsync(dto);
-            // Login thất bại có thể do sai pass (400) hoặc chưa active (401/403) tùy bạn chọn
-            // Ở đây để đơn giản ta trả về theo IsSuccess
             return result.IsSuccess ? Ok(result) : Unauthorized(result);
         }
 

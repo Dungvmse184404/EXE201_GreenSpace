@@ -19,7 +19,7 @@ namespace GreenSpace.Infrastructure.Services
             _tokenHandler = new JsonWebTokenHandler();
         }
 
-        public string GenerateAccessToken(Guid userId, string email, string role)
+        public string GenerateAccessToken(Guid userId, string email, string role, string jti)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -28,8 +28,8 @@ namespace GreenSpace.Infrastructure.Services
             {
                 [JwtRegisteredClaimNames.Sub] = userId.ToString(),
                 [JwtRegisteredClaimNames.Email] = email,
-                [JwtRegisteredClaimNames.Jti] = Guid.NewGuid().ToString(),
-                [ClaimTypes.Role] = role, 
+                [JwtRegisteredClaimNames.Jti] = jti,
+                [ClaimTypes.Role] = role,
                 ["uid"] = userId.ToString()
             };
 
@@ -57,11 +57,13 @@ namespace GreenSpace.Infrastructure.Services
         {
             var validationParameters = new TokenValidationParameters
             {
-                ValidateAudience = false,
-                ValidateIssuer = false,
+                ValidateAudience = true,
+                ValidAudience = _jwtSettings.Audience,
+                ValidateIssuer = true,
+                ValidIssuer = _jwtSettings.Issuer,
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
-                ValidateLifetime = false // Quan trọng: Cho phép token hết hạn lọt qua
+                ValidateLifetime = false
             };
 
             var result = _tokenHandler.ValidateToken(token, validationParameters);
@@ -95,6 +97,19 @@ namespace GreenSpace.Infrastructure.Services
         public DateTime GetTokenExpiration()
         {
             return DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes);
+        }
+
+        public string? GetJwtIdFromToken(string token)
+        {
+            try
+            {
+                var principal = GetPrincipalFromExpiredToken(token);
+                return principal?.FindFirst(JwtRegisteredClaimNames.Jti)?.Value;
+            }
+            catch
+            {
+                return null;
+            }
         }
     }
 }

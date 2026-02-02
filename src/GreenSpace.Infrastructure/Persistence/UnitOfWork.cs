@@ -4,6 +4,7 @@ using GreenSpace.Application.Interfaces.Services;
 using GreenSpace.Application.Services;
 using GreenSpace.Infrastructure.Persistence.Contexts;
 using GreenSpace.Infrastructure.Persistence.Repositories;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -77,7 +78,7 @@ namespace GreenSpace.Infrastructure.Persistence
         public IRefreshTokenRepository RefreshTokenRepository => _refreshTokenRepository.Value;
         public IRefreshTokenService RefreshTokenService => _refreshTokenService.Value;
 
-
+        
         // --- Xử lý Transaction ---
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
@@ -155,6 +156,12 @@ namespace GreenSpace.Infrastructure.Persistence
             }
             await _context.DisposeAsync();
             GC.SuppressFinalize(this);
+        }
+
+        public Task<T> ExecuteStrategyAsync<T>(Func<Task<T>> operation)
+        {
+            var strategy = _context.Database.CreateExecutionStrategy();
+            return strategy.ExecuteAsync(operation);
         }
     }
 }

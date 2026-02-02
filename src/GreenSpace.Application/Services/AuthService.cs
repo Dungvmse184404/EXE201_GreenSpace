@@ -106,33 +106,37 @@ namespace GreenSpace.Application.Services
         {
             try
             {
-                var user = await _unitOfWork.UserRepository.GetByEmailWithRoleAsync(loginDto.Email);
+                var user = await _unitOfWork.UserRepository.GetByEmailAsync(loginDto.Email);
 
                 if (user == null || !_passwordHashService.VerifyPassword(loginDto.Password, user.PasswordHash))
                 {
                     _logger.LogWarning("Login failed for: {Email}", loginDto.Email);
-                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Unauthorized, "Email hoặc mật khẩu không chính xác");
+                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Unauthorized, ApiMessages.Auth.LoginFailed);
                 }
 
                 if (user.IsActive != true)
                 {
-                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Forbidden, "Tài khoản của bạn đã bị khóa.");
+                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Auth.AccountInactive);
                 }
 
-                var accessToken = _tokenService.GenerateAccessToken(user.UserId, user.Email, user.Role);
-                var refreshTokenEntity = await _unitOfWork.RefreshTokenService.GenerateRefreshTokenAsync(user.UserId, accessToken);
+                string jti = Guid.NewGuid().ToString();
+
+                // Tạo Access Token
+                var accessToken = _tokenService.GenerateAccessToken(user.UserId, user.Email, user.Role, jti);
+
+                var refreshTokenEntity = await _unitOfWork.RefreshTokenService.GenerateRefreshTokenAsync(user.UserId, accessToken, jti);
 
                 var authResult = _mapper.Map<AuthResultDto>(user);
                 authResult.AccessToken = accessToken;
                 authResult.RefreshToken = refreshTokenEntity.Token;
                 authResult.ExpiresAt = _tokenService.GetTokenExpiration();
 
-                return ServiceResult<AuthResultDto>.Success(authResult, "Đăng nhập thành công");
+                return ServiceResult<AuthResultDto>.Success(authResult, ApiMessages.Auth.LoginSuccess);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during login for: {Email}", loginDto.Email);
-                return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.InternalServerError, "Lỗi hệ thống khi đăng nhập.");
+                return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Error.General);
             }
         }
 
@@ -156,12 +160,12 @@ namespace GreenSpace.Application.Services
 
                 if (await _unitOfWork.UserRepository.EmailExistsAsync(registerDto.Email))
                 {
-                    return ServiceResult<UserDto>.Failure(ApiStatusCodes.Conflict, "Email đã được sử dụng.");
+                    return ServiceResult<UserDto>.Failure(ApiStatusCodes.Conflict, ApiMessages.Mail.Existed);
                 }
 
                 if (await _unitOfWork.UserRepository.PhoneExistsAsync(registerDto.PhoneNumber))
                 {
-                    return ServiceResult<UserDto>.Failure(ApiStatusCodes.Conflict, "Số điện thoại đã được sử dụng.");
+                    return ServiceResult<UserDto>.Failure(ApiStatusCodes.Conflict, ApiMessages.Mail.PhoneExisted);
                 }
 
                 var newUser = _mapper.Map<User>(registerDto);
@@ -174,12 +178,12 @@ namespace GreenSpace.Application.Services
 
                 await _cache.RemoveAsync(verifiedKey);
 
-                return ServiceResult<UserDto>.Success(_mapper.Map<UserDto>(newUser), "Đăng ký thành công.");
+                return ServiceResult<UserDto>.Success(_mapper.Map<UserDto>(newUser), ApiMessages.User.Created);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error during registration for: {Email}", registerDto.Email);
-                return ServiceResult<UserDto>.Failure(ApiStatusCodes.InternalServerError, "Lỗi server khi đăng ký.");
+                return ServiceResult<UserDto>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Error.General);
             }
         }
 
@@ -226,40 +230,110 @@ namespace GreenSpace.Application.Services
         /// <param name="refreshToken">Refresh token</param>
         /// <param name="accessToken">Current access token to validate</param>
         /// <returns>New authentication result</returns>
-        public async Task<IServiceResult<AuthResultDto>> RefreshTokenAsync(string refreshToken, string accessToken)
+        /// <summary>
+        /// Refresh access token with proper rotation
+        /// </summary>
+        public async Task<IServiceResult<AuthResultDto>> RefreshTokenAsync(
+            string refreshToken,
+            string accessToken)
         {
             try
             {
-                var refreshTokenEntity = await _unitOfWork.RefreshTokenService.GetRefreshTokenWithAccessTokenValidationAsync(refreshToken, accessToken);
+                _logger?.LogInformation("Token refresh attempt started");
+
+                // Validate access token structure (ignore expiration)
+                var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+                if (principal == null)
+                {
+                    _logger?.LogWarning("Invalid access token structure");
+                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Unauthorized, "Invalid access token");
+                }
+
+                // Extract user ID from token
+                var userIdClaim = principal.FindFirst("uid")?.Value;
+                if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+                {
+                    _logger?.LogWarning("Invalid user ID in token");
+                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Unauthorized, "Invalid token claims");
+                }
+
+                // Validate refresh token with access token hash
+                var refreshTokenEntity = await _unitOfWork.RefreshTokenService
+                    .GetRefreshTokenWithAccessTokenValidationAsync(refreshToken, accessToken);
 
                 if (refreshTokenEntity == null)
                 {
-                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Unauthorized, "Refresh token không hợp lệ hoặc đã hết hạn.");
+                    _logger?.LogWarning(
+                        "Refresh token validation failed for user: {UserId}",
+                        userId);
+                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Unauthorized, "Invalid or expired refresh token");
                 }
 
-                var user = await _unitOfWork.UserRepository.GetByIdAsync(refreshTokenEntity.UserId);
+                // Get user with role
+                var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
                 if (user == null || user.IsActive != true)
                 {
+                    _logger?.LogWarning(
+                        "User not found or inactive for refresh token: {UserId}",
+                        userId);
+
+                    // Revoke compromised token
                     await _unitOfWork.RefreshTokenService.RevokeRefreshTokenAsync(refreshToken);
-                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Forbidden, "Tài khoản không còn hoạt động.");
+
+                    return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.Forbidden, "User account is not active");
                 }
 
-                var newAccessToken = _tokenService.GenerateAccessToken(user.UserId, user.Email, user.Role);
-                var newRefreshTokenEntity = await _unitOfWork.RefreshTokenService.GenerateRefreshTokenAsync(user.UserId, newAccessToken);
+                // Begin transaction for token rotation
+                await _unitOfWork.BeginTransactionAsync();
 
-                await _unitOfWork.RefreshTokenService.RevokeRefreshTokenAsync(refreshToken);
+                try
+                {
+                    // Mark old refresh token as used
+                    refreshTokenEntity.IsUsed = true;
+                    await _unitOfWork.RefreshTokenRepository.UpdateAsync(refreshTokenEntity);
 
-                var authResult = _mapper.Map<AuthResultDto>(user);
-                authResult.AccessToken = newAccessToken;
-                authResult.RefreshToken = newRefreshTokenEntity.Token;
-                authResult.ExpiresAt = _tokenService.GetTokenExpiration();
+                    string jwtId = Guid.NewGuid().ToString();
+                    // Generate new tokens
+                    var newAccessToken = _tokenService.GenerateAccessToken(
+                        user.UserId,
+                        user.Email,
+                        user.Role,
+                        jwtId);
 
-                return ServiceResult<AuthResultDto>.Success(authResult, "Làm mới token thành công");
+                    var newRefreshTokenEntity = await _unitOfWork.RefreshTokenService
+                        .GenerateRefreshTokenAsync(user.UserId, newAccessToken, jwtId ?? Guid.NewGuid().ToString());
+
+                    // Save changes and commit transaction
+                    await _unitOfWork.SaveChangesAsync();
+                    await _unitOfWork.CommitAsync();
+
+                    // Create response
+                    var authResult = _mapper.Map<AuthResultDto>(user);
+                    authResult.AccessToken = newAccessToken;
+                    authResult.RefreshToken = newRefreshTokenEntity.Id.ToString();
+                    authResult.ExpiresAt = _tokenService.GetTokenExpiration();
+
+                    _logger?.LogInformation(
+                        "Token refreshed successfully for user: {UserId}",
+                        user.UserId);
+
+                    return ServiceResult<AuthResultDto>.Success(
+                        authResult,
+                        "Token refreshed successfully");
+                }
+                catch (Exception ex)
+                {
+                    await _unitOfWork.RollbackAsync();
+                    _logger?.LogError(ex, "Error during token refresh transaction");
+                    throw;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error during token refresh");
-                return ServiceResult<AuthResultDto>.Failure(ApiStatusCodes.InternalServerError, "Lỗi khi làm mới token.");
+                _logger?.LogError(ex, "Error during token refresh");
+                return ServiceResult<AuthResultDto>.Failure(
+                    ApiStatusCodes.InternalServerError,
+                    $"Error during token refresh: {ex.Message}");
             }
         }
 

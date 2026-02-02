@@ -25,6 +25,22 @@ namespace GreenSpace.Application.Mappings.AutoMappers
                 .ForMember(d => d.UpdatedAt, o => o.Ignore());
 
             CreateMap<ProductVariant, ProductVariantDto>().ReverseMap();
+
+
+            // ProductVariant mappings
+            CreateMap<ProductVariant, ProductVariantDto>().ReverseMap();
+
+            CreateMap<CreateProductVariantDto, ProductVariant>()
+                .ForMember(d => d.VariantId, o => o.Ignore())
+                .ForMember(d => d.IsActive, o => o.Ignore())
+                .ForMember(d => d.CreatedAt, o => o.Ignore())
+                .ForMember(d => d.UpdatedAt, o => o.Ignore());
+
+            CreateMap<UpdateProductVariantDto, ProductVariant>()
+                .ForMember(d => d.VariantId, o => o.Ignore())
+                .ForMember(d => d.ProductId, o => o.Ignore())
+                .ForMember(d => d.CreatedAt, o => o.Ignore())
+                .ForMember(d => d.UpdatedAt, o => o.Ignore());
         }
     }
 }

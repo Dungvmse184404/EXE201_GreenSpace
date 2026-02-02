@@ -1,9 +1,4 @@
 ﻿using GreenSpace.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreenSpace.Application.Interfaces.Repositories
 {
@@ -32,7 +27,7 @@ namespace GreenSpace.Application.Interfaces.Repositories
         /// <param name="userId">User ID</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User with role</returns>
-        Task<User?> GetUserWithRoleAsync(Guid userId, CancellationToken cancellationToken = default);
+        //Task<User?> GetUserWithRoleAsync(Guid userId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get user by ID with role information
@@ -40,7 +35,7 @@ namespace GreenSpace.Application.Interfaces.Repositories
         /// <param name="userId">User ID</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User with role</returns>
-        Task<User?> GetByIdWithRoleAsync(Guid userId, CancellationToken cancellationToken = default);
+        //Task<User?> GetByIdWithRoleAsync(Guid userId, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Get user by email with role information
@@ -48,6 +43,6 @@ namespace GreenSpace.Application.Interfaces.Repositories
         /// <param name="email">User email</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User with role</returns>
-        Task<User?> GetByEmailWithRoleAsync(string email, CancellationToken cancellationToken = default);
+        //Task<User?> GetByEmailWithRoleAsync(string email, CancellationToken cancellationToken = default);
     }
 }

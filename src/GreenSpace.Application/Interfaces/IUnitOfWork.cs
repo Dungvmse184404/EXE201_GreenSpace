@@ -28,7 +28,7 @@ namespace GreenSpace.Application.Interfaces
         ICartItemRepository CartItemRepository { get; }
 
 
-
+        Task<T> ExecuteStrategyAsync<T>(Func<Task<T>> operation);
 
         IRefreshTokenRepository RefreshTokenRepository { get; }
         IRefreshTokenService RefreshTokenService { get; }

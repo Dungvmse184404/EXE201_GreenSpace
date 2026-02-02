@@ -55,13 +55,13 @@ namespace GreenSpace.Infrastructure.Persistence.Repositories
         /// <param name="userId">User ID</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User with role</returns>
-        public async Task<User?> GetByIdWithRoleAsync(Guid userId, CancellationToken cancellationToken = default)
-        {
-            return await _dbSet.Users
-                .Include(u => u.Role)
-                .Where(u => u.UserId == userId && u.IsActive == true)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
+        //public async Task<User?> GetByIdWithRoleAsync(Guid userId, CancellationToken cancellationToken = default)
+        //{
+        //    return await _dbSet.Users
+        //        .Include(u => u.Role)
+        //        .Where(u => u.UserId == userId && u.IsActive == true)
+        //        .FirstOrDefaultAsync(cancellationToken);
+        //}
 
         /// <summary>
         /// Get user by email with role information
@@ -69,13 +69,13 @@ namespace GreenSpace.Infrastructure.Persistence.Repositories
         /// <param name="email">User email</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>User with role</returns>
-        public async Task<User?> GetByEmailWithRoleAsync(string email, CancellationToken cancellationToken = default)
-        {
-            return await _dbSet.Users
-                .Include(u => u.Role)
-                .Where(u => u.Email.ToLower() == email.ToLower() && u.IsActive == true)
-                .FirstOrDefaultAsync(cancellationToken);
-        }
+        //public async Task<User?> GetByEmailWithRoleAsync(string email, CancellationToken cancellationToken = default)
+        //{
+        //    return await _dbSet.Users
+        //        .Include(u => u.Role)
+        //        .Where(u => u.Email.ToLower() == email.ToLower() && u.IsActive == true)
+        //        .FirstOrDefaultAsync(cancellationToken);
+        //}
 
         public async Task<bool> PhoneExistsAsync(string phone, CancellationToken cancellationToken = default)
         {

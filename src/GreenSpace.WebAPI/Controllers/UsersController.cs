@@ -1,5 +1,6 @@
 ﻿using GreenSpace.Application.DTOs.User;
 using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.Domain.Constants;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -19,7 +20,7 @@ namespace GreenSpace.WebAPI.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetAll()
         {
             var result = await _userService.GetAllAsync();
@@ -35,7 +36,7 @@ namespace GreenSpace.WebAPI.Controllers
         }
 
         [HttpGet("{id:guid}")]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _userService.GetByIdAsync(id);
@@ -46,7 +47,7 @@ namespace GreenSpace.WebAPI.Controllers
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserDto dto)
         {
             var currentUserId = Guid.Parse(User.FindFirstValue("uid")!);
-            var isAdmin = User.IsInRole("ADMIN");
+            var isAdmin = User.IsInRole(Roles.Admin);
 
             if (id != currentUserId && !isAdmin)
                 return Forbid();
@@ -58,7 +59,7 @@ namespace GreenSpace.WebAPI.Controllers
         }
 
         [HttpDelete("{id:guid}")]
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = Roles.Admin)]
         public async Task<IActionResult> Deactivate(Guid id)
         {
             var result = await _userService.DeactivateAsync(id);

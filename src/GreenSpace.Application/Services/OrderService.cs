@@ -67,49 +67,134 @@ namespace GreenSpace.Application.Services
             }
         }
 
+
+        //hàm này cần sửa lại logic
         public async Task<IServiceResult<OrderDto>> CreateAsync(CreateOrderDto dto, Guid userId)
         {
             try
             {
-                await _unitOfWork.BeginTransactionAsync();
-
-                // 1. Validate Stock for all items first
-                foreach (var item in dto.Items)
+                return await _unitOfWork.ExecuteStrategyAsync(async () =>
                 {
-                    var variant = await _unitOfWork.ProductVariantRepository.GetByIdAsync(item.VariantId);
-                    if (variant == null)
-                        throw new Exception($"Variant {item.VariantId} not found.");
+                    await _unitOfWork.BeginTransactionAsync();
 
-                    if (variant.StockQuantity < item.Quantity)
-                        return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest, $"Not enough stock for variant: {variant.Sku}");
+                    try
+                    {
+                        var variantIds = dto.Items.Select(i => i.VariantId).ToList();
+                        var variants = await _unitOfWork.ProductVariantRepository.GetAllQueryable()
+                            .Where(v => variantIds.Contains(v.VariantId))
+                            .ToListAsync();
 
-                    // 2. Deduct Stock
-                    variant.StockQuantity -= item.Quantity;
-                    await _unitOfWork.ProductVariantRepository.UpdateAsync(variant);
-                }
+                        if (variants.Count != dto.Items.Count)
+                        {
+                            await _unitOfWork.RollbackAsync();
+                            return ServiceResult<OrderDto>.Failure(
+                                ApiStatusCodes.NotFound,
+                                ApiMessages.ProductVariant.NotFound);
+                        }
+                        var variantDict = variants.ToDictionary(v => v.VariantId);
+ 
+                        decimal totalAmount = 0;
+                        var orderItems = new List<OrderItem>();
 
-                // 3. Create Order
-                var order = _mapper.Map<Order>(dto);
-                order.UserId = userId;
-                order.Status = "Pending"; // Use a Constant like OrderStatuses.Pending
-                order.CreatedAt = DateTime.UtcNow;
+                        foreach (var item in dto.Items)
+                        {
+                            var variant = variantDict[item.VariantId];
 
-                await _unitOfWork.OrderRepository.AddAsync(order);
-                await _unitOfWork.SaveChangesAsync();
+                            // Check stock
+                            if (variant.StockQuantity < item.Quantity)
+                            {
+                                await _unitOfWork.RollbackAsync();
+                                return ServiceResult<OrderDto>.Failure(
+                                    ApiStatusCodes.Conflict,
+                                    $"{variant.Sku}: {ApiMessages.ProductVariant.InsufficientStock}");
+                            }
 
-                // 4. (Optional) Clear User Cart here if your logic requires it
+                            // Deduct stock
+                            variant.StockQuantity -= item.Quantity;
+                            variant.UpdatedAt = DateTime.UtcNow;
 
-                await _unitOfWork.CommitAsync();
+                            // Create order item
+                            var orderItem = new OrderItem
+                            {
+                                VariantId = item.VariantId,
+                                Quantity = item.Quantity,
+                                PriceAtPurchase = variant.Price
+                            };
+                            orderItems.Add(orderItem);
 
-                return ServiceResult<OrderDto>.Success(_mapper.Map<OrderDto>(order), "Order placed successfully.");
+                            // Calculate total
+                            totalAmount += variant.Price * item.Quantity;
+                        }
+
+ 
+                        foreach (var variant in variants)
+                        {
+                            await _unitOfWork.ProductVariantRepository.UpdateAsync(variant);
+                        }
+ 
+                        var order = new Order
+                        {
+                            UserId = userId,
+                            Status = "Pending",
+                            TotalAmount = totalAmount,
+                            ShippingAddress = dto.ShippingAddress,
+                            CreatedAt = DateTime.UtcNow
+                        };
+
+                        await _unitOfWork.OrderRepository.AddAsync(order);
+                        await _unitOfWork.SaveChangesAsync();  
+ 
+                        foreach (var orderItem in orderItems)
+                        {
+                            orderItem.OrderId = order.OrderId;
+                            await _unitOfWork.OrderItemRepository.AddAsync(orderItem);
+                        }
+
+                        await _unitOfWork.SaveChangesAsync();
+                        await _unitOfWork.CommitAsync();
+ 
+                        var createdOrder = await _unitOfWork.OrderRepository.GetAllQueryable()
+                            .Include(o => o.OrderItems)
+                                .ThenInclude(oi => oi.Variant)
+                                    .ThenInclude(v => v.Product)
+                            .AsNoTracking() // Performance optimization
+                            .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+
+                        if (createdOrder == null)
+                        {
+                            return ServiceResult<OrderDto>.Failure(
+                                ApiStatusCodes.InternalServerError,
+                                "Order created but failed to retrieve");
+                        }
+
+                        var orderDto = _mapper.Map<OrderDto>(createdOrder);
+
+                        _logger.LogInformation(
+                            "Order {OrderId} created successfully for user {UserId}",
+                            order.OrderId,
+                            userId);
+
+                        return ServiceResult<OrderDto>.Success(
+                            orderDto,
+                            ApiMessages.Order.Created);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error in order transaction for user {UserId}", userId);
+                        await _unitOfWork.RollbackAsync();
+                        throw;
+                    }
+                });
             }
             catch (Exception ex)
             {
-                await _unitOfWork.RollbackAsync();
                 _logger.LogError(ex, "Error creating order for user {UserId}", userId);
-                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, "Order creation failed. Please try again.");
+                return ServiceResult<OrderDto>.Failure(
+                    ApiStatusCodes.InternalServerError,
+                    "Order creation failed. Please try again.");
             }
         }
+
 
         public async Task<IServiceResult<OrderDto>> UpdateStatusAsync(Guid orderId, string status)
         {

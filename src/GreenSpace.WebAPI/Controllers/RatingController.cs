@@ -1,43 +1,85 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+﻿using GreenSpace.Application.DTOs.Rating;
+using GreenSpace.Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GreenSpace.WebAPI.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
-    public class RatingController : ControllerBase
+    [Route("api/[controller]")]
+    public class RatingsController : ControllerBase
     {
-        // GET: api/<RatingController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IRatingService _ratingService;
+
+        public RatingsController(IRatingService ratingService)
         {
-            return new string[] { "value1", "value2" };
+            _ratingService = ratingService;
         }
 
-        // GET api/<RatingController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("product/{productId:guid}")]
+        public async Task<IActionResult> GetByProductId(Guid productId)
         {
-            return "value";
+            var result = await _ratingService.GetByProductIdAsync(productId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        // POST api/<RatingController>
+        [HttpGet("product/{productId:guid}/average")]
+        public async Task<IActionResult> GetAverageRating(Guid productId)
+        {
+            var result = await _ratingService.GetAverageRatingAsync(productId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpGet("my-ratings")]
+        [Authorize]
+        public async Task<IActionResult> GetMyRatings()
+        {
+            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var result = await _ratingService.GetByUserIdAsync(userId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(Guid id)
+        {
+            var result = await _ratingService.GetByIdAsync(id);
+            return result.IsSuccess ? Ok(result) : NotFound(result);
+        }
+
         [HttpPost]
-        public void Post([FromBody] string value)
+        [Authorize]
+        public async Task<IActionResult> Create([FromBody] CreateRatingDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var result = await _ratingService.CreateAsync(dto, userId);
+            return result.IsSuccess
+                ? CreatedAtAction(nameof(GetById), new { id = result.Data?.RatingId }, result)
+                : BadRequest(result);
         }
 
-        // PUT api/<RatingController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateRatingDto dto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var result = await _ratingService.UpdateAsync(id, dto, userId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
-        // DELETE api/<RatingController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete("{id:guid}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(Guid id)
         {
+            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var result = await _ratingService.DeleteAsync(id, userId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }

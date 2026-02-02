@@ -21,6 +21,9 @@ namespace GreenSpace.Application
                 cfg.AddProfile<OrderProfile>();
                 cfg.AddProfile<CartProfile>();
                 cfg.AddProfile<PromotionProfile>();
+                cfg.AddProfile<RatingProfile>();
+                cfg.AddProfile<UserAddressProfile>();
+                cfg.AddProfile<PaymentProfile>();
             });
 
             services.AddScoped<IAuthService, AuthService>();
@@ -30,6 +33,10 @@ namespace GreenSpace.Application
             services.AddScoped<ICartService, CartService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IPromotionService, PromotionService>();
+            services.AddScoped<IRatingService, RatingService>();
+            services.AddScoped<IUserAddressService, UserAddressService>();
+            services.AddScoped<IProductVariantService, ProductVariantService>();
+            services.AddScoped<IPaymentService, PaymentService>();
 
             return services;
         }

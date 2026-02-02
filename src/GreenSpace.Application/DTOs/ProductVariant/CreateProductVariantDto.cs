@@ -13,7 +13,8 @@ namespace GreenSpace.Application.DTOs.ProductVariant
         public Guid ProductId { get; set; }
 
         [Required]
-        public string Sku { get; set; }
+        [MaxLength(100)]
+        public string Sku { get; set; } = string.Empty;
 
         [Range(0, double.MaxValue)]
         public decimal Price { get; set; }
@@ -21,8 +22,13 @@ namespace GreenSpace.Application.DTOs.ProductVariant
         [Range(0, int.MaxValue)]
         public int StockQuantity { get; set; }
 
-        public string ImageUrl { get; set; }
-        public string Color { get; set; }
-        public string SizeOrModel { get; set; }
+        [MaxLength(255)]
+        public string? ImageUrl { get; set; }
+
+        [MaxLength(50)]
+        public string? Color { get; set; }
+
+        [MaxLength(50)]
+        public string? SizeOrModel { get; set; }
     }
 }
