@@ -55,9 +55,17 @@ Dự án tuân thủ mô hình **Clean Architecture** kết hợp với **Reposi
 ┌──────────────▼──────────────────────────┐
 │          Application Layer              │
 │      (GreenSpace.Infrastructure)        │
+│   • DTOs                                │
+│   • Interfaces                          │
+│   • Mappings (Auto Mapper)              │
 │   • Services (Business Logic)           │
-│   • Repositories Implementation         │
-│   • EF Core (DB Context)                │
+└──────────────┬──────────────────────────┘
+               │
+┌──────────────▼──────────────────────────┐
+│          Infrastructure Layer           │
+│      (GreenSpace.Infrastructure)        │
+│   • External Services                   │
+│   • Persistence (DB Context)            │
 │   • External Services (VNPAY, Email)    │
 └──────────────┬──────────────────────────┘
                │
