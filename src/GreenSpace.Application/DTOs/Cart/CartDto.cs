@@ -19,7 +19,7 @@ namespace GreenSpace.Application.DTOs.Cart
         public decimal SubTotal => Quantity * Price;
     }
 
-    public class AddCartItemDto
+    public class ModifyCartItemDto
     {
         [Required]
         public Guid VariantId { get; set; }
@@ -27,4 +27,6 @@ namespace GreenSpace.Application.DTOs.Cart
         [Range(1, int.MaxValue)]
         public int Quantity { get; set; } = 1;
     }
+
+
 }

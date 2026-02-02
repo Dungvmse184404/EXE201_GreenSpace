@@ -1,5 +1,6 @@
 ﻿using GreenSpace.Application.DTOs.Cart;
 using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -21,34 +22,34 @@ namespace GreenSpace.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMyCart()
         {
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var userId = User.GetUserId();
             var result = await _cartService.GetUserCartAsync(userId);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
 
         [HttpPost("items")]
-        public async Task<IActionResult> AddItem([FromBody] AddCartItemDto dto)
+        public async Task<IActionResult> AddItem([FromBody] ModifyCartItemDto dto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var userId = User.GetUserId();
             var result = await _cartService.AddItemAsync(userId, dto);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
-
-        [HttpDelete("items/{cartItemId:guid}")]
-        public async Task<IActionResult> RemoveItem(Guid cartItemId)
+        
+        [HttpDelete("items")]
+        public async Task<IActionResult> RemoveItem([FromBody] ModifyCartItemDto dto)
         {
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
-            var result = await _cartService.RemoveItemAsync(userId, cartItemId);
+            var userId = User.GetUserId();
+            var result = await _cartService.RemoveItemAsync(userId, dto);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
         [HttpDelete]
         public async Task<IActionResult> ClearCart()
         {
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var userId = User.GetUserId();
             var result = await _cartService.ClearCartAsync(userId);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }

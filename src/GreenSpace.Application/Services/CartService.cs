@@ -44,37 +44,37 @@ namespace GreenSpace.Application.Services
             }
         }
 
-        public async Task<IServiceResult<CartDto>> AddItemAsync(Guid userId, AddCartItemDto dto)
+        public async Task<IServiceResult<CartDto>> AddItemAsync(Guid userId, ModifyCartItemDto dto)
         {
             try
             {
-                // 1. Validate Variant Existence & Stock
+                // Validate Variant Existence & Stock
                 var variant = await _unitOfWork.ProductVariantRepository.GetByIdAsync(dto.VariantId);
                 if (variant == null)
                 {
-                    return ServiceResult<CartDto>.Failure(ApiStatusCodes.NotFound, "Product variant not found.");
+                    return ServiceResult<CartDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.ProductVariant.NotFound);
                 }
 
                 if (variant.StockQuantity < dto.Quantity)
                 {
-                    return ServiceResult<CartDto>.Failure(ApiStatusCodes.BadRequest, "Not enough stock available.");
+                    return ServiceResult<CartDto>.Failure(ApiStatusCodes.BadRequest, ApiMessages.ProductVariant.InsufficientStock);
                 }
 
-                // 2. Get or Create Cart
+                // Get or Create Cart
                 var cart = await GetCartWithItemsAsync(userId);
                 if (cart == null)
                 {
                     cart = await CreateNewCartAsync(userId);
                 }
 
-                // 3. Update or Add Item
+                // Update or Add Item
                 var existingItem = cart.CartItems.FirstOrDefault(ci => ci.VariantId == dto.VariantId);
                 if (existingItem != null)
                 {
                     existingItem.Quantity += dto.Quantity;
                     // Optional: Check stock again against total quantity
                     if (variant.StockQuantity < existingItem.Quantity)
-                        return ServiceResult<CartDto>.Failure(ApiStatusCodes.BadRequest, "Total quantity exceeds available stock.");
+                        return ServiceResult<CartDto>.Failure(ApiStatusCodes.BadRequest,ApiMessages.ProductVariant.InsufficientStock);
                 }
                 else
                 {
@@ -89,35 +89,48 @@ namespace GreenSpace.Application.Services
                 cart.UpdatedAt = DateTime.UtcNow;
                 await _unitOfWork.SaveChangesAsync();
 
-                return ServiceResult<CartDto>.Success(_mapper.Map<CartDto>(cart), "Item added to cart successfully.");
+                return ServiceResult<CartDto>.Success(_mapper.Map<CartDto>(cart), ApiMessages.ProductVariant.Added);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error adding item to cart for user {UserId}", userId);
-                return ServiceResult<CartDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to add item to cart.");
+                return ServiceResult<CartDto>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.ProductVariant.AddFailed);
             }
         }
 
-        public async Task<IServiceResult<CartDto>> RemoveItemAsync(Guid userId, Guid cartItemId)
+        public async Task<IServiceResult<CartDto>> RemoveItemAsync(Guid userId, ModifyCartItemDto dto)
         {
             try
             {
                 var cart = await GetCartWithItemsAsync(userId);
-                if (cart == null) return ServiceResult<CartDto>.Failure(ApiStatusCodes.NotFound, "Cart not found.");
+                if (cart == null) return ServiceResult<CartDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Cart.NotFound);
 
-                var item = cart.CartItems.FirstOrDefault(ci => ci.CartItemId == cartItemId);
-                if (item == null) return ServiceResult<CartDto>.Failure(ApiStatusCodes.NotFound, "Item not found in cart.");
+                var item = cart.CartItems.FirstOrDefault(ci => ci.VariantId == dto.VariantId);
+                if (item == null) return ServiceResult<CartDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Cart.ItemNotFound);
 
-                await _unitOfWork.CartItemRepository.RemoveAsync(item);
+                // Caculate numbers
+                item.Quantity -= dto.Quantity;
+
+                if (item.Quantity <= 0)
+                {
+                    // <= 0 -> delete
+                    await _unitOfWork.CartItemRepository.RemoveAsync(item);
+                }
+                else
+                {
+                    // > 0 -> update 
+                    await _unitOfWork.CartItemRepository.UpdateAsync(item);
+                }
+
                 cart.UpdatedAt = DateTime.UtcNow;
                 await _unitOfWork.SaveChangesAsync();
 
-                return ServiceResult<CartDto>.Success(_mapper.Map<CartDto>(cart), "Item removed from cart.");
+                return ServiceResult<CartDto>.Success(_mapper.Map<CartDto>(cart), ApiMessages.Cart.Updated);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error removing item {CartItemId} for user {UserId}", cartItemId, userId);
-                return ServiceResult<CartDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to remove item.");
+                _logger.LogError(ex, "Error modifying item {VariantId} for user {UserId}", dto.VariantId, userId);
+                return ServiceResult<CartDto>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Cart.UpdateFailed);
             }
         }
 
@@ -136,18 +149,23 @@ namespace GreenSpace.Application.Services
                 cart.UpdatedAt = DateTime.UtcNow;
                 await _unitOfWork.SaveChangesAsync();
 
-                return ServiceResult<bool>.Success(true, "Cart cleared successfully.");
+                return ServiceResult<bool>.Success(true, ApiMessages.Cart.Cleared);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error clearing cart for user {UserId}", userId);
-                return ServiceResult<bool>.Failure(ApiStatusCodes.InternalServerError, "Failed to clear cart.");
+                return ServiceResult<bool>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Cart.ClearFailed);
             }
         }
 
         #region Private Helper Methods
 
-        private async Task<Cart> GetCartWithItemsAsync(Guid userId)
+        /// <summary>
+        /// Gets the cart with items.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns></returns>
+        private async Task<Cart?> GetCartWithItemsAsync(Guid userId)
         {
             return await _unitOfWork.CartRepository.GetAllQueryable()
                 .Include(c => c.CartItems)

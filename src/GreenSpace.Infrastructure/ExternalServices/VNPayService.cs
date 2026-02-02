@@ -202,16 +202,13 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         var order = await _unitOfWork.OrderRepository.GetByIdAsync(payment.OrderId);
                         if (order != null)
                         {
-                            order.Status = "Paid";
+                            order.Status = OrderStatus.Confirmed;
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
                         }
                     }
-
                     var saved = await _unitOfWork.SaveChangesAsync();
-                    _logger.LogInformation("SaveChangesAsync returned {SavedCount} for payment {PaymentId}", saved, payment.PaymentId);
 
                     await _unitOfWork.CommitAsync();
-                    _logger.LogInformation("CommitAsync completed for payment {PaymentId}", payment.PaymentId);
 
                     _logger.LogInformation(
                         "Payment {PaymentId} processed: Status={Status}, Amount={Amount}",
@@ -223,7 +220,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         new ProcessPaymentResultDto
                         {
                             Success = isSuccess,
-                            Message = isSuccess ? "Payment successful" : payment.ResponseMessage ?? "Payment failed",
+                            Message = isSuccess ? ApiMessages.Payment.Success : payment.ResponseMessage ?? ApiMessages.Payment.Failed,
                             OrderId = payment.OrderId,
                             TransactionCode = callback.vnp_TransactionNo,
                             Amount = amount,

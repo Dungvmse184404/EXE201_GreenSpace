@@ -1,5 +1,6 @@
 ﻿using GreenSpace.Application.DTOs.Rating;
 using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -54,7 +55,7 @@ namespace GreenSpace.WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var userId = User.GetUserId();
             var result = await _ratingService.CreateAsync(dto, userId);
             return result.IsSuccess
                 ? CreatedAtAction(nameof(GetById), new { id = result.Data?.RatingId }, result)
@@ -68,7 +69,7 @@ namespace GreenSpace.WebAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var userId = User.GetUserId();
             var result = await _ratingService.UpdateAsync(id, dto, userId);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
@@ -77,7 +78,7 @@ namespace GreenSpace.WebAPI.Controllers
         [Authorize]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var userId = User.GetUserId();
             var result = await _ratingService.DeleteAsync(id, userId);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }

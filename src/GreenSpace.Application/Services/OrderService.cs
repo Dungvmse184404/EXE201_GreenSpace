@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using GreenSpace.Application.Common.Constants;
 using GreenSpace.Application.DTOs.Order;
+using GreenSpace.Application.Enums;
 using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Services;
 using GreenSpace.Domain.Common;
+using GreenSpace.Domain.Constants;
 using GreenSpace.Domain.Interfaces;
 using GreenSpace.Domain.Models;
 using Microsoft.EntityFrameworkCore;
@@ -41,7 +43,7 @@ namespace GreenSpace.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting orders for user {UserId}", userId);
-                return ServiceResult<List<OrderDto>>.Failure(ApiStatusCodes.InternalServerError, "Failed to retrieve your orders.");
+                return ServiceResult<List<OrderDto>>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Error.General);
             }
         }
 
@@ -68,8 +70,7 @@ namespace GreenSpace.Application.Services
         }
 
 
-        //hàm này cần sửa lại logic
-        public async Task<IServiceResult<OrderDto>> CreateAsync(CreateOrderDto dto, Guid userId)
+        public async Task<IServiceResult<OrderDto>> CreateOrderAsync(CreateOrderDto dto, Guid userId)
         {
             try
             {
@@ -135,7 +136,7 @@ namespace GreenSpace.Application.Services
                         var order = new Order
                         {
                             UserId = userId,
-                            Status = "Pending",
+                            Status = OrderStatus.Pending,
                             TotalAmount = totalAmount,
                             ShippingAddress = dto.ShippingAddress,
                             CreatedAt = DateTime.UtcNow
@@ -191,7 +192,7 @@ namespace GreenSpace.Application.Services
                 _logger.LogError(ex, "Error creating order for user {UserId}", userId);
                 return ServiceResult<OrderDto>.Failure(
                     ApiStatusCodes.InternalServerError,
-                    "Order creation failed. Please try again.");
+                    ApiMessages.Order.CreateFailed);
             }
         }
 
@@ -202,7 +203,7 @@ namespace GreenSpace.Application.Services
             {
                 var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
                 if (order == null)
-                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, "Order not found.");
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound);
 
   
                 order.Status = status;
@@ -214,7 +215,7 @@ namespace GreenSpace.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating order status for {OrderId}", orderId);
-                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, "Failed to update order status.");
+                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Order.UpdateFailed);
             }
         }
     }

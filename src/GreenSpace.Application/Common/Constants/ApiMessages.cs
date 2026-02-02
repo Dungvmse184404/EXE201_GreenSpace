@@ -163,7 +163,6 @@ namespace GreenSpace.Application.Common.Constants
         }
 
 
-
         public static class ProductVariant
         {
             public const string NotFound = "Product variant not found.";
@@ -173,6 +172,8 @@ namespace GreenSpace.Application.Common.Constants
             public const string Deleted = "Product variant deleted successfully.";
             public const string SkuExists = "SKU already exists.";
             public const string StockUpdated = "Product variant stock updated successfully.";
+            public const string Added = "Variant added successfully.";
+            public const string AddFailed = "Failed to add item to cart.";
         }
 
         public static class Rating
@@ -206,5 +207,17 @@ namespace GreenSpace.Application.Common.Constants
             public static string StatusUpdated = "Payment status updated successfully";
         }
 
+        public static class Cart
+        {
+            public const string NotFound = "Cart variant not found.";
+            public const string ItemNotFound = "Itemnot found in cart.";
+            public const string Created = "Cart variant created successfully.";
+            public const string Updated = "Cart variant updated successfully.";
+            public const string Deleted = "Cart variant deleted successfully.";
+            public const string UpdateFailed = "Cart variant updated failed.";
+            public const string Cleared = "Cart cleared successfully.";
+            public const string ClearFailed = "Failed to clear cart.";
+
+        }
     }
 }

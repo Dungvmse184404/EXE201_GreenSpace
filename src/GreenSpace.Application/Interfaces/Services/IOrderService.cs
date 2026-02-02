@@ -7,7 +7,7 @@ namespace GreenSpace.Application.Interfaces.Services
     {
         Task<IServiceResult<List<OrderDto>>> GetUserOrdersAsync(Guid userId);
         Task<IServiceResult<OrderDto>> GetByIdAsync(Guid orderId);
-        Task<IServiceResult<OrderDto>> CreateAsync(CreateOrderDto dto, Guid userId);
+        Task<IServiceResult<OrderDto>> CreateOrderAsync(CreateOrderDto dto, Guid userId);
         Task<IServiceResult<OrderDto>> UpdateStatusAsync(Guid orderId, string status);
     }
 }

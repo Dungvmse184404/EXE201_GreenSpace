@@ -58,4 +58,9 @@ public partial class ProductVariant
     [ForeignKey("ProductId")]
     [InverseProperty("ProductVariants")]
     public virtual Product Product { get; set; } = null!;
+
+    [Timestamp]
+    [Column("row_version")]
+    public byte[]? RowVersion { get; set; }
+
 }

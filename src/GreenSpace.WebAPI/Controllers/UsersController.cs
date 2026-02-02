@@ -1,6 +1,7 @@
 ﻿using GreenSpace.Application.DTOs.User;
 using GreenSpace.Application.Interfaces.Services;
 using GreenSpace.Domain.Constants;
+using GreenSpace.WebAPI.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -30,7 +31,7 @@ namespace GreenSpace.WebAPI.Controllers
         [HttpGet("me")]
         public async Task<IActionResult> GetMe()
         {
-            var userId = Guid.Parse(User.FindFirstValue("uid")!);
+            var userId = User.GetUserId();
             var result = await _userService.GetByIdAsync(userId);
             return result.IsSuccess ? Ok(result) : NotFound(result);
         }
@@ -46,7 +47,7 @@ namespace GreenSpace.WebAPI.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateUserDto dto)
         {
-            var currentUserId = Guid.Parse(User.FindFirstValue("uid")!);
+            var currentUserId = User.GetUserId();
             var isAdmin = User.IsInRole(Roles.Admin);
 
             if (id != currentUserId && !isAdmin)
