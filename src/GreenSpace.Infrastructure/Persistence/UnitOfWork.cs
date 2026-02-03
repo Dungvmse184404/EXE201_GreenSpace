@@ -1,13 +1,16 @@
-﻿using GreenSpace.Application.Interfaces;
+﻿using GreenSpace.Application.DTOs.VNPay;
+using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.Repositories;
 using GreenSpace.Application.Interfaces.Services;
 using GreenSpace.Application.Services;
+using GreenSpace.Infrastructure.ExternalServices;
 using GreenSpace.Infrastructure.Persistence.Contexts;
 using GreenSpace.Infrastructure.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace GreenSpace.Infrastructure.Persistence
 {
@@ -59,6 +62,7 @@ namespace GreenSpace.Infrastructure.Persistence
             _cartItemRepository = new Lazy<ICartItemRepository>(() => new CartItemRepository(_context));
             _refreshTokenRepository = new Lazy<IRefreshTokenRepository>(() => new RefreshTokenRepository(_context));
             _refreshTokenService = new Lazy<IRefreshTokenService>(() => new RefreshTokenService(this, _configuration, _loggerFactory.CreateLogger<RefreshTokenService>()));
+    
         }
 
         public IAttributeRepository AttributeRepository => _attributeRepository.Value;
@@ -78,7 +82,7 @@ namespace GreenSpace.Infrastructure.Persistence
         public IRefreshTokenRepository RefreshTokenRepository => _refreshTokenRepository.Value;
         public IRefreshTokenService RefreshTokenService => _refreshTokenService.Value;
 
-        
+
         // --- Xử lý Transaction ---
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {

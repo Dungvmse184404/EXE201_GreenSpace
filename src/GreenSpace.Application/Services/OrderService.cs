@@ -18,12 +18,14 @@ namespace GreenSpace.Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<OrderService> _logger;
+        private readonly IStockService _stockService;
 
-        public OrderService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<OrderService> logger)
+        public OrderService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<OrderService> logger, IStockService stockService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
+            _stockService = stockService;
         }
 
         public async Task<IServiceResult<List<OrderDto>>> GetUserOrdersAsync(Guid userId)
@@ -70,129 +72,106 @@ namespace GreenSpace.Application.Services
         }
 
 
-        public async Task<IServiceResult<OrderDto>> CreateOrderAsync(CreateOrderDto dto, Guid userId)
+        public async Task<IServiceResult<OrderDto>> CreateOrderAsync(
+            CreateOrderDto dto, 
+            Guid userId)
         {
             try
             {
-                return await _unitOfWork.ExecuteStrategyAsync(async () =>
+                // check stock availability  
+                var stockCheck = await _stockService.CheckStockAvailabilityAsync(dto.Items);
+                if (!stockCheck.IsSuccess)
                 {
-                    await _unitOfWork.BeginTransactionAsync();
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, stockCheck.Message ?? "Stock unavailable");
+                }
 
-                    try
+                await _unitOfWork.BeginTransactionAsync();
+
+                try
+                {
+                    // Create order
+                    var order = new Order
                     {
-                        var variantIds = dto.Items.Select(i => i.VariantId).ToList();
-                        var variants = await _unitOfWork.ProductVariantRepository.GetAllQueryable()
-                            .Where(v => variantIds.Contains(v.VariantId))
-                            .ToListAsync();
+                        UserId = userId,
+                        Status = "Pending",
+                        ShippingAddress = dto.ShippingAddress,
+                        CreatedAt = DateTime.UtcNow,
+                        TotalAmount = 0 
+                    };
 
-                        if (variants.Count != dto.Items.Count)
+                    await _unitOfWork.OrderRepository.AddAsync(order);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    // Create order items
+                    decimal totalAmount = 0;
+                    var orderItems = new List<OrderItem>();
+
+                    foreach (var item in dto.Items)
+                    {
+                        var variant = await _unitOfWork.ProductVariantRepository
+                            .GetByIdAsync(item.VariantId);
+
+                        if (variant == null)
+                            throw new InvalidOperationException($"Variant {item.VariantId} not found");
+
+                        var orderItem = new OrderItem
                         {
-                            await _unitOfWork.RollbackAsync();
-                            return ServiceResult<OrderDto>.Failure(
-                                ApiStatusCodes.NotFound,
-                                ApiMessages.ProductVariant.NotFound);
-                        }
-                        var variantDict = variants.ToDictionary(v => v.VariantId);
- 
-                        decimal totalAmount = 0;
-                        var orderItems = new List<OrderItem>();
-
-                        foreach (var item in dto.Items)
-                        {
-                            var variant = variantDict[item.VariantId];
-
-                            // Check stock
-                            if (variant.StockQuantity < item.Quantity)
-                            {
-                                await _unitOfWork.RollbackAsync();
-                                return ServiceResult<OrderDto>.Failure(
-                                    ApiStatusCodes.Conflict,
-                                    $"{variant.Sku}: {ApiMessages.ProductVariant.InsufficientStock}");
-                            }
-
-                            // Deduct stock
-                            variant.StockQuantity -= item.Quantity;
-                            variant.UpdatedAt = DateTime.UtcNow;
-
-                            // Create order item
-                            var orderItem = new OrderItem
-                            {
-                                VariantId = item.VariantId,
-                                Quantity = item.Quantity,
-                                PriceAtPurchase = variant.Price
-                            };
-                            orderItems.Add(orderItem);
-
-                            // Calculate total
-                            totalAmount += variant.Price * item.Quantity;
-                        }
-
- 
-                        foreach (var variant in variants)
-                        {
-                            await _unitOfWork.ProductVariantRepository.UpdateAsync(variant);
-                        }
- 
-                        var order = new Order
-                        {
-                            UserId = userId,
-                            Status = OrderStatus.Pending,
-                            TotalAmount = totalAmount,
-                            ShippingAddress = dto.ShippingAddress,
-                            CreatedAt = DateTime.UtcNow
+                            OrderId = order.OrderId,
+                            VariantId = item.VariantId,
+                            Quantity = item.Quantity,
+                            PriceAtPurchase = variant.Price
                         };
 
-                        await _unitOfWork.OrderRepository.AddAsync(order);
-                        await _unitOfWork.SaveChangesAsync();  
- 
-                        foreach (var orderItem in orderItems)
-                        {
-                            orderItem.OrderId = order.OrderId;
-                            await _unitOfWork.OrderItemRepository.AddAsync(orderItem);
-                        }
-
-                        await _unitOfWork.SaveChangesAsync();
-                        await _unitOfWork.CommitAsync();
- 
-                        var createdOrder = await _unitOfWork.OrderRepository.GetAllQueryable()
-                            .Include(o => o.OrderItems)
-                                .ThenInclude(oi => oi.Variant)
-                                    .ThenInclude(v => v.Product)
-                            .AsNoTracking() // Performance optimization
-                            .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
-
-                        if (createdOrder == null)
-                        {
-                            return ServiceResult<OrderDto>.Failure(
-                                ApiStatusCodes.InternalServerError,
-                                "Order created but failed to retrieve");
-                        }
-
-                        var orderDto = _mapper.Map<OrderDto>(createdOrder);
-
-                        _logger.LogInformation(
-                            "Order {OrderId} created successfully for user {UserId}",
-                            order.OrderId,
-                            userId);
-
-                        return ServiceResult<OrderDto>.Success(
-                            orderDto,
-                            ApiMessages.Order.Created);
+                        orderItems.Add(orderItem);
+                        totalAmount += variant.Price * item.Quantity;
                     }
-                    catch (Exception ex)
+
+                    await _unitOfWork.OrderItemRepository.AddMultipleAsync(orderItems);
+                    
+                    // Update total amount
+                    order.TotalAmount = totalAmount;
+                    await _unitOfWork.OrderRepository.UpdateAsync(order);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    // Reserve stock
+                    var reserveResult = await _stockService.ReserveStockAsync(
+                        order.OrderId, 
+                        dto.Items);
+
+                    if (!reserveResult.IsSuccess)
                     {
-                        _logger.LogError(ex, "Error in order transaction for user {UserId}", userId);
                         await _unitOfWork.RollbackAsync();
-                        throw;
+                        return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError,
+                            reserveResult.Message ?? "Failed to reserve stock");
                     }
-                });
+
+                    await _unitOfWork.CommitAsync();
+
+                    // Reload order with items
+                    var createdOrder = await _unitOfWork.OrderRepository.GetAllQueryable()
+                        .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Variant)
+                        .ThenInclude(v => v.Product)
+                        .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+
+                    var result = _mapper.Map<OrderDto>(createdOrder);
+                    
+                    _logger.LogInformation(
+                        "Order {OrderId} created with stock reserved for user {UserId}", 
+                        order.OrderId, userId);
+
+                    return ServiceResult<OrderDto>.Success(result, ApiMessages.Order.Created);
+                }
+                catch (Exception)
+                {
+                    await _unitOfWork.RollbackAsync();
+                    throw;
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating order for user {UserId}", userId);
-                return ServiceResult<OrderDto>.Failure(
-                    ApiStatusCodes.InternalServerError,
-                    ApiMessages.Order.CreateFailed);
+                _logger.LogError(ex, "Error creating order");
+                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }
 
@@ -205,17 +184,36 @@ namespace GreenSpace.Application.Services
                 if (order == null)
                     return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound);
 
-  
+                var oldStatus = order.Status;
                 order.Status = status;
+
+                // Handle stock based on status change
+                if (status == OrderStatus.Cancelled)
+                {
+                    // Revert stock if order cancelled/failed
+                    await _stockService.RevertStockReservationAsync(orderId);
+                }
+                else if (status == OrderStatus.Completed)
+                {
+                    // Confirm stock deduction
+                    await _stockService.ConfirmStockReservationAsync(orderId);
+                }
+
                 await _unitOfWork.OrderRepository.UpdateAsync(order);
                 await _unitOfWork.SaveChangesAsync();
 
-                return ServiceResult<OrderDto>.Success(_mapper.Map<OrderDto>(order), $"Order status updated to {status}.");
+                var result = _mapper.Map<OrderDto>(order);
+
+                _logger.LogInformation(
+                    "Order {OrderId} status changed from {OldStatus} to {NewStatus}",
+                    orderId, oldStatus, status);
+
+                return ServiceResult<OrderDto>.Success(result, ApiMessages.Order.Updated);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating order status for {OrderId}", orderId);
-                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Order.UpdateFailed);
+                _logger.LogError(ex, "Error updating order status {OrderId}", orderId);
+                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }
     }

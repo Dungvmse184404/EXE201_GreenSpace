@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreenSpace.Application.Enums
 {
-    internal class ProductStatus
+    public class ProductStatus
     {
     }
 }

@@ -128,6 +128,11 @@ namespace GreenSpace.Infrastructure
 
             services.Configure<ClientSettings>(configuration.GetSection("ClientSettings"));
 
+            // Đăng ký dịch vụ quản lý kho hàng
+            services.AddScoped<IStockService, StockService>();
+            // Đăng ký dịch vụ chạy ngầm để dọn dẹp kho hàng
+            services.AddHostedService<StockCleanupService>();
+
             services.AddDistributedMemoryCache();
            
 

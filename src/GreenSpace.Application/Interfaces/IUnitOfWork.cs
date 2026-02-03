@@ -34,7 +34,6 @@ namespace GreenSpace.Application.Interfaces
         IRefreshTokenService RefreshTokenService { get; }
 
 
-
         /// <summary>
         /// Persists all changes synchronously.
         /// </summary>
@@ -66,5 +65,6 @@ namespace GreenSpace.Application.Interfaces
         /// </summary>
         /// <param name="cancellationToken">A token to cancel the operation.</param>
         Task RollbackAsync(CancellationToken cancellationToken = default);
+
     }
 }

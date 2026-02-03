@@ -43,4 +43,10 @@ public partial class Order
     [ForeignKey("UserId")]
     [InverseProperty("Orders")]
     public virtual User User { get; set; } = null!;
+
+    [Column("payment_expiry_at", TypeName = "timestamp without time zone")]
+    public DateTime? PaymentExpiryAt { get; set; }
+
+    [Column("stock_reserved")]
+    public bool StockReserved { get; set; }
 }

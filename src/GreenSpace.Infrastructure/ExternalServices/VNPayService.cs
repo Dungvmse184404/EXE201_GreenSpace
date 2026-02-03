@@ -6,14 +6,17 @@ using GreenSpace.Application.Enums;
 using GreenSpace.Application.Interfaces;
 using GreenSpace.Application.Interfaces.External;
 using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.Application.Services;
 using GreenSpace.Domain.Common;
 using GreenSpace.Domain.Constants;
 using GreenSpace.Domain.Interfaces;
 using GreenSpace.Domain.Models;
+using MailKit.Search;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Globalization;
+using static GreenSpace.Application.Common.Constants.ApiMessages;
 
 namespace GreenSpace.Infrastructure.ExternalServices
 {
@@ -21,13 +24,16 @@ namespace GreenSpace.Infrastructure.ExternalServices
     {
         private readonly VNPaySettings _settings;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IStockService _stockService;
         private readonly ILogger<VNPayService> _logger;
 
         public VNPayService(
             IOptions<VNPaySettings> settings,
             IUnitOfWork unitOfWork,
+            IStockService stockService,
             ILogger<VNPayService> logger)
         {
+            _stockService = stockService;
             _settings = settings.Value;
             _unitOfWork = unitOfWork;
             _logger = logger;
@@ -43,7 +49,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                 var order = await _unitOfWork.OrderRepository.GetByIdAsync(request.OrderId);
                 if (order == null)
                 {
-                    return ServiceResult<VNPayResponseDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound );
+                    return ServiceResult<VNPayResponseDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound);
                 }
 
                 // create transaction reference (unique identifier)
@@ -52,7 +58,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                 var tick = timeNow.Ticks.ToString();
                 var txnRef = $"VNPAY_{request.OrderId}_{tick}";
 
-                var payment = new Payment
+                var payment = new Domain.Models.Payment
                 {
                     OrderId = request.OrderId,
                     Gateway = PaymentGateway.VNPay,
@@ -120,7 +126,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error creating VNPay payment URL");
-                 return ServiceResult<VNPayResponseDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
+                return ServiceResult<VNPayResponseDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }
 
@@ -135,7 +141,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                 if (!ValidateSignature(vnpayData, callback.vnp_SecureHash))
                 {
                     _logger.LogWarning("Invalid VNPay signature for TxnRef: {TxnRef}", callback.vnp_TxnRef);
-                      return ServiceResult<ProcessPaymentResultDto>.Failure(ApiStatusCodes.Conflict, ApiMessages.Payment.InvalidSignature);
+                    return ServiceResult<ProcessPaymentResultDto>.Failure(ApiStatusCodes.Conflict, ApiMessages.Payment.InvalidSignature);
                 }
 
                 // Find payment by transaction reference
@@ -156,7 +162,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         new ProcessPaymentResultDto
                         {
                             Success = true,
-                            Message = "Payment already processed",
+                            Message = ApiMessages.Payment.Paied,
                             OrderId = payment.OrderId,
                             TransactionCode = payment.TransactionCode,
                             Amount = payment.Amount
@@ -197,13 +203,19 @@ namespace GreenSpace.Infrastructure.ExternalServices
                     await _unitOfWork.PaymentRepository.UpdateAsync(payment);
 
                     // Update order status if payment successful
-                    if (isSuccess)
+                    var order = await _unitOfWork.OrderRepository.GetByIdAsync(payment.OrderId);
+                    if (order != null)
                     {
-                        var order = await _unitOfWork.OrderRepository.GetByIdAsync(payment.OrderId);
-                        if (order != null)
+                        if (isSuccess)
                         {
                             order.Status = OrderStatus.Confirmed;
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
+                            await _stockService.ConfirmStockReservationAsync(order.OrderId);
+                        }
+                        else
+                        {
+                            order.Status = OrderStatus.Pending;
+                            await _stockService.RevertStockReservationAsync(order.OrderId);
                         }
                     }
                     var saved = await _unitOfWork.SaveChangesAsync();
