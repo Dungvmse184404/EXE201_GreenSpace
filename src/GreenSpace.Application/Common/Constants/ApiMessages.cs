@@ -106,6 +106,10 @@ namespace GreenSpace.Application.Common.Constants
         public static class Error
         {
             public const string General = "Internal server error. Please try again later.";
+            public const string NotImplemented = "This feature is not implemented yet.";
+            public const string ServiceUnavailable = "Service is currently unavailable. Please try again later.";
+            public const string Timeout = "The request has timed out. Please try again.";
+            public const string SystemBusy = "";
         }
 
         public static class Product
@@ -160,7 +164,21 @@ namespace GreenSpace.Application.Common.Constants
             public const string Updated = "Order updated successfully.";
             public const string Deleted = "Order deleted successfully.";
             public const string StatusUpdated = "Order status updated successfully.";
+
+            public const string CreateFailed = "Order creation failed. Please try again";
+            public const string UpdateFailed = "Failed to update order status.";
         }
+
+        public static class Stock
+        {
+            public const string HighTraffic = "Unable to reserve stock due to high demand. Please try again.";
+            public const string MutipleAttempts = "Failed to reserve stock after multiple attempts";
+            public const string NoStock = "No stock to confirm";
+            public const string Confirmed = "Stock confirmed successfully";
+            public const string Released = "Stock released successfully";
+
+        }
+
 
 
         public static class ProductVariant
@@ -202,9 +220,11 @@ namespace GreenSpace.Application.Common.Constants
             public static string Created = "Payment created successfully";
             public static string InvalidSignature = "Invalid signature";
             public static string InvalidTransaction = "Invalid transaction reference";
-            public static string PaymentFailed = "Payment failed";
+            public static string Failed = "Payment failed";
+            public static string Success = "Payment successful";
             public static string NotFound  = "Payment not found";
             public static string StatusUpdated = "Payment status updated successfully";
+            public static string Paied = "Payment already processed";
         }
 
         public static class Cart

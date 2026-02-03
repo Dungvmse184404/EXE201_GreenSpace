@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GreenSpace.Application.Common.Constants
 {
-    internal class PaymentRespondCode
+    public class PaymentRespondCode
     {
     }
 }

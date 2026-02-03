@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GreenSpace.Infrastructure.Persistence.Repositories
 {
-    internal class CartRepository : GenericRepository<Cart>, ICartRepository
+    public class CartRepository : GenericRepository<Cart>, ICartRepository
     {
         public CartRepository(AppDbContext context) : base(context)
         {
