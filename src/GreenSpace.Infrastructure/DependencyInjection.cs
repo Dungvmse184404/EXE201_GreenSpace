@@ -12,6 +12,7 @@ using GreenSpace.Infrastructure.Helpers;
 using GreenSpace.Infrastructure.Persistence;
 using GreenSpace.Infrastructure.Persistence.Contexts;
 using GreenSpace.Infrastructure.Persistence.Repositories;
+using GreenSpace.Infrastructure.Persistence.Seeders;
 using GreenSpace.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -134,8 +135,10 @@ namespace GreenSpace.Infrastructure
             services.AddHostedService<StockCleanupService>();
 
             services.AddDistributedMemoryCache();
-           
 
+            // Đăng ký Seeder
+            services.AddScoped<AdminSeeder>();
+            services.Configure<DefaultAdmin>(configuration.GetSection("Seeder:DefaultAdmin"));
 
             return services;
         }

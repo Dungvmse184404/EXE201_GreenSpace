@@ -5,7 +5,7 @@ namespace GreenSpace.Domain.Constants
     {
         public const string Admin = "ADMIN";
         public const string Staff = "STAFF";
-        public const string Manager = "MANAHER";
+        public const string Manager = "MANAGER";
         public const string Customer = "CUSTOMER";
 
         /// <summary>

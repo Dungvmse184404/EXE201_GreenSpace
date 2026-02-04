@@ -1,0 +1,63 @@
+services:
+  # ============================================
+  # PostgreSQL Database
+  # ============================================
+  db:
+    image: postgres:16
+    container_name: greenspace-db
+    environment:
+      POSTGRES_DB: EXE201_GreenSpaceDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/EXE201_GreenSpaceDb.sql:/docker-entrypoint-initdb.d/seed.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # GreenSpace Web API
+  # ============================================
+  api:
+    build: .
+    container_name: greenspace-api
+    ports:
+      - "5020:5020"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Kestrel__Endpoints__Http__Url=http://0.0.0.0:5020
+      - ConnectionStrings__DefaultConnection=Host=aws-1-ap-southeast-1.pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.edyichtsvltkmyfxbbiz;Password=l2WkFeI8ZNsLDUpe;Ssl Mode=Require;Trust Server Certificate=true;Pooling=true;Maximum Pool Size=20;Timeout=300
+      #- ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=EXE201_GreenSpaceDb;Username=postgres;Password=12345
+
+      - JwtSettings__SecretKey=!@#$%^&*()Mahoasieucapbaomat958l[p0-=-1l=p[=1;=.]]
+      - JwtSettings__Issuer=GreenSpace
+      - JwtSettings__Audience=GreenSpace_API
+      - JwtSettings__ExpiryMinutes=60
+      - JwtSettings__RefreshTokenExpiryDays=7
+
+      - MailSettings__Mail=dungvu2324@gmail.com
+      - MailSettings__DisplayName=GreenSpace Support
+      - MailSettings__Password=xdcc ksvb odhs qzku
+      - MailSettings__Host=smtp.gmail.com
+      - MailSettings__Port=587
+      
+      - VNPaySettings__TmnCode=U59B892K
+      - VNPaySettings__HashSecret=N9SQGZZKXOFT71EIMCMGN94WWZFPMMMO
+      - VNPaySettings__BaseUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+      - VNPaySettings__ReturnUrl=http://localhost:5020/api/payments/vnpay/callback
+      - VNPaySettings__Version=2.1.0
+      - VNPaySettings__Command=pay
+      - VNPaySettings__CurrCode=VND
+      - VNPaySettings__Locale=vn
+      - VNPaySettings__TimeoutMinutes=10
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

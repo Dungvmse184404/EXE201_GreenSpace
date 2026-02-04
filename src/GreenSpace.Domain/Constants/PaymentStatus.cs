@@ -24,6 +24,7 @@ namespace GreenSpace.Domain.Constants
         public const string ZaloPay = "ZaloPay";
         public const string BankTransfer = "BankTransfer";
         public const string COD = "COD";
+        public const string PayOS = "PayOS";
     }
 
 }

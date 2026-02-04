@@ -67,7 +67,7 @@ namespace GreenSpace.Application.Services
             catch (Exception ex)
             {
                 _logger?.LogError(ex, "Error initiate register for {Email}", dto.Email);
-                return ServiceResult.Failure(ApiStatusCodes.InternalServerError, ApiMessages.OTP.SentFailed);
+                return ServiceResult.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }
 

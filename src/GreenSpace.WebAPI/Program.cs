@@ -1,5 +1,6 @@
 ﻿using GreenSpace.Application;
 using GreenSpace.Infrastructure;
+using GreenSpace.Infrastructure.Persistence.Seeders;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.OpenApi.Models;
@@ -8,7 +9,7 @@ namespace GreenSpace.WebAPI
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)// cẩn thận với async main
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -91,6 +92,13 @@ namespace GreenSpace.WebAPI
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+
+            // Seed admin user khi khởi động ứng dụng
+            using (var scope = app.Services.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<AdminSeeder>();
+                await seeder.SeedAsync();
             }
 
             app.UseHttpsRedirection();
