@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("order_items")]
+[Index("OrderId", Name = "IX_order_items_order_id")]
+[Index("VariantId", Name = "IX_order_items_variant_id")]
 public partial class OrderItem
 {
     [Key]

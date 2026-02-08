@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("product_variants")]
+[Index("ProductId", Name = "IX_product_variants_product_id")]
 [Index("Sku", Name = "product_variants_sku_key", IsUnique = true)]
 public partial class ProductVariant
 {
@@ -49,6 +50,9 @@ public partial class ProductVariant
     [Column("updated_at", TypeName = "timestamp without time zone")]
     public DateTime? UpdatedAt { get; set; }
 
+    [Column("row_version")]
+    public byte[]? RowVersion { get; set; }
+
     [InverseProperty("Variant")]
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
@@ -58,9 +62,4 @@ public partial class ProductVariant
     [ForeignKey("ProductId")]
     [InverseProperty("ProductVariants")]
     public virtual Product Product { get; set; } = null!;
-
-    [Timestamp]
-    [Column("row_version")]
-    public byte[]? RowVersion { get; set; } // For concurrency control for optimistic locking
-
 }

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("carts")]
+[Index("UserId", Name = "IX_carts_user_id")]
 public partial class Cart
 {
     [Key]

@@ -129,6 +129,10 @@ namespace GreenSpace.Infrastructure
 
             services.Configure<ClientSettings>(configuration.GetSection("ClientSettings"));
 
+
+            services.Configure<PayOSSettings>(configuration.GetSection("PayOSSettings"));
+            services.AddScoped<IPayOSService, PayOSService>();
+
             // Đăng ký dịch vụ quản lý kho hàng
             services.AddScoped<IStockService, StockService>();
             // Đăng ký dịch vụ chạy ngầm để dọn dẹp kho hàng
@@ -168,7 +172,7 @@ namespace GreenSpace.Infrastructure
         //        if (iface != null)
         //        {
         //            services.TryAddScoped(iface, impl);
-        //        }
+            //        }
         //    }
 
         //    return services;

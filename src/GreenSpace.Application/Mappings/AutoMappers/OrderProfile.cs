@@ -33,8 +33,7 @@ namespace GreenSpace.Application.Mappings.AutoMappers
                 .ForMember(d => d.TotalAmount, o => o.Ignore())
                 .ForMember(d => d.CreatedAt, o => o.Ignore())
                 .ForMember(d => d.OrderItems, o => o.Ignore())
-                .ForMember(d => d.Payments, o => o.Ignore())
-                .ForMember(d => d.Promotions, o => o.Ignore());
+                .ForMember(d => d.Payments, o => o.Ignore());
 
             // CreateOrderItemDto → OrderItem
             CreateMap<CreateOrderItemDto, OrderItem>()

@@ -218,6 +218,7 @@ namespace GreenSpace.Application.Common.Constants
         public static class Payment
         {
             public static string Created = "Payment created successfully";
+            public static string LinkCreated = "Payment link created successfully";
             public static string InvalidSignature = "Invalid signature";
             public static string InvalidTransaction = "Invalid transaction reference";
             public static string Failed = "Payment failed";
@@ -239,5 +240,20 @@ namespace GreenSpace.Application.Common.Constants
             public const string ClearFailed = "Failed to clear cart.";
 
         }
+
+        public static class Promotion
+        {
+            public const string NotFound = "Promotiont not found.";
+            public const string Invalid = "Invalid promotion code.";
+            public const string Expired = "Promotion code expired.";
+            public const string InActived = "Inactived promotion code.";
+            public const string LimitExceeded = "Promotion usage limit reached.";
+            public const string Created = "Promotiont created successfully.";
+            public const string Updated = "Promotiont updated successfully.";
+            public const string Deleted = "Promotiont deleted successfully.";
+            public const string UpdateFailed = "Promotiont updated failed.";
+
+        }
+
     }
 }

@@ -175,9 +175,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.UpdateAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
 
-            entity.HasOne(d => d.Order).WithMany(p => p.Promotions)
-                .OnDelete(DeleteBehavior.Cascade)
-                .HasConstraintName("fk_promotions_order");
+            // Create unique index on Code for voucher lookup
+            entity.HasIndex(e => e.Code)
+                .IsUnique()
+                .HasFilter("code IS NOT NULL");
         });
 
         modelBuilder.Entity<Rating>(entity =>

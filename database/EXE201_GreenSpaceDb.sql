@@ -5,14 +5,14 @@
 -- LƯU Ý: Chạy script này SAU KHI đã chạy EF Core Migrations
 -- (dotnet ef database update) để tạo bảng trước.
 -- ============================================
- 
+
 -- Enable UUID generation
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
- 
+
 -- ============================================
 -- 1. USERS (5 users: 1 admin, 1 staff, 3 customers)
 -- ============================================
- 
+
 INSERT INTO users (user_id, username, email, password_hash, first_name, last_name, phone, role, date_of_birth, gender, is_active, create_at, update_at, login_attempts)
 VALUES
 -- Admin (Password: Admin@123a)
@@ -100,11 +100,11 @@ VALUES
     NOW(),
     0
 );
- 
+
 -- ============================================
 -- 2. USER ADDRESSES
 -- ============================================
- 
+
 INSERT INTO user_address (address_id, user_id, address)
 SELECT
     gen_random_uuid(),
@@ -116,11 +116,11 @@ SELECT
     END
 FROM users u
 WHERE u.role = 'CUSTOMER';
- 
+
 -- ============================================
 -- 3. CATEGORIES (Hierarchical structure)
 -- ============================================
- 
+
 WITH cat_indoor AS (
     INSERT INTO categories (category_id, name, slug, parent_id)
     VALUES (gen_random_uuid(), 'Cây Cảnh Trong Nhà', 'cay-canh-trong-nha', NULL)
@@ -155,22 +155,22 @@ UNION ALL
 SELECT gen_random_uuid(), 'Dụng Cụ Tưới', 'dung-cu-tuoi', category_id FROM cat_tools
 UNION ALL
 SELECT gen_random_uuid(), 'Dụng Cụ Cắt Tỉa', 'dung-cu-cat-tia', category_id FROM cat_tools;
- 
+
 -- ============================================
 -- 4. ATTRIBUTES
 -- ============================================
- 
+
 INSERT INTO attributes (attribute_id, name, data_type)
 VALUES
 (gen_random_uuid(), 'Chiều cao', 'number'),
 (gen_random_uuid(), 'Xuất xứ', 'text'),
 (gen_random_uuid(), 'Chất liệu', 'text'),
 (gen_random_uuid(), 'Trọng lượng', 'number');
- 
+
 -- ============================================
 -- 5. PRODUCTS (20 products)
 -- ============================================
- 
+
 WITH cat_ids AS (
     SELECT category_id, name FROM categories WHERE parent_id IS NOT NULL
 )
@@ -316,11 +316,11 @@ VALUES
     (SELECT category_id FROM cat_ids WHERE name = 'Dụng Cụ Tưới' LIMIT 1),
     NULL, true, NOW(), NOW()
 );
- 
+
 -- ============================================
 -- 6. PRODUCT ATTRIBUTE VALUES
 -- ============================================
- 
+
 INSERT INTO product_attribute_values (value_id, attribute_id, product_id, value)
 SELECT
     gen_random_uuid(),
@@ -346,11 +346,11 @@ AND p.name NOT LIKE '%Vòi%'
 AND p.name NOT LIKE '%Chậu%'
 AND p.name NOT LIKE '%Giá Treo%'
 LIMIT 20;
- 
+
 -- ============================================
 -- 7. PRODUCT VARIANTS
 -- ============================================
- 
+
 WITH prod AS (
     SELECT product_id, name, base_price, ROW_NUMBER() OVER (ORDER BY name) as rn
     FROM products
@@ -381,19 +381,32 @@ FROM prod p
 CROSS JOIN (
     VALUES ('S', 'SMALL'), ('M', 'MEDIUM'), ('L', 'LARGE')
 ) AS size_variant(size, suffix);
- 
+
 -- ============================================
 -- 8. ORDERS (10 sample orders)
 -- ============================================
- 
+
 WITH customer_ids AS (
     SELECT user_id FROM users WHERE role = 'CUSTOMER'
 )
-INSERT INTO orders (order_id, user_id, total_amount, status, shipping_address, created_at, payment_expiry_at, stock_reserved)
+INSERT INTO orders (
+    order_id, user_id,
+    sub_total, discount, voucher_code, shipping_fee,
+    total_amount, final_amount,
+    status, shipping_address, note, created_at, updated_at, payment_expiry_at, stock_reserved
+)
 SELECT
     gen_random_uuid(),
     (SELECT user_id FROM customer_ids ORDER BY RANDOM() LIMIT 1),
-    (RANDOM() * 500000 + 100000)::numeric(10,2),
+    -- Price breakdown (simplified)
+    (RANDOM() * 500000 + 100000)::numeric(10,2) AS sub_total,  -- SubTotal (tổng giá SP)
+    CASE WHEN RANDOM() > 0.5 THEN (RANDOM() * 50000)::numeric(10,2) ELSE 0 END AS discount, -- 50% có discount
+    CASE WHEN RANDOM() > 0.7 THEN 'SALE' || (RANDOM() * 100)::int ELSE NULL END AS voucher_code,
+    30000::numeric(10,2) AS shipping_fee,                       -- Phí ship cố định 30k (không giảm)
+    -- Legacy total_amount (sẽ = final_amount)
+    0::numeric(10,2),  -- Sẽ được tính lại bên dưới
+    0::numeric(10,2),  -- Sẽ được tính lại bên dưới
+    -- Order info
     CASE (RANDOM() * 4)::int
         WHEN 0 THEN 'Pending'
         WHEN 1 THEN 'Processing'
@@ -401,15 +414,23 @@ SELECT
         ELSE 'Completed'
     END,
     '123 Test Street, District ' || (ROW_NUMBER() OVER ()) || ', HCMC',
+    CASE WHEN RANDOM() > 0.5 THEN 'Giao hàng giờ hành chính' ELSE NULL END,
     NOW() - (RANDOM() * INTERVAL '30 days'),
+    NOW(),
     NOW() + INTERVAL '15 minutes',
     false
 FROM generate_series(1, 10);
- 
+
+-- Update final_amount và total_amount cho các orders
+-- Formula: FinalAmount = SubTotal - Discount + ShippingFee
+UPDATE orders SET
+    final_amount = GREATEST(0, sub_total - discount + shipping_fee),
+    total_amount = GREATEST(0, sub_total - discount + shipping_fee);
+
 -- ============================================
 -- 9. ORDER ITEMS
 -- ============================================
- 
+
 WITH order_list AS (
     SELECT order_id, ROW_NUMBER() OVER () as rn FROM orders
 ),
@@ -431,11 +452,11 @@ CROSS JOIN LATERAL (
     WHERE rn = (o.rn % 20) + 1
     LIMIT 2
 ) v;
- 
+
 -- ============================================
 -- 10. PAYMENTS
 -- ============================================
- 
+
 WITH SeedData AS (
     SELECT
         o.order_id,
@@ -499,11 +520,11 @@ SELECT
     order_created_at,
     order_created_at + INTERVAL '15 minutes'
 FROM SeedData;
- 
+
 -- ============================================
 -- 11. CARTS (for 3 customers)
 -- ============================================
- 
+
 INSERT INTO carts (cart_id, user_id, session_id, created_at, updated_at)
 SELECT
     gen_random_uuid(),
@@ -513,11 +534,11 @@ SELECT
     NOW()
 FROM users
 WHERE role = 'CUSTOMER';
- 
+
 -- ============================================
 -- 12. CART ITEMS
 -- ============================================
- 
+
 WITH cart_list AS (
     SELECT cart_id, ROW_NUMBER() OVER () as rn FROM carts
 ),
@@ -538,11 +559,11 @@ CROSS JOIN LATERAL (
     WHERE rn = (c.rn % 5) + 1
     LIMIT 2
 ) v;
- 
+
 -- ============================================
 -- 13. RATINGS
 -- ============================================
- 
+
 WITH prod_sample AS (
     SELECT product_id FROM products WHERE is_active = true LIMIT 10
 ),
@@ -567,33 +588,65 @@ FROM prod_sample p
 CROSS JOIN customer_list c
 WHERE RANDOM() > 0.5
 LIMIT 20;
- 
+
 -- ============================================
--- 14. PROMOTIONS
+-- 14. PROMOTIONS / VOUCHERS
 -- ============================================
- 
-INSERT INTO promotions (promotion_id, order_id, start_date, end_date, discount_type, discount_amount, is_active, create_at, update_at)
+-- Voucher system:
+-- - code: mã voucher unique
+-- - discount_type: "Percentage" hoặc "Fixed"
+-- - discount_value: giá trị giảm (% hoặc số tiền)
+-- - max_discount: giảm tối đa (chỉ cho Percentage)
+-- - min_order_value: đơn hàng tối thiểu
+-- - max_usage: số lần sử dụng tối đa
+-- ============================================
+
+INSERT INTO promotions (
+    promotion_id, code, name, description,
+    discount_type, discount_value, max_discount, min_order_value,
+    max_usage, used_count, is_active,
+    start_date, end_date, created_at, updated_at,
+    -- backward compatible fields
+    order_id, discount_amount, create_at, update_at
+)
 VALUES
+-- Voucher 1: Giảm 20% tối đa 50k, đơn tối thiểu 200k
 (
-    gen_random_uuid(), NULL,
-    NOW(), NOW() + INTERVAL '30 days',
-    'Percentage', 15, true, NOW(), NOW()
+    gen_random_uuid(), 'SALE20', 'Giảm 20% tối đa 50k', 'Áp dụng cho đơn hàng từ 200,000đ',
+    'Percentage', 20, 50000, 200000,
+    100, 0, true,
+    NOW() - INTERVAL '2 day', NOW() + INTERVAL '30 days', NOW(), NOW(),
+    NULL, 20, NOW(), NOW()
 ),
+-- Voucher 2: Giảm 50k cho đơn từ 300k
 (
-    gen_random_uuid(), NULL,
-    NOW() + INTERVAL '7 days', NOW() + INTERVAL '14 days',
-    'Fixed', 50000, true, NOW(), NOW()
+    gen_random_uuid(), 'FLAT50K', 'Giảm ngay 50,000đ', 'Áp dụng cho đơn hàng từ 300,000đ',
+    'Fixed', 50000, NULL, 300000,
+    50, 0, true,
+    NOW() - INTERVAL '2 day', NOW() + INTERVAL '14 days', NOW(), NOW(),
+    NULL, 50000, NOW(), NOW()
 ),
+-- Voucher 3: Giảm 15% tối đa 100k, không giới hạn lượt dùng
 (
-    gen_random_uuid(), NULL,
-    NOW() - INTERVAL '10 days', NOW() + INTERVAL '20 days',
-    'Percentage', 20, true, NOW(), NOW()
+    gen_random_uuid(), 'NEWUSER', 'Ưu đãi khách mới', 'Giảm 15% cho khách hàng mới, tối đa 100k',
+    'Percentage', 15, 100000, 100000,
+    NULL, 0, true,
+    NOW() - INTERVAL '10 days', NOW() + INTERVAL '60 days', NOW(), NOW(),
+    NULL, 15, NOW(), NOW()
+),
+-- Voucher 4: Giảm 10% không giới hạn (VIP)
+(
+    gen_random_uuid(), 'VIP10', 'Ưu đãi VIP', 'Giảm 10% không giới hạn cho khách VIP',
+    'Percentage', 10, NULL, 0,
+    NULL, 0, true,
+    NOW() - INTERVAL '2 day', NOW() + INTERVAL '365 days', NOW(), NOW(),
+    NULL, 10, NOW(), NOW()
 );
- 
+
 -- ============================================
 -- VERIFICATION QUERIES
 -- ============================================
- 
+
 SELECT 'Users' as table_name, COUNT(*) as count FROM users
 UNION ALL SELECT 'User Addresses', COUNT(*) FROM user_address
 UNION ALL SELECT 'Categories', COUNT(*) FROM categories

@@ -19,13 +19,23 @@ namespace GreenSpace.Application.Services
         private readonly IMapper _mapper;
         private readonly ILogger<OrderService> _logger;
         private readonly IStockService _stockService;
+        private readonly IPromotionService _promotionService;
 
-        public OrderService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<OrderService> logger, IStockService stockService)
+        // Default shipping fee (có thể config từ appsettings)
+        private const decimal DefaultShippingFee = 30000m;
+
+        public OrderService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            ILogger<OrderService> logger,
+            IStockService stockService,
+            IPromotionService promotionService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
             _stockService = stockService;
+            _promotionService = promotionService;
         }
 
         public async Task<IServiceResult<List<OrderDto>>> GetUserOrdersAsync(Guid userId)
@@ -73,8 +83,8 @@ namespace GreenSpace.Application.Services
 
 
         public async Task<IServiceResult<OrderDto>> CreateOrderAsync(
-            CreateOrderDto dto, 
-            Guid userId)
+             CreateOrderDto dto,
+             Guid userId)
         {
             try
             {
@@ -89,21 +99,8 @@ namespace GreenSpace.Application.Services
 
                 try
                 {
-                    // Create order
-                    var order = new Order
-                    {
-                        UserId = userId,
-                        Status = "Pending",
-                        ShippingAddress = dto.ShippingAddress,
-                        CreatedAt = DateTime.UtcNow,
-                        TotalAmount = 0 
-                    };
-
-                    await _unitOfWork.OrderRepository.AddAsync(order);
-                    await _unitOfWork.SaveChangesAsync();
-
-                    // Create order items
-                    decimal totalAmount = 0;
+                    // Calculate SubTotal from order items first
+                    decimal subTotal = 0;
                     var orderItems = new List<OrderItem>();
 
                     foreach (var item in dto.Items)
@@ -114,28 +111,72 @@ namespace GreenSpace.Application.Services
                         if (variant == null)
                             throw new InvalidOperationException($"Variant {item.VariantId} not found");
 
-                        var orderItem = new OrderItem
+                        subTotal += variant.Price * item.Quantity;
+
+                        orderItems.Add(new OrderItem
                         {
-                            OrderId = order.OrderId,
                             VariantId = item.VariantId,
                             Quantity = item.Quantity,
                             PriceAtPurchase = variant.Price
-                        };
+                        });
+                    }
 
-                        orderItems.Add(orderItem);
-                        totalAmount += variant.Price * item.Quantity;
+                    // Calculate discount from voucher
+                    decimal discount = 0;
+                    string? appliedVoucherCode = null;
+
+                    if (!string.IsNullOrEmpty(dto.VoucherCode))
+                    {
+                        var discountResult = await _promotionService.ApplyVoucherAsync(dto.VoucherCode, subTotal);
+                        if (discountResult.IsSuccess)
+                        {
+                            discount = discountResult.Data;
+                            appliedVoucherCode = dto.VoucherCode.ToUpper();
+                            _logger.LogInformation("Voucher {Code} applied. Discount: {Discount}", dto.VoucherCode, discount);
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Voucher {Code} failed: {Message}", dto.VoucherCode, discountResult.Message);
+                            // Không throw error, chỉ log warning và tiếp tục không có discount
+                        }
+                    }
+
+                    // Calculate final amount
+                    decimal shippingFee = DefaultShippingFee;
+                    decimal finalAmount = subTotal - discount + shippingFee;
+
+                    // Create order with all pricing info
+                    var order = new Order
+                    {
+                        UserId = userId,
+                        Status = OrderStatus.Pending,
+                        ShippingAddress = dto.ShippingAddress,
+                        Note = dto.Note,
+                        CreatedAt = DateTime.UtcNow,
+                        // Price breakdown
+                        SubTotal = subTotal,
+                        Discount = discount,
+                        VoucherCode = appliedVoucherCode,
+                        ShippingFee = shippingFee,
+                        FinalAmount = finalAmount,
+                        TotalAmount = finalAmount // backward compatible
+                    };
+
+                    await _unitOfWork.OrderRepository.AddAsync(order);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    // Set OrderId for order items and save
+                    foreach (var item in orderItems)
+                    {
+                        item.OrderId = order.OrderId;
                     }
 
                     await _unitOfWork.OrderItemRepository.AddMultipleAsync(orderItems);
-                    
-                    // Update total amount
-                    order.TotalAmount = totalAmount;
-                    await _unitOfWork.OrderRepository.UpdateAsync(order);
                     await _unitOfWork.SaveChangesAsync();
 
                     // Reserve stock
                     var reserveResult = await _stockService.ReserveStockAsync(
-                        order.OrderId, 
+                        order.OrderId,
                         dto.Items);
 
                     if (!reserveResult.IsSuccess)
@@ -155,9 +196,9 @@ namespace GreenSpace.Application.Services
                         .FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
 
                     var result = _mapper.Map<OrderDto>(createdOrder);
-                    
+
                     _logger.LogInformation(
-                        "Order {OrderId} created with stock reserved for user {UserId}", 
+                        "Order {OrderId} created with stock reserved for user {UserId}",
                         order.OrderId, userId);
 
                     return ServiceResult<OrderDto>.Success(result, ApiMessages.Order.Created);

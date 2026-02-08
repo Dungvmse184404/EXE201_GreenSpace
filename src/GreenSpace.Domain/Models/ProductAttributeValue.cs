@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("product_attribute_values")]
+[Index("AttributeId", Name = "IX_product_attribute_values_attribute_id")]
+[Index("ProductId", Name = "IX_product_attribute_values_product_id")]
 public partial class ProductAttributeValue
 {
     [Key]

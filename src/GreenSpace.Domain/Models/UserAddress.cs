@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("user_address")]
+[Index("UserId", Name = "IX_user_address_user_id")]
 public partial class UserAddress
 {
     [Key]

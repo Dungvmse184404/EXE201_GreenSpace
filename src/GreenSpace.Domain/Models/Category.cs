@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("categories")]
+[Index("ParentId", Name = "IX_categories_parent_id")]
 public partial class Category
 {
     [Key]

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("refresh_tokens")]
+[Index("UserId", Name = "IX_refresh_tokens_user_id")]
 [Index("Token", Name = "idx_refresh_tokens_token")]
 [Index("Token", Name = "refresh_tokens_token_key", IsUnique = true)]
 public partial class RefreshToken

@@ -182,9 +182,9 @@ namespace GreenSpace.Infrastructure.ExternalServices
                     paymentDate = parsedDate;
                 }
 
-                // Check payment success
-                var isSuccess = callback.vnp_ResponseCode == "00" &&
-                                callback.vnp_TransactionStatus == "00";
+                // Check payment success using constants
+                var isSuccess = PaymentResponseCode.VNPay.IsSuccess(callback.vnp_ResponseCode) &&
+                                PaymentResponseCode.VNPay.IsSuccess(callback.vnp_TransactionStatus);
 
                 await _unitOfWork.BeginTransactionAsync();
 
@@ -194,7 +194,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                     payment.Status = isSuccess ? PaymentStatus.Success : PaymentStatus.Failed;
                     payment.TransactionCode = callback.vnp_TransactionNo;
                     payment.ResponseCode = callback.vnp_ResponseCode;
-                    payment.ResponseMessage = GetVNPayResponseMessage(callback.vnp_ResponseCode);
+                    payment.ResponseMessage = PaymentResponseCode.VNPay.GetMessage(callback.vnp_ResponseCode);
                     payment.BankCode = callback.vnp_BankCode;
                     payment.CardType = callback.vnp_CardType;
                     payment.PaidAt = paymentDate;
@@ -266,7 +266,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                 if (!string.IsNullOrEmpty(value) && key != "vnp_SecureHash")
                 {
                     vnpay.AddResponseData(key, value);
-                }
+                }   
             }
 
             return vnpay.ValidateSignature(secureHash, _settings.HashSecret);
@@ -325,24 +325,5 @@ namespace GreenSpace.Infrastructure.ExternalServices
             };
         }
 
-        private string GetVNPayResponseMessage(string responseCode)
-        {
-            return responseCode switch
-            {
-                "00" => "Giao dịch thành công",
-                "07" => "Trừ tiền thành công. Giao dịch bị nghi ngờ (liên quan tới lừa đảo, giao dịch bất thường).",
-                "09" => "Thẻ/Tài khoản của khách hàng chưa đăng ký dịch vụ InternetBanking tại ngân hàng.",
-                "10" => "Khách hàng xác thực thông tin thẻ/tài khoản không đúng quá 3 lần",
-                "11" => "Đã hết hạn chờ thanh toán. Xin quý khách vui lòng thực hiện lại giao dịch.",
-                "12" => "Thẻ/Tài khoản của khách hàng bị khóa.",
-                "13" => "Quý khách nhập sai mật khẩu xác thực giao dịch (OTP). Xin quý khách vui lòng thực hiện lại giao dịch.",
-                "24" => "Khách hàng hủy giao dịch",
-                "51" => "Tài khoản của quý khách không đủ số dư để thực hiện giao dịch.",
-                "65" => "Tài khoản của Quý khách đã vượt quá hạn mức giao dịch trong ngày.",
-                "75" => "Ngân hàng thanh toán đang bảo trì.",
-                "79" => "KH nhập sai mật khẩu thanh toán quá số lần quy định. Xin quý khách vui lòng thực hiện lại giao dịch",
-                _ => "Giao dịch thất bại"
-            };
-        }
     }
 }

@@ -2,11 +2,6 @@
 using GreenSpace.Domain.Models;
 using GreenSpace.Infrastructure.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GreenSpace.Infrastructure.Persistence.Repositories
 {

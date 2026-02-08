@@ -168,6 +168,21 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasColumnName("created_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<decimal>("Discount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("discount");
+
+                    b.Property<decimal>("FinalAmount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("final_amount");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("note");
+
                     b.Property<DateTime?>("PaymentExpiryAt")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("payment_expiry_at");
@@ -176,6 +191,11 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)")
                         .HasColumnName("shipping_address");
+
+                    b.Property<decimal>("ShippingFee")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("shipping_fee");
 
                     b.Property<string>("Status")
                         .ValueGeneratedOnAdd()
@@ -188,14 +208,28 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("stock_reserved");
 
+                    b.Property<decimal>("SubTotal")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("sub_total");
+
                     b.Property<decimal>("TotalAmount")
                         .HasPrecision(10, 2)
                         .HasColumnType("numeric(10,2)")
                         .HasColumnName("total_amount");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at");
+
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid")
                         .HasColumnName("user_id");
+
+                    b.Property<string>("VoucherCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("voucher_code");
 
                     b.HasKey("OrderId")
                         .HasName("orders_pkey");
@@ -518,11 +552,25 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasColumnName("promotion_id")
                         .HasDefaultValueSql("gen_random_uuid()");
 
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("code");
+
                     b.Property<DateTime?>("CreateAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("create_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("description");
 
                     b.Property<decimal?>("DiscountAmount")
                         .HasPrecision(10, 2)
@@ -534,19 +582,39 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("discount_type");
 
+                    b.Property<decimal>("DiscountValue")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("discount_value");
+
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("end_date");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
                         .HasDefaultValue(true)
                         .HasColumnName("is_active");
 
-                    b.Property<Guid?>("OrderId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("order_id");
+                    b.Property<decimal?>("MaxDiscount")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("max_discount");
+
+                    b.Property<int?>("MaxUsage")
+                        .HasColumnType("integer")
+                        .HasColumnName("max_usage");
+
+                    b.Property<decimal?>("MinOrderValue")
+                        .HasPrecision(10, 2)
+                        .HasColumnType("numeric(10,2)")
+                        .HasColumnName("min_order_value");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("name");
 
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("timestamp without time zone")
@@ -558,10 +626,20 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasColumnName("update_at")
                         .HasDefaultValueSql("CURRENT_TIMESTAMP");
 
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp without time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<int>("UsedCount")
+                        .HasColumnType("integer")
+                        .HasColumnName("used_count");
+
                     b.HasKey("PromotionId")
                         .HasName("promotions_pkey");
 
-                    b.HasIndex("OrderId");
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasFilter("code IS NOT NULL");
 
                     b.ToTable("promotions");
                 });
@@ -914,17 +992,6 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("GreenSpace.Domain.Models.Promotion", b =>
-                {
-                    b.HasOne("GreenSpace.Domain.Models.Order", "Order")
-                        .WithMany("Promotions")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .HasConstraintName("fk_promotions_order");
-
-                    b.Navigation("Order");
-                });
-
             modelBuilder.Entity("GreenSpace.Domain.Models.Rating", b =>
                 {
                     b.HasOne("GreenSpace.Domain.Models.Product", "Product")
@@ -992,8 +1059,6 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                     b.Navigation("OrderItems");
 
                     b.Navigation("Payments");
-
-                    b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("GreenSpace.Domain.Models.Product", b =>

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace GreenSpace.Domain.Models;
 
 [Table("products")]
+[Index("CategoryId", Name = "IX_products_category_id")]
 public partial class Product
 {
     [Key]

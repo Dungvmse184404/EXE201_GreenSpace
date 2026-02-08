@@ -50,6 +50,22 @@ namespace GreenSpace.WebAPI
                 });
             });
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                   policy =>
+                   {
+                       policy.WithOrigins(
+                               "http://localhost:3000",
+                               "http://localhost:5173"
+                           )
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                   });
+            });
+
+
             // Configure request size limits for file uploads
             builder.Services.Configure<IISServerOptions>(options =>
             {
@@ -88,11 +104,11 @@ namespace GreenSpace.WebAPI
             // ==========================================
             var app = builder.Build();
 
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             // Seed admin user khi khởi động ứng dụng
             using (var scope = app.Services.CreateScope())
@@ -100,14 +116,15 @@ namespace GreenSpace.WebAPI
                 var seeder = scope.ServiceProvider.GetRequiredService<AdminSeeder>();
                 await seeder.SeedAsync();
             }
-
+           
             app.UseHttpsRedirection();
 
-            app.UseAuthentication(); 
+            app.UseStaticFiles();  
+
+            app.UseCors("AllowAll");
+
+            app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseStaticFiles(); // Cho phép phục vụ file tĩnh từ wwwroot
-
             app.MapControllers();
 
             app.Run();
