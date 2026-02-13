@@ -882,20 +882,20 @@ POST /api/orders
 **Request Body:**
 ```json
 {
-  "addressId": "guid",              // Optional
+  "addressId": "guid",              // Optional (Default: nếu có sẵn is_default trong userAddress)
                                      // Hint: ID địa chỉ đã lưu (nếu dùng địa chỉ có sẵn)
 
   "shippingAddress": "123 ABC...",  // Optional (bắt buộc nếu không có addressId)
                                      // Hint: Địa chỉ giao hàng nhập tay
 
-  "recipientName": "Nguyen Van A",  // Required, max 100 chars
+  "recipientName": "Nguyen Van A",  // Optional, max 100 chars (Default: người đang đăng nhập)
                                      // Hint: Tên người nhận hàng
 
-  "recipientPhone": "0901234567",   // Required, max 20 chars
+  "recipientPhone": "0901234567",   // Optional, max 20 chars (Default:  người đang đăng nhập)
                                      // Hint: SĐT người nhận hàng
 
-  "paymentMethod": "COD",           // Required
-                                     // Hint: Phương thức thanh toán: "COD", "VNPAY", "PAYOS"
+  "paymentMethod": "COD",           // Optional (tự điền sau khi thanh toán)
+                                     // Hint: Phương thức thanh toán: "COD", "VNPAY", "PAYOS" ()
 
   "voucherCode": "SALE20",          // Optional, max 50 chars
                                      // Hint: Mã giảm giá (nếu có)
@@ -905,6 +905,9 @@ POST /api/orders
 
   "items": [                         // Required
     {
+      "variantId": "guid",           // Required - ID variant sản phẩm
+      "quantity": 2                  // Required - Số lượng mua
+    },{
       "variantId": "guid",           // Required - ID variant sản phẩm
       "quantity": 2                  // Required - Số lượng mua
     }
