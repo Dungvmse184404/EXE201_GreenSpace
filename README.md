@@ -199,26 +199,6 @@ Bash
 git clone https://github.com/GreenSpace-Team/GreenSpace_BE.git
 cd GreenSpace_BE
 
-```
-
-Tạo file `src/GreenSpace.WebAPI/appsettings.Development.json`:
-
-JSON
-
-```
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Host=localhost;Port=5432;Database=greenspace_db;Username=postgres;Password=your_password"
-  },
-  "JwtSettings": {
-    "SecretKey": "SuperSecretKey@123456789_MustBeLongEnough",
-    "Issuer": "GreenSpace_API",
-    "Audience": "GreenSpace_Client"
-  }
-}
-
-```
-
 ### 2. Database Migration
 
 Chạy lệnh sau tại thư mục root của solution để khởi tạo Database:
