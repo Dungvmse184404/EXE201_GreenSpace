@@ -78,7 +78,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                 await _unitOfWork.SaveChangesAsync();
 
                 // 4. Create PayOS payment link
-                var description = request.Description ?? $"GreenSpace #{order.OrderId.ToString()[..8]}";
+                var description = $"GreenSpace #{order.OrderId.ToString()[..8]}";
                 // PayOS description max 25 chars
                 if (description.Length > 25)
                     description = description[..25];
@@ -111,7 +111,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         PaymentUrl = createPaymentResult.CheckoutUrl,
                         QrCode = createPaymentResult.QrCode,
                         TransactionId = orderCode.ToString(),
-                        Message = "Payment link created successfully"
+                        Message = ApiMessages.Payment.LinkCreated
                     });
             }
             catch (Exception ex)
@@ -200,9 +200,10 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         if (isSuccess)
                         {
                             order.Status = OrderStatus.Confirmed;
+                            order.PaymentMethod = PaymentGateway.PayOS;  // Cập nhật payment method từ gateway đã dùng
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
                             await _stockService.ConfirmStockReservationAsync(order.OrderId);
-                            _logger.LogInformation("Order {OrderId} confirmed, stock reservation confirmed", order.OrderId);
+                            _logger.LogInformation("Order {OrderId} confirmed with PaymentMethod=PayOS, stock reservation confirmed", order.OrderId);
                         }
                         else if (isCancelled)
                         {
@@ -303,12 +304,14 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         if (isSuccess)
                         {
                             order.Status = OrderStatus.Confirmed;
+                            order.PaymentMethod = PaymentGateway.PayOS;  // Cập nhật payment method từ gateway đã dùng
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
                             await _stockService.ConfirmStockReservationAsync(order.OrderId);
                         }
                         else
                         {
-                            order.Status = OrderStatus.Pending;
+                            order.Status = OrderStatus.Cancelled;  // Sửa từ Pending thành Cancelled
+                            await _unitOfWork.OrderRepository.UpdateAsync(order);
                             await _stockService.RevertStockReservationAsync(order.OrderId);
                         }
                     }

@@ -38,6 +38,10 @@ namespace GreenSpace.Infrastructure.Persistence
         private readonly Lazy<ICartItemRepository> _cartItemRepository;
         private readonly Lazy<IRefreshTokenRepository> _refreshTokenRepository;
         private readonly Lazy<IRefreshTokenService> _refreshTokenService;
+        private readonly Lazy<IDiagnosisCacheRepository> _diagnosisCacheRepository;
+        private readonly Lazy<ISymptomDictionaryRepository> _symptomDictionaryRepository;
+        private readonly Lazy<IDiseaseRepository> _diseaseRepository;
+        private readonly Lazy<IPlantTypeRepository> _plantTypeRepository;
 
         public UnitOfWork(AppDbContext context, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
@@ -62,7 +66,11 @@ namespace GreenSpace.Infrastructure.Persistence
             _cartItemRepository = new Lazy<ICartItemRepository>(() => new CartItemRepository(_context));
             _refreshTokenRepository = new Lazy<IRefreshTokenRepository>(() => new RefreshTokenRepository(_context));
             _refreshTokenService = new Lazy<IRefreshTokenService>(() => new RefreshTokenService(this, _configuration, _loggerFactory.CreateLogger<RefreshTokenService>()));
-    
+            _diagnosisCacheRepository = new Lazy<IDiagnosisCacheRepository>(() => new DiagnosisCacheRepository(_context));
+            _symptomDictionaryRepository = new Lazy<ISymptomDictionaryRepository>(() => new SymptomDictionaryRepository(_context));
+            _diseaseRepository = new Lazy<IDiseaseRepository>(() => new DiseaseRepository(_context));
+            _plantTypeRepository = new Lazy<IPlantTypeRepository>(() => new PlantTypeRepository(_context));
+
         }
 
         public IAttributeRepository AttributeRepository => _attributeRepository.Value;
@@ -81,6 +89,10 @@ namespace GreenSpace.Infrastructure.Persistence
         public ICartItemRepository CartItemRepository => _cartItemRepository.Value;
         public IRefreshTokenRepository RefreshTokenRepository => _refreshTokenRepository.Value;
         public IRefreshTokenService RefreshTokenService => _refreshTokenService.Value;
+        public IDiagnosisCacheRepository DiagnosisCacheRepository => _diagnosisCacheRepository.Value;
+        public ISymptomDictionaryRepository SymptomDictionaryRepository => _symptomDictionaryRepository.Value;
+        public IDiseaseRepository DiseaseRepository => _diseaseRepository.Value;
+        public IPlantTypeRepository PlantTypeRepository => _plantTypeRepository.Value;
 
 
         // --- Xử lý Transaction ---

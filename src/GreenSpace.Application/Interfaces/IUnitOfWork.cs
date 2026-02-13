@@ -26,6 +26,12 @@ namespace GreenSpace.Application.Interfaces
         IPaymentRepository PaymentRepository { get; }
         ICartRepository CartRepository { get; }
         ICartItemRepository CartItemRepository { get; }
+        IDiagnosisCacheRepository DiagnosisCacheRepository { get; }
+        ISymptomDictionaryRepository SymptomDictionaryRepository { get; }
+
+        // Disease Knowledge Base
+        IDiseaseRepository DiseaseRepository { get; }
+        IPlantTypeRepository PlantTypeRepository { get; }
 
 
         Task<T> ExecuteStrategyAsync<T>(Func<Task<T>> operation);

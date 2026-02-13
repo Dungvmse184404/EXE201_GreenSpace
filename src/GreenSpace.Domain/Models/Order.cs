@@ -74,9 +74,44 @@ public partial class Order
     [StringLength(50)]
     public string? Status { get; set; }
 
+    /// <summary>
+    /// Phương thức thanh toán đã sử dụng (được cập nhật sau khi thanh toán thành công)
+    /// VD: "PayOS", "VNPay", "VNBANK", "NCB", etc.
+    /// </summary>
+    [Column("payment_method")]
+    [StringLength(50)]
+    public string? PaymentMethod { get; set; }
+
+    // ============================================
+    // Shipping Info (Snapshot từ UserAddress + Recipient)
+    // ============================================
+
+    /// <summary>
+    /// FK đến UserAddress đã chọn (optional, để tracking)
+    /// </summary>
+    [Column("shipping_address_id")]
+    public Guid? ShippingAddressId { get; set; }
+
+    /// <summary>
+    /// Địa chỉ giao hàng (snapshot - không thay đổi khi UserAddress thay đổi)
+    /// </summary>
     [Column("shipping_address")]
-    [StringLength(255)]
+    [StringLength(500)]
     public string? ShippingAddress { get; set; }
+
+    /// <summary>
+    /// Tên người nhận hàng
+    /// </summary>
+    [Column("recipient_name")]
+    [StringLength(100)]
+    public string? RecipientName { get; set; }
+
+    /// <summary>
+    /// Số điện thoại người nhận hàng
+    /// </summary>
+    [Column("recipient_phone")]
+    [StringLength(20)]
+    public string? RecipientPhone { get; set; }
 
     /// <summary>
     /// Ghi chú của khách hàng

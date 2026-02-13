@@ -50,5 +50,30 @@ namespace GreenSpace.Application.Interfaces.Services
         Task<IServiceResult> RegisterMailAsync(RegisteMailDto dto);
 
         Task<IServiceResult> VerifyRegisterOtpAsync(VerifyRegisterOtpDto dto);
+
+        // =================================================================
+        // RESET PASSWORD
+        // =================================================================
+
+        /// <summary>
+        /// Khởi tạo reset password - kiểm tra email tồn tại và gửi OTP
+        /// </summary>
+        /// <param name="dto">Email cần reset password</param>
+        /// <returns>Success nếu email hợp lệ và OTP đã gửi</returns>
+        Task<IServiceResult> ForgotPasswordAsync(ForgotPasswordDto dto);
+
+        /// <summary>
+        /// Xác thực OTP reset password
+        /// </summary>
+        /// <param name="dto">Email và OTP</param>
+        /// <returns>Success nếu OTP hợp lệ</returns>
+        Task<IServiceResult> VerifyResetPasswordOtpAsync(VerifyResetPasswordOtpDto dto);
+
+        /// <summary>
+        /// Đặt mật khẩu mới sau khi đã verify OTP
+        /// </summary>
+        /// <param name="dto">Email và mật khẩu mới</param>
+        /// <returns>Success nếu đổi mật khẩu thành công</returns>
+        Task<IServiceResult> ResetPasswordAsync(ResetPasswordDto dto);
     }
 }

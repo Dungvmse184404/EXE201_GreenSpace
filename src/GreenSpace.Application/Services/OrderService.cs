@@ -70,7 +70,7 @@ namespace GreenSpace.Application.Services
                     .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
                 if (order == null)
-                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, "Order not found.");
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound);
 
                 return ServiceResult<OrderDto>.Success(_mapper.Map<OrderDto>(order));
             }
@@ -145,12 +145,85 @@ namespace GreenSpace.Application.Services
                     decimal shippingFee = DefaultShippingFee;
                     decimal finalAmount = subTotal - discount + shippingFee;
 
+                    // Resolve shipping address
+                    string shippingAddress;
+                    Guid? shippingAddressId = null;
+
+                    if (dto.AddressId.HasValue)
+                    {
+                        // Lay dia chi tu UserAddress
+                        var userAddress = await _unitOfWork.UserAddressRepository
+                            .GetByIdAndUserIdAsync(dto.AddressId.Value, userId);
+
+                        if (userAddress == null)
+                        {
+                            await _unitOfWork.RollbackAsync();
+                            return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, "Address not found");
+                        }
+
+                        shippingAddress = userAddress.FullAddress;
+                        shippingAddressId = userAddress.AddressId;
+                    }
+                    else
+                    {
+                        // Option 3: Fallback lấy default address của user
+                        var defaultAddress = await _unitOfWork.UserAddressRepository
+                            .GetDefaultByUserIdAsync(userId);
+
+                        if (defaultAddress == null)
+                        {
+                            await _unitOfWork.RollbackAsync();
+                            return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
+                                "No shipping address provided and no default address found");
+                        }
+
+                        shippingAddress = defaultAddress.FullAddress;
+                        shippingAddressId = defaultAddress.AddressId;
+                        _logger.LogInformation("Using default address {AddressId} for order", defaultAddress.AddressId);
+                    }
+                    if (!string.IsNullOrEmpty(dto.ShippingAddress))
+                    {
+                        // Su dung dia chi nhap truc tiep
+                        shippingAddress = dto.ShippingAddress;
+                    }
+
+
+                    // Resolve RecipientName and RecipientPhone from user profile if not provided
+                    var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+
+                    string recipientName = dto.RecipientName ?? string.Empty;
+                    if (string.IsNullOrWhiteSpace(recipientName))
+                    {
+                        recipientName = $"{user?.FirstName} {user?.LastName}".Trim();
+                        if (string.IsNullOrWhiteSpace(recipientName))
+                        {
+                            await _unitOfWork.RollbackAsync();
+                            return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
+                                "RecipientName is required (user profile has no name)");
+                        }
+                    }
+
+                    string recipientPhone = dto.RecipientPhone ?? string.Empty;
+                    if (string.IsNullOrWhiteSpace(recipientPhone))
+                    {
+                        recipientPhone = user?.Phone ?? string.Empty;
+                        if (string.IsNullOrWhiteSpace(recipientPhone))
+                        {
+                            await _unitOfWork.RollbackAsync();
+                            return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
+                                "RecipientPhone is required (user profile has no phone)");
+                        }
+                    }
+
                     // Create order with all pricing info
                     var order = new Order
                     {
                         UserId = userId,
                         Status = OrderStatus.Pending,
-                        ShippingAddress = dto.ShippingAddress,
+                        ShippingAddressId = shippingAddressId,
+                        ShippingAddress = shippingAddress,
+                        RecipientName = recipientName,
+                        RecipientPhone = recipientPhone,
                         Note = dto.Note,
                         CreatedAt = DateTime.UtcNow,
                         // Price breakdown

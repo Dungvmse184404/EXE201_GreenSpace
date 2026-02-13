@@ -37,6 +37,7 @@ namespace GreenSpace.Application
             services.AddScoped<IUserAddressService, UserAddressService>();
             services.AddScoped<IProductVariantService, ProductVariantService>();
             services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IReportService, ReportService>();
 
             return services;
         }

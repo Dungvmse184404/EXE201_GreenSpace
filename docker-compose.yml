@@ -5,6 +5,7 @@ services:
   db:
     image: postgres:16
     container_name: greenspace-db
+    restart: unless-stopped
     environment:
       POSTGRES_DB: EXE201_GreenSpaceDb
       POSTGRES_USER: postgres
@@ -26,6 +27,7 @@ services:
   api:
     build: .
     container_name: greenspace-api
+    restart: unless-stopped
     ports:
       - "5020:5020"
     environment:

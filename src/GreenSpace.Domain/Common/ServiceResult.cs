@@ -54,6 +54,10 @@ namespace GreenSpace.Domain.Common
         public static new ServiceResult<T> Failure(IEnumerable<string> errors)
             => new(false, default, errors: errors);
 
-       
+        /// <summary>
+        /// Return data even on failure (for debug info)
+        /// </summary>
+        public static ServiceResult<T> SuccessWithData(T data, int statusCode, string? message = null)
+            => new(statusCode >= 200 && statusCode < 300, statusCode, data, message);
     } 
 }

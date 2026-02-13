@@ -110,11 +110,18 @@ namespace GreenSpace.WebAPI
                 app.UseSwaggerUI();
             //}
 
-            // Seed admin user khi khởi động ứng dụng
+            // Seed data khi khởi động ứng dụng
             using (var scope = app.Services.CreateScope())
             {
-                var seeder = scope.ServiceProvider.GetRequiredService<AdminSeeder>();
-                await seeder.SeedAsync();
+                var adminSeeder = scope.ServiceProvider.GetRequiredService<AdminSeeder>();
+                await adminSeeder.SeedAsync();
+
+                var symptomSeeder = scope.ServiceProvider.GetRequiredService<SymptomDictionarySeeder>();
+                await symptomSeeder.SeedAsync();
+
+                // Seed Disease Knowledge Base (PlantTypes, Diseases, DiseaseSymptoms)
+                var diseaseKnowledgeSeeder = scope.ServiceProvider.GetRequiredService<DiseaseKnowledgeSeeder>();
+                await diseaseKnowledgeSeeder.SeedAsync();
             }
            
             app.UseHttpsRedirection();

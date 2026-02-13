@@ -15,7 +15,7 @@ namespace GreenSpace.Application.DTOs.Product
         public decimal BasePrice { get; set; }
         public string? ThumbnailUrl { get; set; }
         public string CategoryName { get; set; } = string.Empty;
-        public string BrandName { get; set; } = string.Empty;
+        //public string BrandName { get; set; } = string.Empty;
         public List<ProductVariantDto> Variants { get; set; } = new();
     }
 }

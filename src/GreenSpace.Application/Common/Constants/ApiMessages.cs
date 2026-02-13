@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static GreenSpace.Application.Common.Constants.ApiMessages;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace GreenSpace.Application.Common.Constants
 {
@@ -223,7 +226,7 @@ namespace GreenSpace.Application.Common.Constants
             public static string InvalidTransaction = "Invalid transaction reference";
             public static string Failed = "Payment failed";
             public static string Success = "Payment successful";
-            public static string NotFound  = "Payment not found";
+            public static string NotFound = "Payment not found";
             public static string StatusUpdated = "Payment status updated successfully";
             public static string Paied = "Payment already processed";
         }
@@ -253,6 +256,22 @@ namespace GreenSpace.Application.Common.Constants
             public const string Deleted = "Promotiont deleted successfully.";
             public const string UpdateFailed = "Promotiont updated failed.";
 
+        }
+
+        public static class Diagnostic
+        {
+            public const string ServiceUnavailable = "AI Diagnostic service unavailable.";
+            public const string DiagnosicError = "An error occurred during the diagnostic process.";
+            public const string InvalidApiKey = "Invalid API key for AI Diagnostic service.";
+            public const string DiagnosicFailed = "Unable to process diagnosic results.";
+            public const string Timeout = "AI Diagnostic request timed out.";
+            public const string InvalidInput = "Invalid input for AI Diagnostic.";
+            public const string QuotaExceeded = "AI Diagnostic service quota exceeded.";
+
+            public const string DiagnosicImageFailed = "Unable to diagnosic the image.";
+            public const string DiagnosicTextFailed = "Unable to diagnosic the text.";
+
+            public const string Success = "Diagnostic successfully.";
         }
 
     }

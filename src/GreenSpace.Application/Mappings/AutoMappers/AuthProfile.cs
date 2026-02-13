@@ -21,18 +21,20 @@ namespace GreenSpace.Application.Mappings.AutoMappers
                 .ForMember(d => d.RefreshToken, o => o.Ignore())
                 .ForMember(d => d.ExpiresAt, o => o.Ignore());
 
-            // 2. User <-> UserDto (2 CHIỀU)
+            // 2. User <-> UserDto (2 CHIEU)
             CreateMap<User, UserDto>()
                 .ForMember(d => d.PhoneNumber, o => o.MapFrom(s => s.Phone))
-                .ForMember(d => d.Address, o => o.MapFrom(s => s.UserAddresses != null ? s.UserAddresses.Select(a => a.Address).FirstOrDefault() : null))
+                .ForMember(d => d.Address, o => o.MapFrom(s => s.UserAddresses != null && s.UserAddresses.Any()
+                    ? s.UserAddresses.FirstOrDefault(a => a.IsDefault)!.FullAddress
+                    : null))
                 .ForMember(d => d.Birthday, o => o.MapFrom(s => s.DateOfBirth.HasValue ? DateOnly.FromDateTime(s.DateOfBirth.Value) : (DateOnly?)null))
                 .ForMember(d => d.Status, o => o.MapFrom(s => s.IsActive == true ? "Active" : "Inactive"))
                 .ForMember(d => d.CreatedAt, o => o.MapFrom(s => s.CreateAt))
                 .ForMember(d => d.UpdatedAt, o => o.MapFrom(s => s.UpdateAt))
-                .ReverseMap() //
+                .ReverseMap()
                 .ForMember(d => d.DateOfBirth, o => o.MapFrom(s => s.Birthday.HasValue ? s.Birthday.Value.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null))
                 .ForMember(d => d.Phone, o => o.MapFrom(s => s.PhoneNumber))
-                // Ignore các trường nhạy cảm khi map ngược về Entity
+                // Ignore cac truong nhay cam khi map nguoc ve Entity
                 .ForMember(d => d.PasswordHash, o => o.Ignore())
                 .ForMember(d => d.Carts, o => o.Ignore())
                 .ForMember(d => d.Orders, o => o.Ignore())

@@ -133,6 +133,26 @@ namespace GreenSpace.Infrastructure
             services.Configure<PayOSSettings>(configuration.GetSection("PayOSSettings"));
             services.AddScoped<IPayOSService, PayOSService>();
 
+            // =================================================================
+            // AI DIAGNOSIS SERVICES (Groq - using Llama 3.2 Vision)
+            // Configured as optional - if API key is not set, service returns unavailable
+            // To switch back to Gemini, change GroqService to GeminiService
+            // =================================================================
+            services.Configure<GroqSettings>(configuration.GetSection(GroqSettings.SectionName));
+            services.AddHttpClient<IAIVisionService, GroqService>();
+
+            // Diagnosis Cache Service - semantic matching for cached diagnosis results
+            services.AddScoped<IDiagnosisCacheService, DiagnosisCacheService>();
+
+            // Disease Knowledge Base Service - expert-curated disease data
+            services.AddScoped<IDiseaseKnowledgeService, DiseaseKnowledgeService>();
+
+            // Main Diagnosis Service - KB → Cache → AI priority
+            services.AddScoped<IDiagnosisService, DiagnosisService>();
+
+            // Keep Gemini config for potential future use
+            services.Configure<GeminiSettings>(configuration.GetSection(GeminiSettings.SectionName));
+
             // Đăng ký dịch vụ quản lý kho hàng
             services.AddScoped<IStockService, StockService>();
             // Đăng ký dịch vụ chạy ngầm để dọn dẹp kho hàng
@@ -142,6 +162,8 @@ namespace GreenSpace.Infrastructure
 
             // Đăng ký Seeder
             services.AddScoped<AdminSeeder>();
+            services.AddScoped<SymptomDictionarySeeder>();
+            services.AddScoped<DiseaseKnowledgeSeeder>();
             services.Configure<DefaultAdmin>(configuration.GetSection("Seeder:DefaultAdmin"));
 
             return services;

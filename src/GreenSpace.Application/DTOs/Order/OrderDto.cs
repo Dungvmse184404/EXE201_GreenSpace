@@ -23,7 +23,12 @@ namespace GreenSpace.Application.DTOs.Order
         // Backward compatible
         public decimal TotalAmount { get; set; }
 
+        // Shipping info
+        public Guid? ShippingAddressId { get; set; }
         public string ShippingAddress { get; set; } = string.Empty;
+        public string? RecipientName { get; set; }
+        public string? RecipientPhone { get; set; }
+
         public string? Note { get; set; }
         public string PaymentMethod { get; set; } = string.Empty;
         public string PaymentStatus { get; set; } = string.Empty;
@@ -33,20 +38,43 @@ namespace GreenSpace.Application.DTOs.Order
 
     public class CreateOrderDto
     {
-        [Required]
-        public string ShippingAddress { get; set; } = string.Empty;
-
-        [Required]
-        public string PaymentMethod { get; set; } = string.Empty;
+        /// <summary>
+        /// ID dia chi da luu (optional - neu co thi lay tu UserAddress)
+        /// </summary>
+        public Guid? AddressId { get; set; }
 
         /// <summary>
-        /// Mã voucher giảm giá (optional)
+        /// Dia chi giao hang (bat buoc neu khong co AddressId)
+        /// </summary>
+        public string? ShippingAddress { get; set; }
+
+        /// <summary>
+        /// Ten nguoi nhan hang (optional - neu khong co se lay tu user profile)
+        /// </summary>
+        [MaxLength(100)]
+        public string? RecipientName { get; set; }
+
+        /// <summary>
+        /// So dien thoai nguoi nhan hang (optional - neu khong co se lay tu user profile)
+        /// </summary>
+        [MaxLength(20)]
+        public string? RecipientPhone { get; set; }
+
+        /// <summary>
+        /// Phuong thuc thanh toan (optional - se duoc cap nhat sau khi thanh toan thanh cong)
+        /// VD: "PayOS", "VNPay", "VNBANK", etc.
+        /// </summary>
+        [MaxLength(50)]
+        public string? PaymentMethod { get; set; }
+
+        /// <summary>
+        /// Ma voucher giam gia (optional)
         /// </summary>
         [MaxLength(50)]
         public string? VoucherCode { get; set; }
 
         /// <summary>
-        /// Ghi chú đơn hàng (optional)
+        /// Ghi chu don hang (optional)
         /// </summary>
         [MaxLength(500)]
         public string? Note { get; set; }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using GreenSpace.Application.DTOs.Order;
+using GreenSpace.Domain.Constants;
 using GreenSpace.Domain.Models;
 
 namespace GreenSpace.Application.Mappings.AutoMappers
@@ -10,8 +11,14 @@ namespace GreenSpace.Application.Mappings.AutoMappers
         {
             // Order → OrderDto
             CreateMap<Order, OrderDto>()
-                .ForMember(d => d.PaymentMethod, o => o.MapFrom(s => s.ShippingAddress != null ? "Pending" : ""))
-                .ForMember(d => d.PaymentStatus, o => o.MapFrom(s => s.Status == "Paid" ? "Success" : "Pending"));
+                .ForMember(d => d.ShippingAddressId, o => o.MapFrom(s => s.ShippingAddressId))
+                .ForMember(d => d.RecipientName, o => o.MapFrom(s => s.RecipientName))
+                .ForMember(d => d.RecipientPhone, o => o.MapFrom(s => s.RecipientPhone))
+                .ForMember(d => d.PaymentMethod, o => o.MapFrom(s => s.PaymentMethod ?? PaymentStatus.Pending))
+                .ForMember(d => d.PaymentStatus, o => o.MapFrom(s =>
+                    s.Status == OrderStatus.Confirmed || s.Status == OrderStatus.Shipping || s.Status == OrderStatus.Completed
+                        ? PaymentStatus.Success
+                        : PaymentStatus.Pending));
 
             // OrderItem → OrderItemDto (THIS WAS MISSING!)
             CreateMap<OrderItem, OrderItemDto>()

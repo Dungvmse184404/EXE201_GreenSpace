@@ -12,7 +12,7 @@ namespace GreenSpace.Application.DTOs.PayOS
         [Required]
         public Guid OrderId { get; set; }
 
-        [MaxLength(255)]
-        public string? Description { get; set; }
+        //[MaxLength(255)]
+        //public string? Description { get; set; }
     }
 }

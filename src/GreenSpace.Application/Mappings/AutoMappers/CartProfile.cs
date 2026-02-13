@@ -14,6 +14,7 @@ namespace GreenSpace.Application.Mappings.AutoMappers
         public CartProfile()
         {
             CreateMap<Cart, CartDto>()
+                .ForMember(d => d.Items, o => o.MapFrom(s => s.CartItems))
                 .ForMember(d => d.TotalAmount, o => o.MapFrom(s =>
                     s.CartItems.Sum(ci => ci.Quantity!.Value * ci.Variant.Price)));
 

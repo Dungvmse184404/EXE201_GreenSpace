@@ -361,7 +361,132 @@ namespace GreenSpace.Application.Services
             return ServiceResult<bool>.Success(true, "Đã thu hồi toàn bộ token của người dùng.");
         }
 
+        // =================================================================
+        // RESET PASSWORD
+        // =================================================================
 
+        /// <summary>
+        /// Khởi tạo reset password - kiểm tra email tồn tại và gửi OTP
+        /// </summary>
+        public async Task<IServiceResult> ForgotPasswordAsync(ForgotPasswordDto dto)
+        {
+            try
+            {
+                // Kiểm tra email có tồn tại trong hệ thống không
+                var user = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
+                if (user == null)
+                {
+                    _logger?.LogWarning("Forgot password failed: Email {Email} not found", dto.Email);
+                    return ServiceResult.Failure(ApiStatusCodes.NotFound, "Email không tồn tại trong hệ thống.");
+                }
 
+                // Kiểm tra tài khoản có active không
+                if (user.IsActive != true)
+                {
+                    _logger?.LogWarning("Forgot password failed: Account {Email} is inactive", dto.Email);
+                    return ServiceResult.Failure(ApiStatusCodes.Forbidden, "Tài khoản đã bị vô hiệu hóa.");
+                }
+
+                // Gửi OTP qua email với purpose "ResetPassword"
+                await _otpService.SendOtpAsync(dto.Email, "Mã xác thực đặt lại mật khẩu GreenSpace", "ResetPassword");
+
+                _logger?.LogInformation("Reset password OTP sent to {Email}", dto.Email);
+                return ServiceResult.Success("Mã OTP đã được gửi đến email của bạn.");
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error sending reset password OTP for {Email}", dto.Email);
+                return ServiceResult.Failure(ApiStatusCodes.InternalServerError, $"Lỗi: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Xác thực OTP reset password
+        /// </summary>
+        public async Task<IServiceResult> VerifyResetPasswordOtpAsync(VerifyResetPasswordOtpDto dto)
+        {
+            try
+            {
+                // Kiểm tra email có tồn tại không
+                var user = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
+                if (user == null)
+                {
+                    return ServiceResult.Failure(ApiStatusCodes.NotFound, "Email không tồn tại trong hệ thống.");
+                }
+
+                // Verify OTP với purpose "ResetPassword"
+                var otpResult = await _otpService.VerifyOtpAsync(dto.Email, dto.Otp, "ResetPassword");
+
+                switch (otpResult)
+                {
+                    case OtpResult.Invalid:
+                        return ServiceResult.Failure(ApiStatusCodes.BadRequest, ApiMessages.OTP.Invalid);
+
+                    case OtpResult.Expired:
+                        return ServiceResult.Failure(ApiStatusCodes.Gone, ApiMessages.OTP.Expired);
+                }
+
+                // Lưu trạng thái đã verify vào cache (có thời hạn 15 phút để đặt mật khẩu mới)
+                var verifiedKey = $"ResetPasswordVerified:{dto.Email}";
+                await _cache.SetStringAsync(verifiedKey, "true", new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15)
+                });
+
+                _logger?.LogInformation("Reset password OTP verified for {Email}", dto.Email);
+                return ServiceResult.Success("Xác thực OTP thành công. Vui lòng đặt mật khẩu mới.");
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error verifying reset password OTP for {Email}", dto.Email);
+                return ServiceResult.Failure(ApiStatusCodes.InternalServerError, $"Lỗi: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Đặt mật khẩu mới sau khi đã verify OTP
+        /// </summary>
+        public async Task<IServiceResult> ResetPasswordAsync(ResetPasswordDto dto)
+        {
+            try
+            {
+                // Kiểm tra đã verify OTP chưa
+                var verifiedKey = $"ResetPasswordVerified:{dto.Email}";
+                var isVerified = await _cache.GetStringAsync(verifiedKey);
+
+                if (string.IsNullOrEmpty(isVerified))
+                {
+                    return ServiceResult.Failure(ApiStatusCodes.Unauthorized, "Phiên làm việc hết hạn hoặc chưa xác thực OTP.");
+                }
+
+                // Lấy user
+                var user = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
+                if (user == null)
+                {
+                    return ServiceResult.Failure(ApiStatusCodes.NotFound, "Email không tồn tại trong hệ thống.");
+                }
+
+                // Hash mật khẩu mới và cập nhật
+                user.PasswordHash = _passwordHashService.HashPassword(dto.NewPassword);
+                user.UpdateAt = DateTime.UtcNow;
+
+                await _unitOfWork.UserRepository.UpdateAsync(user);
+                await _unitOfWork.SaveChangesAsync();
+
+                // Xóa cache verified
+                await _cache.RemoveAsync(verifiedKey);
+
+                // Thu hồi tất cả refresh token của user (bắt buộc đăng nhập lại)
+                await _unitOfWork.RefreshTokenService.RevokeAllUserRefreshTokensAsync(user.UserId);
+
+                _logger?.LogInformation("Password reset successfully for {Email}", dto.Email);
+                return ServiceResult.Success("Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.");
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error resetting password for {Email}", dto.Email);
+                return ServiceResult.Failure(ApiStatusCodes.InternalServerError, $"Lỗi: {ex.Message}");
+            }
+        }
     }
 }

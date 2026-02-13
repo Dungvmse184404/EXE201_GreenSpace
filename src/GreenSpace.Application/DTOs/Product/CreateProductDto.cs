@@ -20,7 +20,7 @@ namespace GreenSpace.Application.DTOs.Product
         public string ThumbnailUrl { get; set; }
 
         public int CategoryId { get; set; }
-        public int? BrandId { get; set; }
+        //public int? BrandId { get; set; }
     }
 }
 
