@@ -118,7 +118,7 @@ namespace GreenSpace.WebAPI
                 await adminSeeder.SeedAsync();
 
                 var symptomSeeder = scope.ServiceProvider.GetRequiredService<SymptomDictionarySeeder>();
-                await symptomSeeder.SeedAsync();
+                await symptomSeeder.SeedAsync();    
 
                 // Seed Disease Knowledge Base (PlantTypes, Diseases, DiseaseSymptoms)
                 var diseaseKnowledgeSeeder = scope.ServiceProvider.GetRequiredService<DiseaseKnowledgeSeeder>();

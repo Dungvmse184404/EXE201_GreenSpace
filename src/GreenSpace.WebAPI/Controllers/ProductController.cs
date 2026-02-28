@@ -60,7 +60,7 @@ namespace GreenSpace.WebAPI.Controllers
         /// <returns>Created product</returns>
         /// <remarks>
         /// Sample request:
-        ///
+        /// 
         ///     POST /api/products
         ///     {
         ///         "name": "Cay xanh mini",           // Ten san pham

@@ -10,7 +10,8 @@ namespace GreenSpace.Application.Mappings.AutoMappers
         public ProductProfile()
         {
             CreateMap<Product, ProductDto>()
-                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : ""));
+                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category != null ? s.Category.Name : ""))
+                .ForMember(d => d.Variants, o => o.MapFrom(s => s.ProductVariants));
 
             CreateMap<CreateProductDto, Product>()
                 .ForMember(d => d.ProductId, o => o.Ignore())
@@ -24,10 +25,6 @@ namespace GreenSpace.Application.Mappings.AutoMappers
                 .ForMember(d => d.CreatedAt, o => o.Ignore())
                 .ForMember(d => d.UpdatedAt, o => o.Ignore());
 
-            CreateMap<ProductVariant, ProductVariantDto>().ReverseMap();
-
-
-            // ProductVariant mappings
             CreateMap<ProductVariant, ProductVariantDto>().ReverseMap();
 
             CreateMap<CreateProductVariantDto, ProductVariant>()

@@ -47,6 +47,8 @@ namespace GreenSpace.Application.Services
                     .Where(o => o.UserId == userId)
                     .Include(o => o.OrderItems)
                         .ThenInclude(oi => oi.Variant)
+                            .ThenInclude(v => v.Product)
+                    .Include(o => o.Payments)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToListAsync();
 
@@ -55,7 +57,7 @@ namespace GreenSpace.Application.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting orders for user {UserId}", userId);
-                return ServiceResult<List<OrderDto>>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Error.General);
+                return ServiceResult<List<OrderDto>>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Error.General + $"{ex.Message}");
             }
         }
 
@@ -67,6 +69,8 @@ namespace GreenSpace.Application.Services
                     .AsNoTracking()
                     .Include(o => o.OrderItems)
                         .ThenInclude(oi => oi.Variant)
+                            .ThenInclude(v => v.Product)
+                    .Include(o => o.Payments)
                     .FirstOrDefaultAsync(o => o.OrderId == orderId);
 
                 if (order == null)
@@ -82,6 +86,13 @@ namespace GreenSpace.Application.Services
         }
 
 
+        /// <summary>
+        /// Creates the order asynchronous.
+        /// </summary>
+        /// <param name="dto">The dto.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns></returns>
+        /// <exception cref="System.InvalidOperationException">Variant {item.VariantId} not found</exception>
         public async Task<IServiceResult<OrderDto>> CreateOrderAsync(
              CreateOrderDto dto,
              Guid userId)
@@ -146,7 +157,7 @@ namespace GreenSpace.Application.Services
                     decimal finalAmount = subTotal - discount + shippingFee;
 
                     // Resolve shipping address
-                    string shippingAddress;
+                    string shippingAddress = null;
                     Guid? shippingAddressId = null;
 
                     if (dto.AddressId.HasValue)
@@ -166,24 +177,20 @@ namespace GreenSpace.Application.Services
                     }
                     else
                     {
-                        // Option 3: Fallback lấy default address của user
+                        //Fallback lấy default address của user
                         var defaultAddress = await _unitOfWork.UserAddressRepository
                             .GetDefaultByUserIdAsync(userId);
 
-                        if (defaultAddress == null)
+                        if (defaultAddress != null)
                         {
-                            await _unitOfWork.RollbackAsync();
-                            return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
-                                "No shipping address provided and no default address found");
+                            shippingAddress = defaultAddress.FullAddress;
+                            shippingAddressId = defaultAddress.AddressId;
+                            _logger.LogInformation("Using default address {AddressId} for order", defaultAddress.AddressId);
                         }
-
-                        shippingAddress = defaultAddress.FullAddress;
-                        shippingAddressId = defaultAddress.AddressId;
-                        _logger.LogInformation("Using default address {AddressId} for order", defaultAddress.AddressId);
                     }
+                    // !!! vấn đề hiện tại nếu shipping address và addressId không trùng khớp có thể gây hiểu lầm địa chỉ gia hàng.
                     if (!string.IsNullOrEmpty(dto.ShippingAddress))
                     {
-                        // Su dung dia chi nhap truc tiep
                         shippingAddress = dto.ShippingAddress;
                     }
 

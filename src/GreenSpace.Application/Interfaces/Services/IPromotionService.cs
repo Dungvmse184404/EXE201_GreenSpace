@@ -7,8 +7,12 @@ namespace GreenSpace.Application.Interfaces.Services
 {
     public interface IPromotionService
     {
+        Task<IServiceResult<List<PromotionDto>>> GetAllAsync();
+        Task<IServiceResult<PromotionDto>> GetByIdAsync(Guid promotionId);
         Task<IServiceResult<List<PromotionDto>>> GetActivePromotionsAsync();
         Task<IServiceResult<PromotionDto>> CreateAsync(CreatePromotionDto dto);
+        Task<IServiceResult<PromotionDto>> UpdateAsync(Guid promotionId, UpdatePromotionDto dto);
+        Task<IServiceResult<bool>> DeleteAsync(Guid promotionId);
 
         // ============================================
         // Voucher/Discount Methods

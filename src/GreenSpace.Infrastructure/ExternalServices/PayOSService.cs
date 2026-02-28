@@ -200,10 +200,9 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         if (isSuccess)
                         {
                             order.Status = OrderStatus.Confirmed;
-                            order.PaymentMethod = PaymentGateway.PayOS;  // Cập nhật payment method từ gateway đã dùng
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
                             await _stockService.ConfirmStockReservationAsync(order.OrderId);
-                            _logger.LogInformation("Order {OrderId} confirmed with PaymentMethod=PayOS, stock reservation confirmed", order.OrderId);
+                            _logger.LogInformation("Order {OrderId} confirmed, stock reservation confirmed", order.OrderId);
                         }
                         else if (isCancelled)
                         {
@@ -304,7 +303,6 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         if (isSuccess)
                         {
                             order.Status = OrderStatus.Confirmed;
-                            order.PaymentMethod = PaymentGateway.PayOS;  // Cập nhật payment method từ gateway đã dùng
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
                             await _stockService.ConfirmStockReservationAsync(order.OrderId);
                         }

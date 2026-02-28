@@ -11,10 +11,9 @@ namespace GreenSpace.Application.Mappings.AutoMappers
         {
             // Order → OrderDto
             CreateMap<Order, OrderDto>()
-                .ForMember(d => d.ShippingAddressId, o => o.MapFrom(s => s.ShippingAddressId))
-                .ForMember(d => d.RecipientName, o => o.MapFrom(s => s.RecipientName))
-                .ForMember(d => d.RecipientPhone, o => o.MapFrom(s => s.RecipientPhone))
-                .ForMember(d => d.PaymentMethod, o => o.MapFrom(s => s.PaymentMethod ?? PaymentStatus.Pending))
+                .ForMember(d => d.Items, o => o.MapFrom(s => s.OrderItems))
+                .ForMember(d => d.PaymentMethod, o => o.MapFrom(s =>
+                    s.Payments.OrderByDescending(p => p.CreatedAt).Select(p => p.PaymentMethod).FirstOrDefault()))
                 .ForMember(d => d.PaymentStatus, o => o.MapFrom(s =>
                     s.Status == OrderStatus.Confirmed || s.Status == OrderStatus.Shipping || s.Status == OrderStatus.Completed
                         ? PaymentStatus.Success
@@ -27,10 +26,11 @@ namespace GreenSpace.Application.Mappings.AutoMappers
                     s.Variant != null && s.Variant.Product != null
                         ? s.Variant.Product.Name
                         : "Unknown Product"))
-                .ForMember(d => d.VariantSku, o => o.MapFrom(s =>
-                    s.Variant != null
-                        ? s.Variant.Sku ?? ""
-                        : ""));
+                .ForMember(d => d.VariantId, o => o.MapFrom(s => s.VariantId))
+                .ForMember(d => d.VariantSku, o => o.MapFrom(s => s.Variant != null ? s.Variant.Sku : null))
+                .ForMember(d => d.Color, o => o.MapFrom(s => s.Variant != null ? s.Variant.Color : null))
+                .ForMember(d => d.SizeOrModel, o => o.MapFrom(s => s.Variant != null ? s.Variant.SizeOrModel : null))
+                .ForMember(d => d.ImageUrl, o => o.MapFrom(s => s.Variant != null ? s.Variant.ImageUrl : null));
 
             // CreateOrderDto → Order
             CreateMap<CreateOrderDto, Order>()

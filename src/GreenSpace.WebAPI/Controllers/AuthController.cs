@@ -1,5 +1,6 @@
 using GreenSpace.Application.DTOs.Auth;
 using GreenSpace.Application.Interfaces.Services;
+using GreenSpace.Domain.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -121,7 +122,10 @@ namespace GreenSpace.WebAPI.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var result = await _authService.LoginAsync(dto);
-            return result.IsSuccess ? Ok(result) : Unauthorized(result);
+            if (result.IsSuccess) return Ok(result);
+
+            var statusCode = (result as ServiceResult)?.StatusCode ?? 401;
+            return StatusCode(statusCode, result);
         }
 
         /// <summary>

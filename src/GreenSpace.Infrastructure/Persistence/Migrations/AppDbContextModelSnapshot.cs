@@ -443,11 +443,6 @@ namespace GreenSpace.Infrastructure.Persistence.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("payment_expiry_at");
 
-                    b.Property<string>("PaymentMethod")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("payment_method");
-
                     b.Property<string>("RecipientName")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")

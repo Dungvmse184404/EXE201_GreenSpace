@@ -74,14 +74,6 @@ public partial class Order
     [StringLength(50)]
     public string? Status { get; set; }
 
-    /// <summary>
-    /// Phương thức thanh toán đã sử dụng (được cập nhật sau khi thanh toán thành công)
-    /// VD: "PayOS", "VNPay", "VNBANK", "NCB", etc.
-    /// </summary>
-    [Column("payment_method")]
-    [StringLength(50)]
-    public string? PaymentMethod { get; set; }
-
     // ============================================
     // Shipping Info (Snapshot từ UserAddress + Recipient)
     // ============================================

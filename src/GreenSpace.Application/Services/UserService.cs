@@ -67,7 +67,8 @@ namespace GreenSpace.Application.Services
                 if (user == null)
                     return ServiceResult<UserDto>.Failure(ApiStatusCodes.NotFound, "User not found.");
 
-                // 1. Validate Email Uniqueness if changed
+                // Only update fields that are explicitly provided (not null)
+
                 if (!string.IsNullOrEmpty(dto.Email) && dto.Email != user.Email)
                 {
                     if (await _unitOfWork.UserRepository.EmailExistsAsync(dto.Email))
@@ -75,7 +76,6 @@ namespace GreenSpace.Application.Services
                     user.Email = dto.Email;
                 }
 
-                // 2. Validate Phone Uniqueness if changed
                 if (!string.IsNullOrEmpty(dto.PhoneNumber) && dto.PhoneNumber != user.Phone)
                 {
                     if (await _unitOfWork.UserRepository.PhoneExistsAsync(dto.PhoneNumber))
@@ -83,7 +83,6 @@ namespace GreenSpace.Application.Services
                     user.Phone = dto.PhoneNumber;
                 }
 
-                // 3. Handle Name Parsing
                 if (!string.IsNullOrEmpty(dto.FullName))
                 {
                     var names = dto.FullName.Trim().Split(' ', 2);
@@ -91,8 +90,6 @@ namespace GreenSpace.Application.Services
                     user.LastName = names.Length > 1 ? names[1] : "";
                 }
 
-                // 4. Update other fields via Mapper
-                _mapper.Map(dto, user);
                 user.UpdateAt = DateTime.UtcNow;
 
                 await _unitOfWork.UserRepository.UpdateAsync(user);

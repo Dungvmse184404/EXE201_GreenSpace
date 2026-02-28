@@ -30,7 +30,7 @@ namespace GreenSpace.Application.DTOs.Order
         public string? RecipientPhone { get; set; }
 
         public string? Note { get; set; }
-        public string PaymentMethod { get; set; } = string.Empty;
+        public string? PaymentMethod { get; set; }
         public string PaymentStatus { get; set; } = string.Empty;
         public List<OrderItemDto> Items { get; set; } = new();
     }
@@ -59,13 +59,6 @@ namespace GreenSpace.Application.DTOs.Order
         /// </summary>
         [MaxLength(20)]
         public string? RecipientPhone { get; set; }
-
-        /// <summary>
-        /// Phuong thuc thanh toan (optional - se duoc cap nhat sau khi thanh toan thanh cong)
-        /// VD: "PayOS", "VNPay", "VNBANK", etc.
-        /// </summary>
-        [MaxLength(50)]
-        public string? PaymentMethod { get; set; }
 
         /// <summary>
         /// Ma voucher giam gia (optional)

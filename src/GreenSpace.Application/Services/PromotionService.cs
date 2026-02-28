@@ -24,6 +24,41 @@ namespace GreenSpace.Application.Services
             _logger = logger;
         }
 
+        public async Task<IServiceResult<List<PromotionDto>>> GetAllAsync()
+        {
+            try
+            {
+                var promotions = await _unitOfWork.PromotionRepository.GetAllQueryable()
+                    .AsNoTracking()
+                    .OrderByDescending(p => p.CreatedAt)
+                    .ToListAsync();
+
+                return ServiceResult<List<PromotionDto>>.Success(_mapper.Map<List<PromotionDto>>(promotions));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all promotions");
+                return ServiceResult<List<PromotionDto>>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
+            }
+        }
+
+        public async Task<IServiceResult<PromotionDto>> GetByIdAsync(Guid promotionId)
+        {
+            try
+            {
+                var promotion = await _unitOfWork.PromotionRepository.GetByIdAsync(promotionId);
+                if (promotion == null)
+                    return ServiceResult<PromotionDto>.Failure(ApiStatusCodes.NotFound, "Promotion not found.");
+
+                return ServiceResult<PromotionDto>.Success(_mapper.Map<PromotionDto>(promotion));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting promotion {PromotionId}", promotionId);
+                return ServiceResult<PromotionDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
+            }
+        }
+
         public async Task<IServiceResult<List<PromotionDto>>> GetActivePromotionsAsync()
         {
             try
@@ -78,6 +113,74 @@ namespace GreenSpace.Application.Services
             {
                 _logger.LogError(ex, "Error creating promotion");
                 return ServiceResult<PromotionDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
+            }
+        }
+
+        public async Task<IServiceResult<PromotionDto>> UpdateAsync(Guid promotionId, UpdatePromotionDto dto)
+        {
+            try
+            {
+                var promotion = await _unitOfWork.PromotionRepository.GetByIdAsync(promotionId);
+                if (promotion == null)
+                    return ServiceResult<PromotionDto>.Failure(ApiStatusCodes.NotFound, "Promotion not found.");
+
+                // Check code uniqueness if changed
+                if (!string.IsNullOrEmpty(dto.Code) && dto.Code.ToLower() != promotion.Code?.ToLower())
+                {
+                    var codeExists = await _unitOfWork.PromotionRepository.GetAllQueryable()
+                        .AnyAsync(p => p.Code != null && p.Code.ToLower() == dto.Code.ToLower());
+
+                    if (codeExists)
+                        return ServiceResult<PromotionDto>.Failure(ApiStatusCodes.BadRequest, "Mã voucher đã tồn tại.");
+                    promotion.Code = dto.Code;
+                }
+
+                if (dto.Name != null) promotion.Name = dto.Name;
+                if (dto.Description != null) promotion.Description = dto.Description;
+                if (dto.DiscountType != null) promotion.DiscountType = dto.DiscountType;
+                if (dto.DiscountValue.HasValue) promotion.DiscountValue = dto.DiscountValue.Value;
+                if (dto.MaxDiscount.HasValue) promotion.MaxDiscount = dto.MaxDiscount;
+                if (dto.MinOrderValue.HasValue) promotion.MinOrderValue = dto.MinOrderValue;
+                if (dto.MaxUsage.HasValue) promotion.MaxUsage = dto.MaxUsage;
+                if (dto.StartDate.HasValue) promotion.StartDate = dto.StartDate;
+                if (dto.EndDate.HasValue) promotion.EndDate = dto.EndDate;
+                if (dto.IsActive.HasValue) promotion.IsActive = dto.IsActive.Value;
+
+                promotion.UpdatedAt = DateTime.UtcNow;
+                promotion.UpdateAt = DateTime.UtcNow;
+
+                // Entity đã tracked từ GetByIdAsync, chỉ cần SaveChanges
+                await _unitOfWork.SaveChangesAsync();
+
+                return ServiceResult<PromotionDto>.Success(_mapper.Map<PromotionDto>(promotion), "Promotion updated.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating promotion {PromotionId}", promotionId);
+                return ServiceResult<PromotionDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
+            }
+        }
+
+        public async Task<IServiceResult<bool>> DeleteAsync(Guid promotionId)
+        {
+            try
+            {
+                var promotion = await _unitOfWork.PromotionRepository.GetByIdAsync(promotionId);
+                if (promotion == null)
+                    return ServiceResult<bool>.Failure(ApiStatusCodes.NotFound, "Promotion not found.");
+
+                promotion.IsActive = false;
+                promotion.UpdatedAt = DateTime.UtcNow;
+                promotion.UpdateAt = DateTime.UtcNow;
+
+                await _unitOfWork.SaveChangesAsync();
+
+                return ServiceResult<bool>.Success(true, "Promotion deactivated.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting promotion {PromotionId}", promotionId);
+                return ServiceResult<bool>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }
 

@@ -209,11 +209,9 @@ namespace GreenSpace.Infrastructure.ExternalServices
                         if (isSuccess)
                         {
                             order.Status = OrderStatus.Confirmed;
-                            // Cập nhật payment method từ gateway đã dùng (VNPay hoặc BankCode cụ thể)
-                            order.PaymentMethod = payment.PaymentMethod ?? PaymentGateway.VNPay;
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
                             await _stockService.ConfirmStockReservationAsync(order.OrderId);
-                            _logger.LogInformation("Order {OrderId} confirmed with PaymentMethod={PaymentMethod}", order.OrderId, order.PaymentMethod);
+                            _logger.LogInformation("Order {OrderId} confirmed via VNPay", order.OrderId);
                         }
                         else
                         {

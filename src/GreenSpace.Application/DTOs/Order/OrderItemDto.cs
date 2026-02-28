@@ -10,10 +10,14 @@ namespace GreenSpace.Application.DTOs.Order
     {
         public Guid ProductId { get; set; }
         public string ProductName { get; set; }
-        public string VariantSku { get; set; }
+        public Guid? VariantId { get; set; }
+        public string? VariantSku { get; set; }
+        public string? Color { get; set; }
+        public string? SizeOrModel { get; set; }
+        public string? ImageUrl { get; set; }
         public int Quantity { get; set; }
         public decimal PriceAtPurchase { get; set; }
-        public decimal SubTotal => Quantity * PriceAtPurchase; //field này không map từ db mà tính toán từ các field khác
+        public decimal SubTotal => Quantity * PriceAtPurchase;
     }
 
     public class CreateOrderItemDto

@@ -10,8 +10,5 @@ namespace GreenSpace.Application.DTOs.User
         public string? PhoneNumber { get; set; }
         public string? EditAddress { get; set; }
         public string? AdditionalAddress { get; set; }
-        public string? Status { get; set; }
-        public bool IsActive { get; set; } = true;
-
     }
 }

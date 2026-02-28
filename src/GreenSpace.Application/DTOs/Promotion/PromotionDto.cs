@@ -86,6 +86,30 @@ namespace GreenSpace.Application.DTOs.Promotion
         public decimal DiscountAmount { get; set; }
     }
 
+    public class UpdatePromotionDto
+    {
+        [MaxLength(50)]
+        public string? Code { get; set; }
+
+        [MaxLength(100)]
+        public string? Name { get; set; }
+
+        [MaxLength(500)]
+        public string? Description { get; set; }
+
+        public string? DiscountType { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public decimal? DiscountValue { get; set; }
+
+        public decimal? MaxDiscount { get; set; }
+        public decimal? MinOrderValue { get; set; }
+        public int? MaxUsage { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public bool? IsActive { get; set; }
+    }
+
     /// <summary>
     /// Kết quả tính discount
     /// </summary>

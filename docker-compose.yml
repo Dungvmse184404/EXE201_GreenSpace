@@ -51,7 +51,7 @@ services:
       - VNPaySettings__TmnCode=U59B892K
       - VNPaySettings__HashSecret=N9SQGZZKXOFT71EIMCMGN94WWZFPMMMO
       - VNPaySettings__BaseUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-      - VNPaySettings__ReturnUrl=http://localhost:5020/api/payments/vnpay/callback
+      - VNPaySettings__ReturnUrl=https://green-space-exe.vercel.app/api/payments/vnpay/callback
       - VNPaySettings__Version=2.1.0
       - VNPaySettings__Command=pay
       - VNPaySettings__CurrCode=VND
@@ -61,11 +61,11 @@ services:
       - PayOSSettings__ClientId=da0da971-3060-4128-8034-52821a265cfb
       - PayOSSettings__ApiKey=c9aeafcc-1fc3-406e-b83d-a4997eb7c047
       - PayOSSettings__ChecksumKey=188b066830f23cf7d3ee98f9a0f87d731e4c2b9344765ddced8009797d5d5424
-      - PayOSSettings__ReturnUrl=http://localhost:5020/api/payments/payos/callback
-      - PayOSSettings__CancelUrl=http://localhost:5020/api/payments/payos/callback
+      - PayOSSettings__ReturnUrl=https://green-space-exe.vercel.app/orders
+      - PayOSSettings__CancelUrl=https://green-space-exe.vercel.app/payment-result
       
-      - ClientSettings__BaseUrl=http://localhost:3000
-      - ClientSettings__BackupUrl=http://localhost:3000/payment-failed
+      - ClientSettings__BaseUrl=https://green-space-exe.vercel.app/
+      - ClientSettings__BackupUrl=https://green-space-exe.vercel.app/error
     depends_on:
       db:
         condition: service_healthy

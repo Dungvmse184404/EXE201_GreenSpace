@@ -108,7 +108,7 @@ namespace GreenSpace.Application.Common.Constants
 
         public static class Error
         {
-            public const string General = "Internal server error. Please try again later.";
+            public const string General = "Internal server error: ";
             public const string NotImplemented = "This feature is not implemented yet.";
             public const string ServiceUnavailable = "Service is currently unavailable. Please try again later.";
             public const string Timeout = "The request has timed out. Please try again.";

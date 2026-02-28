@@ -54,7 +54,6 @@ namespace GreenSpace.Application.Services
                 var products = await _unitOfWork.ProductRepository.GetAllQueryable()
                     .AsNoTracking()
                     .Include(p => p.Category)
-                    .Include(p => p.ProductVariants)
                     .Where(p => p.IsActive == true)
                     .ToListAsync();
 
