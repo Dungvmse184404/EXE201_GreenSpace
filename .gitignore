@@ -114,3 +114,9 @@ ehthumbs.db
 **/.vs
 **/bin
 **/obj
+
+########################################
+# Publishing secrets
+########################################
+greenspace.runasp.net-WebDeploy.publishSettings
+*.publishSettings
