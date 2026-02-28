@@ -58,7 +58,8 @@ namespace GreenSpace.WebAPI
                    {
                        policy.WithOrigins(
                                "http://localhost:3000",
-                               "http://localhost:5173"
+                               "http://localhost:5173",
+                               "https://green-space-exe.vercel.app"
                            )
                            .AllowAnyMethod()
                            .AllowAnyHeader();
@@ -123,12 +124,11 @@ namespace GreenSpace.WebAPI
                 var diseaseKnowledgeSeeder = scope.ServiceProvider.GetRequiredService<DiseaseKnowledgeSeeder>();
                 await diseaseKnowledgeSeeder.SeedAsync();
             }
-           
+
+            app.UseCors("AllowAll");
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();  
-
-            app.UseCors("AllowAll");
 
             app.UseAuthentication();
             app.UseAuthorization();
