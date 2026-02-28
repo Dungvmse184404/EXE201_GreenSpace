@@ -11,9 +11,9 @@ namespace GreenSpace.Application.Mappings.AutoMappers
         {
             // Order → OrderDto
             CreateMap<Order, OrderDto>()
-                .ForMember(d => d.Items, o => o.MapFrom(s => s.OrderItems))
-                .ForMember(d => d.PaymentMethod, o => o.MapFrom(s =>
-                    s.Payments.OrderByDescending(p => p.CreatedAt).Select(p => p.PaymentMethod).FirstOrDefault()))
+                .ForMember(d => d.ShippingAddressId, o => o.MapFrom(s => s.ShippingAddressId))
+                .ForMember(d => d.RecipientName, o => o.MapFrom(s => s.RecipientName))
+                .ForMember(d => d.RecipientPhone, o => o.MapFrom(s => s.RecipientPhone))
                 .ForMember(d => d.PaymentStatus, o => o.MapFrom(s =>
                     s.Status == OrderStatus.Confirmed || s.Status == OrderStatus.Shipping || s.Status == OrderStatus.Completed
                         ? PaymentStatus.Success

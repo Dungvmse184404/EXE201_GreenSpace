@@ -126,6 +126,26 @@ namespace GreenSpace.WebAPI.Controllers
             var result = await _orderService.UpdateStatusAsync(id, dto.Status);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
+
+        /// <summary>
+        /// Get all orders (Admin/Staff only)
+        /// </summary>
+        /// <returns>all orders</returns>
+        /// <response code="200">Status updated successfully</response>
+        /// <response code="400">Invalid status or transition not allowed</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="403">Forbidden - Admin/Staff only</response>
+        [HttpGet]
+        [Authorize(Roles = "ADMIN,STAFF")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        public async Task<IActionResult> GetAll()
+        {
+            var result = await _orderService.GetAllOrderAsync();
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
     }
 
     /// <summary>

@@ -211,7 +211,7 @@ namespace GreenSpace.Infrastructure.ExternalServices
                             order.Status = OrderStatus.Confirmed;
                             await _unitOfWork.OrderRepository.UpdateAsync(order);
                             await _stockService.ConfirmStockReservationAsync(order.OrderId);
-                            _logger.LogInformation("Order {OrderId} confirmed via VNPay", order.OrderId);
+                            _logger.LogInformation("Order {OrderId} confirmed with PaymentMethod={PaymentMethod}", order.OrderId);
                         }
                         else
                         {

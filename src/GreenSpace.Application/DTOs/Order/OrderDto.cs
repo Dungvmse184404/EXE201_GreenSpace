@@ -30,7 +30,6 @@ namespace GreenSpace.Application.DTOs.Order
         public string? RecipientPhone { get; set; }
 
         public string? Note { get; set; }
-        public string? PaymentMethod { get; set; }
         public string PaymentStatus { get; set; } = string.Empty;
         public List<OrderItemDto> Items { get; set; } = new();
     }
@@ -59,6 +58,7 @@ namespace GreenSpace.Application.DTOs.Order
         /// </summary>
         [MaxLength(20)]
         public string? RecipientPhone { get; set; }
+
 
         /// <summary>
         /// Ma voucher giam gia (optional)

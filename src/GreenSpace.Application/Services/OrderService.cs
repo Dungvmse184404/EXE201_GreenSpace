@@ -10,6 +10,7 @@ using GreenSpace.Domain.Interfaces;
 using GreenSpace.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using static GreenSpace.Application.Common.Constants.ApiMessages;
 
 namespace GreenSpace.Application.Services
 {
@@ -223,7 +224,7 @@ namespace GreenSpace.Application.Services
                     }
 
                     // Create order with all pricing info
-                    var order = new Order
+                    var order = new Domain.Models.Order
                     {
                         UserId = userId,
                         Status = OrderStatus.Pending,
@@ -335,6 +336,26 @@ namespace GreenSpace.Application.Services
             {
                 _logger.LogError(ex, "Error updating order status {OrderId}", orderId);
                 return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
+            }
+        }
+
+        public async Task<IServiceResult<List<OrderDto>>> GetAllOrderAsync()
+        {
+            try
+            {
+                var orders = await _unitOfWork.OrderRepository.GetAllQueryable()
+                    .AsNoTracking()
+                    .Include(o => o.OrderItems)
+                        .ThenInclude(oi => oi.Variant)
+                    .OrderByDescending(o => o.CreatedAt)
+                    .ToListAsync();
+
+                return ServiceResult<List<OrderDto>>.Success(_mapper.Map<List<OrderDto>>(orders));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving orders");
+                return ServiceResult<List<OrderDto>>.Failure(ApiStatusCodes.InternalServerError, ApiMessages.Error.General);
             }
         }
     }
