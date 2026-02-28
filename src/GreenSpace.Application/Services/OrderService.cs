@@ -46,9 +46,9 @@ namespace GreenSpace.Application.Services
                 var orders = await _unitOfWork.OrderRepository.GetAllQueryable()
                     .AsNoTracking()
                     .Where(o => o.UserId == userId)
-                    .Include(o => o.OrderItems)
-                        .ThenInclude(oi => oi.Variant)
-                            .ThenInclude(v => v.Product)
+                    //.Include(o => o.OrderItems)
+                    //    .ThenInclude(oi => oi.Variant)
+                    //        .ThenInclude(v => v.Product)
                     .Include(o => o.Payments)
                     .OrderByDescending(o => o.CreatedAt)
                     .ToListAsync();
