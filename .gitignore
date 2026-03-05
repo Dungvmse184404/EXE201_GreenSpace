@@ -78,7 +78,10 @@ appsettings.Local.json
 appsettings.*.json.user
 secrets.json
 appsettings.json
-
+secrets.json
+.env
+.env.*
+!.env.example
 ########################################
 # User uploads / runtime generated files
 ########################################
@@ -95,28 +98,26 @@ wwwroot/temp/
 *.sqlite
 
 ########################################
-# OS generated
+# Logs & Temp
+########################################
+*.log
+logs/
+[Ll]og/
+temp/
+wwwroot/uploads/
+wwwroot/temp/
+
+########################################
+# Database
+########################################
+*.mdf
+*.ldf
+*.db
+*.sqlite
+
+########################################
+# OS & IDE
 ########################################
 .DS_Store
 Thumbs.db
-ehthumbs.db
-
-
-########################################
-# Claude Code
-########################################
 .claude/
-
-########################################
-# Docker
-########################################
-.git
-**/.vs
-**/bin
-**/obj
-
-########################################
-# Publishing secrets
-########################################
-greenspace.runasp.net-WebDeploy.publishSettings
-*.publishSettings
