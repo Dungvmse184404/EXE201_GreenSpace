@@ -14,11 +14,7 @@ namespace GreenSpace.Application.Mappings.AutoMappers
                 .ForMember(d => d.ShippingAddressId, o => o.MapFrom(s => s.ShippingAddressId))
                 .ForMember(d => d.RecipientName, o => o.MapFrom(s => s.RecipientName))
                 .ForMember(d => d.RecipientPhone, o => o.MapFrom(s => s.RecipientPhone))
-                .ForMember(d => d.Items, o => o.MapFrom(s => s.OrderItems))
-                .ForMember(d => d.PaymentStatus, o => o.MapFrom(s =>
-                    s.Status == OrderStatus.Confirmed || s.Status == OrderStatus.Shipping || s.Status == OrderStatus.Completed
-                        ? PaymentStatus.Success
-                        : PaymentStatus.Pending));
+                .ForMember(d => d.Items, o => o.MapFrom(s => s.OrderItems));
                 
 
             // OrderItem → OrderItemDto (THIS WAS MISSING!)

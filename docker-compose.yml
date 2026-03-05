@@ -24,7 +24,7 @@ services:
   # ============================================
   # GreenSpace Web API
   # ============================================
-  api:
+api:
     build: .
     container_name: greenspace-api
     restart: unless-stopped
@@ -33,23 +33,22 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - Kestrel__Endpoints__Http__Url=http://0.0.0.0:5020
-      - ConnectionStrings__DefaultConnection=Host=aws-1-ap-southeast-1.pooler.supabase.com;Port=5432;Database=postgres;Username=postgres.edyichtsvltkmyfxbbiz;Password=l2WkFeI8ZNsLDUpe;Ssl Mode=Require;Trust Server Certificate=true;Pooling=true;Maximum Pool Size=20;Timeout=300
-      #- ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=EXE201_GreenSpaceDb;Username=postgres;Password=12345
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION}
 
-      - JwtSettings__SecretKey=!@#$%^&*()Mahoasieucapbaomat958l[p0-=-1l=p[=1;=.]]
-      - JwtSettings__Issuer=GreenSpace
-      - JwtSettings__Audience=GreenSpace_API
+      - JwtSettings__SecretKey=${JWT_SECRET}
+      - JwtSettings__Issuer=${JWT_ISSUER}
+      - JwtSettings__Audience=${JWT_AUDIENCE}
       - JwtSettings__ExpiryMinutes=60
       - JwtSettings__RefreshTokenExpiryDays=7
 
-      - MailSettings__Mail=dungvu2324@gmail.com
+      - MailSettings__Mail=${MAIL_USER}
       - MailSettings__DisplayName=GreenSpace Support
-      - MailSettings__Password=xdcc ksvb odhs qzku
+      - MailSettings__Password=${MAIL_PASS}
       - MailSettings__Host=smtp.gmail.com
       - MailSettings__Port=587
       
-      - VNPaySettings__TmnCode=U59B892K
-      - VNPaySettings__HashSecret=N9SQGZZKXOFT71EIMCMGN94WWZFPMMMO
+      - VNPaySettings__TmnCode=${VNPAY_TMN_CODE}
+      - VNPaySettings__HashSecret=${VNPAY_HASH_SECRET}
       - VNPaySettings__BaseUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
       - VNPaySettings__ReturnUrl=https://green-space-exe.vercel.app/api/payments/vnpay/callback
       - VNPaySettings__Version=2.1.0
@@ -58,11 +57,25 @@ services:
       - VNPaySettings__Locale=vn
       - VNPaySettings__TimeoutMinutes=10
 
-      - PayOSSettings__ClientId=da0da971-3060-4128-8034-52821a265cfb
-      - PayOSSettings__ApiKey=c9aeafcc-1fc3-406e-b83d-a4997eb7c047
-      - PayOSSettings__ChecksumKey=188b066830f23cf7d3ee98f9a0f87d731e4c2b9344765ddced8009797d5d5424
+      - PayOSSettings__ClientId=${PAYOS_CLIENT_ID}
+      - PayOSSettings__ApiKey=${PAYOS_API_KEY}
+      - PayOSSettings__ChecksumKey=${PAYOS_CHECKSUM}
       - PayOSSettings__ReturnUrl=https://green-space-exe.vercel.app/orders
       - PayOSSettings__CancelUrl=https://green-space-exe.vercel.app/payment-result
+
+      - Groq__ApiKey=${GROQ_API_KEY}
+      - Groq__Model=meta-llama/llama-4-scout-17b-16e-instruct
+      - Groq__BaseUrl=https://api.groq.com/openai/v1
+      - Groq__MaxTokens=2048
+      - Groq__Temperature=0.4
+      - Groq__IsEnabled=true
+
+      - Gemini__ApiKey=${GEMINI_API_KEY}
+      - Gemini__Model=gemini-1.5-flash
+      - Gemini__BaseUrl=https://generativelanguage.googleapis.com/v1beta
+      - Gemini__MaxOutputTokens=2048
+      - Gemini__Temperature=0.4
+      - Gemini__IsEnabled=false
       
       - ClientSettings__BaseUrl=https://green-space-exe.vercel.app/
       - ClientSettings__BackupUrl=https://green-space-exe.vercel.app/error

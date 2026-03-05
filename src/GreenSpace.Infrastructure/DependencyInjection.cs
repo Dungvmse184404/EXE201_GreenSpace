@@ -118,6 +118,7 @@ namespace GreenSpace.Infrastructure
             services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
             services.AddTransient<IEmailSender, EmailSender>();
             services.AddScoped<IEmailTemplateHelper, EmailTemplateHelper>();
+            services.AddScoped<IOrderNotificationService, OrderNotificationService>();
             services.AddScoped<IOtpService, OtpService>();
 
             services.AddScoped<IAuthService, AuthService>();
@@ -141,6 +142,9 @@ namespace GreenSpace.Infrastructure
             services.Configure<GroqSettings>(configuration.GetSection(GroqSettings.SectionName));
             services.AddHttpClient<IAIVisionService, GroqService>();
 
+            // Chat Service - conversational AI (like ChatGPT)
+            services.AddHttpClient<IChatService, GroqService>();
+
             // Diagnosis Cache Service - semantic matching for cached diagnosis results
             services.AddScoped<IDiagnosisCacheService, DiagnosisCacheService>();
 
@@ -149,6 +153,9 @@ namespace GreenSpace.Infrastructure
 
             // Main Diagnosis Service - KB → Cache → AI priority
             services.AddScoped<IDiagnosisService, DiagnosisService>();
+
+            // Chatbox Service - uses same AI Vision Service as Diagnosis for conversational AI
+            services.AddScoped<IChatboxService, ChatboxService>();
 
             // Keep Gemini config for potential future use
             services.Configure<GeminiSettings>(configuration.GetSection(GeminiSettings.SectionName));

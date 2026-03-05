@@ -1,15 +1,20 @@
-﻿
-using GreenSpace.Application.Common.Mail;
+﻿using GreenSpace.Application.Common.Mail;
+using GreenSpace.Application.Common.Settings;
+using GreenSpace.Domain.Constants;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Options;
+using System.Runtime.InteropServices;
 
 namespace GreenSpace.Infrastructure.Helpers
 {
     public class EmailTemplateHelper : IEmailTemplateHelper
     {
         private readonly IWebHostEnvironment _env;
-        public EmailTemplateHelper(IWebHostEnvironment env)
+        private readonly ClientSettings _clientSettings;
+        public EmailTemplateHelper(IWebHostEnvironment env, IOptions<ClientSettings> clientSettings)
         {
             _env = env;
+            _clientSettings = clientSettings.Value;
         }
 
         /// <summary>
@@ -45,6 +50,52 @@ namespace GreenSpace.Infrastructure.Helpers
                 .Replace("{OtpCode}", otp)
                 .Replace("{ExpiryMinutes}", expiry.ToString());
         }
+
+        /// <summary>
+        /// hàm gửi mail thông báo thay đổi trạng thái đơn hàng
+        /// </summary>
+        /// <param name="recipientName">Name of the recipient.</param>
+        /// <param name="orderId">Order ID</param>
+        /// <param name="newStatus">New order status</param>
+        /// <param name="oldStatus">Previous order status</param>
+        /// <returns></returns>
+        public async Task<string> GetOrderStatusNotificationContentAsync(string recipientName, string newStatus, string oldStatus)
+        {
+            var template = await ReadTemplateAsync("OrderStatusNotification.html");
+            string tzId = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+             ? "SE Asia Standard Time"
+             : "Asia/Ho_Chi_Minh";
+            DateTime vnTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById(tzId));
+            return template
+                .Replace("{RecipientName}", recipientName)
+                .Replace("{OldStatus}", GetStatusDisplay(oldStatus))
+                .Replace("{NewStatus}", GetStatusDisplay(newStatus))
+                .Replace("{OrderPageUrl}", _clientSettings.OrderPageUrl ?? "#")
+                .Replace("{CurrentDateTime}", vnTime.ToString("dd/MM/yyyy HH:mm:ss"));
+        }
+
+        /// <summary>
+        /// Get display name for order status
+        /// </summary>
+        private string GetStatusDisplay(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status))
+                return string.Empty;
+
+            var s = status.Trim();
+
+            return s switch
+            {
+                OrderStatus.Pending   => "Chờ xác nhận",
+                OrderStatus.Confirmed => "Đã xác nhận",
+                OrderStatus.Shipping  => "Đang giao hàng",
+                OrderStatus.Completed => "Đã giao",
+                OrderStatus.Cancelled => "Đã hủy",
+                OrderStatus.Returned  => "Đã trả hàng",
+                _ => s
+            };
+        }
+
 
 
 

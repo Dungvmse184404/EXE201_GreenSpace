@@ -8,6 +8,7 @@ namespace GreenSpace.Application.Common.Settings
 {
     public class ClientSettings
     {
+        public string OrderPageUrl { get; set; } = string.Empty;
         public string BaseUrl { get; set; } = string.Empty;
         public string BackupUrl { get; set; } = string.Empty;
     }

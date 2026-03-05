@@ -117,10 +117,7 @@ public class DiagnosisService : IDiagnosisService
                 }
             }
 
-            // =====================================================
-            // STEP 2: CACHE LOOKUP (fallback from KB)
-            // Only for text-based diagnosis without image
-            // =====================================================
+
             if (!request.SkipCache && hasDescription && !hasImage)
             {
                 var cacheMatch = await _cacheService.FindMatchAsync(
@@ -159,9 +156,6 @@ public class DiagnosisService : IDiagnosisService
                 }
             }
 
-            // =====================================================
-            // CALL AI API (cache miss or image-based diagnosis)
-            // =====================================================
             // Call AI Vision API
             var aiResult = await _aiVisionService.AnalyzePlantImageAsync(
                 request.ImageBase64,

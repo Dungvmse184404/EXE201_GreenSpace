@@ -10,5 +10,6 @@ namespace GreenSpace.Application.Common.Mail
     {
         Task<string> GetResetPasswordContentAsync(string recipientName, string otp, int expiry);
         Task<string> GetAccountActivationContentAsync(string recipientName, string otp, int expiry);
+        Task<string> GetOrderStatusNotificationContentAsync(string recipientName, string newStatus, string oldStatus);
     }
 }

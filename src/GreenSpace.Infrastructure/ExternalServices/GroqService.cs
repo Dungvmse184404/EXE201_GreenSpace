@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Diagnostics;
 using GreenSpace.Application.Common.Settings;
 using GreenSpace.Application.Interfaces.External;
 using Microsoft.Extensions.Logging;
@@ -11,7 +12,7 @@ namespace GreenSpace.Infrastructure.ExternalServices;
 /// Groq AI service implementation for plant diagnosis
 /// Uses Llama 3.2 Vision model
 /// </summary>
-public class GroqService : IAIVisionService
+public class GroqService : IAIVisionService, IChatService
 {
     private readonly HttpClient _httpClient;
     private readonly GroqSettings _settings;
@@ -197,7 +198,7 @@ public class GroqService : IAIVisionService
     }
 
     /// <summary>
-    /// Build system prompt for plant diagnosis
+    /// Build system prompt for plant diagnosis 
     /// </summary>
     private string BuildSystemPrompt(string language)
     {
@@ -274,6 +275,20 @@ Tra loi theo format JSON chinh xac nhu sau (KHONG co text khac ngoai JSON):
     }
 
     /// <summary>
+    /// Build request body for Groq Chat API (no JSON format requirement)
+    /// </summary>
+    private object BuildChatRequestBody(List<object> messages)
+    {
+        return new
+        {
+            model = _settings.Model,
+            messages = messages.ToArray(),
+            max_tokens = _settings.MaxTokens,
+            temperature = _settings.Temperature
+        };
+    }
+
+    /// <summary>
     /// Extract content from Groq response (OpenAI-compatible format)
     /// </summary>
     private string? ExtractContentFromResponse(string response)
@@ -305,4 +320,140 @@ Tra loi theo format JSON chinh xac nhu sau (KHONG co text khac ngoai JSON):
             return null;
         }
     }
+
+    /// <summary>
+    /// IChatService Implementation - Simple conversational chat (like ChatGPT)
+    /// </summary>
+    public async Task<ChatCompletionResult> GetChatResponseAsync(string message, string language = "vi")
+    {
+        var stopwatch = Stopwatch.StartNew();
+        var result = new ChatCompletionResult
+        {
+            DebugInfo = new ChatDebugInfo
+            {
+                Provider = "Groq",
+                Model = _settings.Model
+            }
+        };
+
+        if (!IsAvailable())
+        {
+            _logger.LogWarning("Groq service is not available for chat");
+            result.IsSuccess = false;
+            result.ErrorMessage = "Groq service is not configured";
+            return result;
+        }
+
+        try
+        {
+            var systemPrompt = BuildChatSystemPrompt(language);
+            var messages = new List<object>
+            {
+                new { role = "system", content = systemPrompt },
+                new { role = "user", content = message }
+            };
+
+            // Use chat-specific request body (no JSON format requirement)
+            var requestBody = BuildChatRequestBody(messages);
+            var url = $"{_settings.BaseUrl}/chat/completions";
+            var jsonContent = JsonSerializer.Serialize(requestBody);
+
+            _logger.LogInformation("Calling Groq chat API. Message length: {Length}", message.Length);
+
+            _httpClient.DefaultRequestHeaders.Clear();
+            _httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {_settings.ApiKey}");
+
+            var response = await _httpClient.PostAsync(url,
+                new StringContent(jsonContent, Encoding.UTF8, "application/json"));
+
+            stopwatch.Stop();
+            result.DebugInfo.ResponseTimeMs = stopwatch.ElapsedMilliseconds;
+            result.DebugInfo.HttpStatusCode = (int)response.StatusCode;
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Groq chat API error: {StatusCode}", response.StatusCode);
+                result.IsSuccess = false;
+                result.ErrorMessage = "Failed to get response from Groq API";
+                return result;
+            }
+
+            var chatResponse = ExtractChatResponse(responseContent);
+            if (!string.IsNullOrWhiteSpace(chatResponse))
+            {
+                result.IsSuccess = true;
+                result.Response = chatResponse;
+            }
+            else
+            {
+                result.IsSuccess = false;
+                result.ErrorMessage = "Failed to extract response from Groq";
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            stopwatch.Stop();
+            _logger.LogError(ex, "Error in Groq chat completion");
+            result.IsSuccess = false;
+            result.ErrorMessage = ex.Message;
+            return result;
+        }
+    }
+
+    /// <summary>
+    /// Build conversational system prompt (not diagnosis)
+    /// </summary>
+    private string BuildChatSystemPrompt(string language)
+    {
+        var languageInstruction = language == "vi"
+            ? "Trả lời bằng tiếng Việt."
+            : "Respond in English.";
+
+        return $@"Bạn là một chuyên gia chăm sóc cây trồng thân thiện và tư vấn viên về các sản phẩm vườn của GreenSpace.
+
+{languageInstruction}
+
+Hãy trả lời theo cách tự nhiên và hội thoại, giống như một trợ lý ảo thông minh. 
+Có thể giúp người dùng về:
+- Cách chăm sóc các loại cây
+- Nhận dạng và điều trị bệnh cây
+- Gợi ý sản phẩm phù hợp từ GreenSpace
+- Trả lời các câu hỏi chung về thực vật
+
+Hãy ngắn gọn, hữu ích và thân thiện. Nếu cần thêm thông tin, hãy hỏi chi tiết.";
+    }
+
+    /// <summary>
+    /// Extract chat response text from Groq API response
+    /// </summary>
+    private string? ExtractChatResponse(string responseContent)
+    {
+        try
+        {
+            using var doc = JsonDocument.Parse(responseContent);
+            var root = doc.RootElement;
+
+            if (root.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
+            {
+                var firstChoice = choices[0];
+                if (firstChoice.TryGetProperty("message", out var message) &&
+                    message.TryGetProperty("content", out var content))
+                {
+                    return content.GetString();
+                }
+            }
+
+            return null;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error extracting chat response");
+            return null;
+        }
+    }
 }
+

@@ -127,6 +127,35 @@ namespace GreenSpace.WebAPI.Controllers
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
 
+
+
+        /// <summary>
+        /// Cancel order by customer (COD orders only)
+        /// </summary>
+        /// <param name="id">Order ID</param>
+        /// <returns>Cancelled order</returns>
+        /// <remarks>
+        /// Only COD orders in Pending or Confirmed status can be cancelled by the customer.
+        /// Orders paid via VNPay or PayOS cannot be cancelled by the customer - contact support instead.
+        ///
+        ///     PATCH /api/orders/{id}/cancel
+        /// </remarks>
+        /// <response code="200">Order cancelled successfully</response>
+        /// <response code="400">Order cannot be cancelled (not COD or invalid status)</response>
+        /// <response code="401">Unauthorized</response>
+        /// <response code="404">Order not found</response>
+        [HttpPatch("{id:guid}/cancel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> CancelOrder(Guid id)
+        {
+            var userId = User.GetUserId();
+            var result = await _orderService.CancelOrderByCustomerAsync(id, userId);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
+        }
+
         /// <summary>
         /// Get all orders (Admin/Staff only)
         /// </summary>
@@ -142,7 +171,7 @@ namespace GreenSpace.WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<IActionResult> GetAll()
-        {
+        {   
             var result = await _orderService.GetAllOrderAsync();
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }

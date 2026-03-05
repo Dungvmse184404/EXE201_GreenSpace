@@ -21,6 +21,7 @@ namespace GreenSpace.Application.Services
         private readonly ILogger<OrderService> _logger;
         private readonly IStockService _stockService;
         private readonly IPromotionService _promotionService;
+        private readonly IOrderNotificationService _orderNotificationService;
 
         // Default shipping fee (có thể config từ appsettings)
         private const decimal DefaultShippingFee = 30000m;
@@ -30,13 +31,15 @@ namespace GreenSpace.Application.Services
             IMapper mapper,
             ILogger<OrderService> logger,
             IStockService stockService,
-            IPromotionService promotionService)
+            IPromotionService promotionService,
+            IOrderNotificationService orderNotificationService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _logger = logger;
             _stockService = stockService;
             _promotionService = promotionService;
+            _orderNotificationService = orderNotificationService;
         }
 
         public async Task<IServiceResult<List<OrderDto>>> GetUserOrdersAsync(Guid userId)
@@ -302,6 +305,14 @@ namespace GreenSpace.Application.Services
         {
             try
             {
+                // Validate status value
+                if (!OrderStatus.IsValid(status))
+                {
+                    var allowed = string.Join(", ", OrderStatus.ValidStatuses);
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
+                        $"Invalid status '{status}'. Allowed values: {allowed}");
+                }
+
                 var order = await _unitOfWork.OrderRepository.GetByIdAsync(orderId);
                 if (order == null)
                     return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound);
@@ -330,11 +341,112 @@ namespace GreenSpace.Application.Services
                     "Order {OrderId} status changed from {OldStatus} to {NewStatus}",
                     orderId, oldStatus, status);
 
+                // Send notification email to customer (fire and forget)
+                if (!string.IsNullOrEmpty(oldStatus))
+                {
+                    var user = await _unitOfWork.UserRepository.GetByIdAsync(order.UserId);
+                    var recipientEmail = user?.Email ?? "";
+                    var recipientName = !string.IsNullOrEmpty(order.RecipientName)
+                        ? order.RecipientName
+                        : $"{user?.FirstName} {user?.LastName}".Trim();
+
+                    _ = _orderNotificationService.SendOrderStatusNotificationAsync(recipientEmail, recipientName, status, oldStatus)
+                        .ContinueWith(task =>
+                        {
+                            if (task.IsFaulted)
+                            {
+                                _logger.LogError(
+                                    task.Exception,
+                                    "Failed to send order status notification for order {OrderId}",
+                                    orderId);
+                            }
+                        }); 
+                }
+
                 return ServiceResult<OrderDto>.Success(result, ApiMessages.Order.Updated);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating order status {OrderId}", orderId);
+                return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Cancel order by customer - only allowed for COD orders in Pending status
+        /// </summary>
+        public async Task<IServiceResult<OrderDto>> CancelOrderByCustomerAsync(Guid orderId, Guid userId)
+        {
+            try
+            {
+                var order = await _unitOfWork.OrderRepository.GetAllQueryable()
+                    .Include(o => o.Payments)
+                    .FirstOrDefaultAsync(o => o.OrderId == orderId);
+
+                if (order == null)
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound);
+
+                // Verify the order belongs to the requesting customer
+                if (order.UserId != userId)
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.Forbidden, "You do not have permission to cancel this order.");
+
+                // Only allow cancellation of Pending or Confirmed orders
+                if (order.Status != OrderStatus.Pending && order.Status != OrderStatus.Confirmed)
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
+                        $"Cannot cancel order with status '{order.Status}'. Only Pending or Confirmed orders can be cancelled.");
+
+                // Check if the order is a COD order
+                // COD orders either have no payment record or all payments have Gateway = "COD"
+                var hasOnlinePayment = order.Payments.Any(p =>
+                    p.Gateway != PaymentGateway.COD &&
+                    p.Status == PaymentStatus.Success);
+
+                if (hasOnlinePayment)
+                    return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
+                        "Only COD orders can be cancelled by customer. Please contact support for paid orders.");
+
+                var oldStatus = order.Status;
+                order.Status = OrderStatus.Cancelled;
+
+                // Revert reserved stock
+                await _stockService.RevertStockReservationAsync(orderId);
+
+                await _unitOfWork.OrderRepository.UpdateAsync(order);
+                await _unitOfWork.SaveChangesAsync();
+
+                var result = _mapper.Map<OrderDto>(order);
+
+                _logger.LogInformation(
+                    "Order {OrderId} cancelled by customer {UserId}. Previous status: {OldStatus}",
+                    orderId, userId, oldStatus);
+
+                // Send notification email to customer
+                if (!string.IsNullOrEmpty(oldStatus))
+                {
+                    var user = await _unitOfWork.UserRepository.GetByIdAsync(order.UserId);
+                    var recipientEmail = user?.Email ?? "";
+                    var recipientName = !string.IsNullOrEmpty(order.RecipientName)
+                        ? order.RecipientName
+                        : $"{user?.FirstName} {user?.LastName}".Trim();
+
+                    _ = _orderNotificationService.SendOrderStatusNotificationAsync(recipientEmail, recipientName, OrderStatus.Cancelled, oldStatus)
+                        .ContinueWith(task =>
+                        {
+                            if (task.IsFaulted)
+                            {
+                                _logger.LogError(
+                                    task.Exception,
+                                    "Failed to send cancellation notification for order {OrderId}",
+                                    orderId);
+                            }
+                        });
+                }
+
+                return ServiceResult<OrderDto>.Success(result, "Order cancelled successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error cancelling order {OrderId} by customer {UserId}", orderId, userId);
                 return ServiceResult<OrderDto>.Failure(ApiStatusCodes.InternalServerError, $"Error: {ex.Message}");
             }
         }

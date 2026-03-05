@@ -14,7 +14,7 @@ public class GeminiSettings
     /// Gemini API Key
     /// Get from: https://aistudio.google.com/app/apikey
     /// </summary>
-    public string ApiKey { get; set; } = string.Empty;
+    public string ApiKey { get; set; }
 
     /// <summary>
     /// Model to use (default: gemini-1.5-flash)
