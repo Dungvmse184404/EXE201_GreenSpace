@@ -28,5 +28,26 @@ namespace GreenSpace.Domain.Constants
         /// </summary>
         public static bool IsValid(string status) =>
             !string.IsNullOrWhiteSpace(status) && ValidStatuses.Contains(status.Trim());
+
+        /// <summary>
+        /// Normalize status to canonical casing (e.g. "COMPLETED" → "Completed")
+        /// </summary>
+        public static string Normalize(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status)) return status;
+            var trimmed = status.Trim();
+            foreach (var s in ValidStatuses)
+            {
+                if (string.Equals(s, trimmed, StringComparison.OrdinalIgnoreCase))
+                    return s;
+            }
+            return trimmed;
+        }
+
+        /// <summary>
+        /// Case-insensitive status comparison
+        /// </summary>
+        public static bool Equals(string? a, string? b) =>
+            string.Equals(a, b, StringComparison.OrdinalIgnoreCase);
     }
 }

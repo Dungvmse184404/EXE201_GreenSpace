@@ -318,15 +318,17 @@ namespace GreenSpace.Application.Services
                     return ServiceResult<OrderDto>.Failure(ApiStatusCodes.NotFound, ApiMessages.Order.NotFound);
 
                 var oldStatus = order.Status;
+                // Normalize to canonical casing
+                status = OrderStatus.Normalize(status);
                 order.Status = status;
 
                 // Handle stock based on status change
-                if (status == OrderStatus.Cancelled)
+                if (OrderStatus.Equals(status, OrderStatus.Cancelled))
                 {
                     // Revert stock if order cancelled/failed
                     await _stockService.RevertStockReservationAsync(orderId);
                 }
-                else if (status == OrderStatus.Completed)
+                else if (OrderStatus.Equals(status, OrderStatus.Completed))
                 {
                     // Confirm stock deduction
                     await _stockService.ConfirmStockReservationAsync(orderId);
@@ -391,7 +393,7 @@ namespace GreenSpace.Application.Services
                     return ServiceResult<OrderDto>.Failure(ApiStatusCodes.Forbidden, "You do not have permission to cancel this order.");
 
                 // Only allow cancellation of Pending or Confirmed orders
-                if (order.Status != OrderStatus.Pending && order.Status != OrderStatus.Confirmed)
+                if (!OrderStatus.Equals(order.Status, OrderStatus.Pending) && !OrderStatus.Equals(order.Status, OrderStatus.Confirmed))
                     return ServiceResult<OrderDto>.Failure(ApiStatusCodes.BadRequest,
                         $"Cannot cancel order with status '{order.Status}'. Only Pending or Confirmed orders can be cancelled.");
 

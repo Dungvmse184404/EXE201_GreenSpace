@@ -279,7 +279,7 @@ namespace GreenSpace.Application.Services
                     .Where(o => o.StockReserved
                         && o.PaymentExpiryAt.HasValue
                         && o.PaymentExpiryAt.Value <= DateTime.UtcNow
-                        && o.Status == OrderStatus.Pending)
+                        && OrderStatus.Equals(o.Status, OrderStatus.Pending))
                     .ToListAsync(cancellationToken);
 
                 var revertedCount = 0;

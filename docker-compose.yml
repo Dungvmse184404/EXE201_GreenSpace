@@ -9,7 +9,7 @@ services:
     environment:
       POSTGRES_DB: EXE201_GreenSpaceDb
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 12345
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -24,64 +24,67 @@ services:
   # ============================================
   # GreenSpace Web API
   # ============================================
-api:
-    build: .
-    container_name: greenspace-api
-    restart: unless-stopped
-    ports:
-      - "5020:5020"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Production
-      - Kestrel__Endpoints__Http__Url=http://0.0.0.0:5020
-      - ConnectionStrings__DefaultConnection=${DB_CONNECTION}
+  api:
+      build: .
+      container_name: greenspace-api
+      restart: unless-stopped
+      ports:
+        - "5020:5020"
+      env_file:
+        - .env
+      environment:
+        - ASPNETCORE_ENVIRONMENT=Production
+        - Kestrel__Endpoints__Http__Url=http://0.0.0.0:5020
+        - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
 
-      - JwtSettings__SecretKey=${JWT_SECRET}
-      - JwtSettings__Issuer=${JWT_ISSUER}
-      - JwtSettings__Audience=${JWT_AUDIENCE}
-      - JwtSettings__ExpiryMinutes=60
-      - JwtSettings__RefreshTokenExpiryDays=7
+        - JwtSettings__SecretKey=${JWT_SECRET_KEY}
+        - JwtSettings__Issuer=${JWT_ISSUER}
+        - JwtSettings__Audience=${JWT_AUDIENCE}
+        - JwtSettings__ExpiryMinutes=${JWT_EXPIRY_MINUTES}
+        - JwtSettings__RefreshTokenExpiryDays=${JWT_REFRESH_TOKEN_EXPIRY_DAYS}
 
-      - MailSettings__Mail=${MAIL_USER}
-      - MailSettings__DisplayName=GreenSpace Support
-      - MailSettings__Password=${MAIL_PASS}
-      - MailSettings__Host=smtp.gmail.com
-      - MailSettings__Port=587
-      
-      - VNPaySettings__TmnCode=${VNPAY_TMN_CODE}
-      - VNPaySettings__HashSecret=${VNPAY_HASH_SECRET}
-      - VNPaySettings__BaseUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
-      - VNPaySettings__ReturnUrl=https://green-space-exe.vercel.app/api/payments/vnpay/callback
-      - VNPaySettings__Version=2.1.0
-      - VNPaySettings__Command=pay
-      - VNPaySettings__CurrCode=VND
-      - VNPaySettings__Locale=vn
-      - VNPaySettings__TimeoutMinutes=10
+        - MailSettings__Mail=${MAIL_ADDRESS}
+        - MailSettings__DisplayName=${MAIL_DISPLAY_NAME}
+        - MailSettings__Password=${MAIL_PASSWORD}
+        - MailSettings__Host=${MAIL_HOST}
+        - MailSettings__Port=${MAIL_PORT}
+        
+        - VNPaySettings__TmnCode=${VNPAY_TMN_CODE}
+        - VNPaySettings__HashSecret=${VNPAY_HASH_SECRET}
+        - VNPaySettings__BaseUrl=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+        - VNPaySettings__ReturnUrl=${VNPAY_RETURN_URL}
+        - VNPaySettings__Version=2.1.0
+        - VNPaySettings__Command=pay
+        - VNPaySettings__CurrCode=VND
+        - VNPaySettings__Locale=vn
+        - VNPaySettings__TimeoutMinutes=10
 
-      - PayOSSettings__ClientId=${PAYOS_CLIENT_ID}
-      - PayOSSettings__ApiKey=${PAYOS_API_KEY}
-      - PayOSSettings__ChecksumKey=${PAYOS_CHECKSUM}
-      - PayOSSettings__ReturnUrl=https://green-space-exe.vercel.app/orders
-      - PayOSSettings__CancelUrl=https://green-space-exe.vercel.app/payment-result
+        - PayOSSettings__ClientId=${PAYOS_CLIENT_ID}
+        - PayOSSettings__ApiKey=${PAYOS_API_KEY}
+        - PayOSSettings__ChecksumKey=${PAYOS_CHECKSUM_KEY}
+        - PayOSSettings__ReturnUrl=${PAYOS_RETURN_URL}
+        - PayOSSettings__CancelUrl=${PAYOS_CANCEL_URL}
 
-      - Groq__ApiKey=${GROQ_API_KEY}
-      - Groq__Model=meta-llama/llama-4-scout-17b-16e-instruct
-      - Groq__BaseUrl=https://api.groq.com/openai/v1
-      - Groq__MaxTokens=2048
-      - Groq__Temperature=0.4
-      - Groq__IsEnabled=true
+        - Groq__ApiKey=${GROQ_API_KEY}
+        - Groq__Model=meta-llama/llama-4-scout-17b-16e-instruct
+        - Groq__BaseUrl=https://api.groq.com/openai/v1
+        - Groq__MaxTokens=2048
+        - Groq__Temperature=0.4
+        - Groq__IsEnabled=true
 
-      - Gemini__ApiKey=${GEMINI_API_KEY}
-      - Gemini__Model=gemini-1.5-flash
-      - Gemini__BaseUrl=https://generativelanguage.googleapis.com/v1beta
-      - Gemini__MaxOutputTokens=2048
-      - Gemini__Temperature=0.4
-      - Gemini__IsEnabled=false
-      
-      - ClientSettings__BaseUrl=https://green-space-exe.vercel.app/
-      - ClientSettings__BackupUrl=https://green-space-exe.vercel.app/error
-    depends_on:
-      db:
-        condition: service_healthy
+        - Gemini__ApiKey=${GEMINI_API_KEY}
+        - Gemini__Model=gemini-1.5-flash
+        - Gemini__BaseUrl=https://generativelanguage.googleapis.com/v1beta
+        - Gemini__MaxOutputTokens=2048
+        - Gemini__Temperature=0.4
+        - Gemini__IsEnabled=false
+        
+        - OrderPageUrl=https://green-space-exe.vercel.app/orders
+        - ClientSettings__BaseUrl=https://green-space-exe.vercel.app/
+        - ClientSettings__BackupUrl=https://green-space-exe.vercel.app/error
+      depends_on:
+        db:
+          condition: service_healthy
 
 volumes:
   postgres_data:
